@@ -14,9 +14,9 @@ return [
     |
     */
 
-    'title' => 'AdminLTE 3',
+    'title' => 'Natur Global Solutions',
     'title_prefix' => '',
-    'title_postfix' => '',
+    'title_postfix' => 'Admin',
 
     /*
     |--------------------------------------------------------------------------
@@ -110,7 +110,7 @@ return [
     */
 
     'preloader' => [
-        'enabled' => true,
+        'enabled' => false,
         'mode' => 'fullscreen',
         'img' => [
             'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',

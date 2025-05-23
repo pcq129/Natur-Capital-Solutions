@@ -3,6 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\enums\Status;
+use App\enums\Role;
 
 return new class extends Migration
 {
@@ -15,6 +17,15 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('phone', 20);
+            $table->string('company', 40);
+            $table->string('country', 40);
+            $table->string('city', 40);
+            $table->string('provider', 60);
+            $table->text('text');
+            $table->date('token_expiration');
+            $table->enum('role',array_column(ROLE::cases(), 'value') );
+            $table->enum('status',array_column(STATUS::cases(), 'value') );
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
