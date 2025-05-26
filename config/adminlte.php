@@ -14,9 +14,9 @@ return [
     |
     */
 
-    'title' => 'Natur Global Solutions',
+    'title' => 'Natur Capital Solutions',
     'title_prefix' => '',
-    'title_postfix' => 'Admin',
+    'title_postfix' => '',
 
     /*
     |--------------------------------------------------------------------------
@@ -84,7 +84,7 @@ return [
     */
 
     'auth_logo' => [
-        'enabled' => false,
+        'enabled' => true,
         'img' => [
             'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
             'alt' => 'Auth Logo',
