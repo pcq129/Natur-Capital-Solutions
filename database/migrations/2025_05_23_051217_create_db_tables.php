@@ -9,12 +9,17 @@ use App\Enums\DeliveryMode;
 use App\Enums\PaymentMode;
 use App\Enums\ContentType;
 use App\Enums\Language;
-use App\Enums\DeliverMode;
+use App\Enums\ServiceStatus;
+use App\Enums\Status;
 
 
 
 return new class extends Migration
 {
+
+    // INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `phone`, `company`, `country`, `city`, `provider`, `provider_token`, `token_expiration`, `role`, `status`, `deleted_at`) VALUES (NULL, 'Harmit', 'harmitkatariya153@gmail.com', NULL, '$2y$12$Cs79vJdZkFseHrJ4rEibJuAV3LB.UP0XzR8Y6jBa.9YxqE8jsI1j6', NULL, '2025-05-28 04:00:13', '2025-05-28 04:00:13', NULL, 'Natur Capital Solutions', NULL, NULL, NULL, NULL, NULL, 'admin', '1', NULL)
+    // pass #12341234
+
     /**
      * Run the migrations.
      */
@@ -27,8 +32,9 @@ return new class extends Migration
             $table->unsignedBigInteger('sub_category_id');
             $table->integer('minimum_quantity', false, true);
             $table->boolean('is_featured')->comment('for displaying products in featured/popular section');
-            $table->tinyInteger('status')->comment("-1 = deleted, 0 = inactive, 1 = active");
+            $table->enum('status', array_column(Status::cases(), 'value'))->comment("-1 = deleted, 0 = inactive, 1 = active");
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('services', function (Blueprint $table) {
@@ -36,7 +42,9 @@ return new class extends Migration
             $table->string('name', 80);
             $table->unsignedBigInteger('product_id');
             $table->tinyInteger('is_featured')->comment('0 = not featured, 1 = featured');
-            $table->tinyInteger('status')->comment('0 = inactive, 1 = active');
+            $table->enum('status', array_column(Status::cases(), 'value'))->comment("-1 = deleted, 0 = inactive, 1 = active");
+            $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('branch_offices', function (Blueprint $table) {
@@ -45,8 +53,10 @@ return new class extends Migration
             $table->string('office', 255);
             $table->string('email', 80);
             $table->string('mobile');
-            $table->tinyInteger('status')->comment('0 = inactive, 1 = active');
+            $table->enum('status', array_column(Status::cases(), 'value'))->comment("-1 = deleted, 0 = inactive, 1 = active");
             $table->string('location');
+            $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('countries', function (Blueprint $table) {
@@ -74,11 +84,15 @@ return new class extends Migration
             $table->string('address_line_1', 255);
             $table->string('street', 140);
             $table->integer('pincode', false, true);
+            $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
             $table->string('label');
+            $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('cms_pages', function (Blueprint $table) {
@@ -86,6 +100,9 @@ return new class extends Migration
             $table->string('name');
             $table->longText('data');
             $table->string('language', 20);
+            $table->enum('status', array_column(Status::cases(), 'value'));
+            $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('email_templates', function (Blueprint $table) {
@@ -95,6 +112,9 @@ return new class extends Migration
             $table->longText('content');
             $table->string('language', 20);
             $table->unsignedBigInteger('access_to');
+            $table->enum('status', array_column(Status::cases(), 'value'));
+            $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('enquiries', function (Blueprint $table) {
@@ -106,6 +126,8 @@ return new class extends Migration
             $table->unsignedBigInteger('city_id');
             $table->text('message');
             $table->text('response');
+            $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('orders', function (Blueprint $table) {
@@ -118,11 +140,14 @@ return new class extends Migration
             $table->string('feedback', 255);
             $table->unsignedBigInteger('product_id');
             $table->enum('payment_mode', array_column(PaymentMode::cases(), 'value'));
+            $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
             $table->json('invoice_data');
+            $table->softDeletes();
         });
 
 
@@ -134,6 +159,8 @@ return new class extends Migration
             $table->tinyInteger('is_renewable')->comment('1 = renewable/extendible, 0 = non-renewable(fix tenure) ');
             $table->tinyInteger('is_renewed')->comment('1 = entry is a renewed warranty, 0 = entry is regular warranty');
             $table->unsignedBigInteger('previous_warranty');
+            $table->enum('status', array_column(Status::cases(), 'value'));
+            $table->softDeletes();
         });
 
 
@@ -143,7 +170,7 @@ return new class extends Migration
             $table->date('first_service');
             $table->date('second_service');
             $table->date('third_service');
-            $table->tinyInteger('status')->comment(
+            $table->enum('status', array_column(ServiceStatus::cases(), 'value'))->comment(
                 "
                     0 = not serviced,
                     1 = first_service_completed,
@@ -154,19 +181,30 @@ return new class extends Migration
                     -1 = problem_with_third_service
                 "
             );
+            $table->softDeletes();
         });
 
-        Schema::create('banner', function (Blueprint $table) {
+        Schema::create('banners', function (Blueprint $table) {
             $table->id();
+            $table->string('name', 40);
             $table->text('image');
+            $table->text('overlay_heading');
+            $table->text('overlay_sub_text');
             $table->text('buttons');
             $table->text('links');
+            $table->integer('order');
+            $table->enum('status', array_column(Status::cases(), 'value'));
+            $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('contact_details', function (Blueprint $table) {
             $table->id();
             $table->string('purpose', 80);
             $table->string('contact', 60);
+            $table->enum('status', array_column(Status::cases(), 'value'));
+            $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('resources', function (Blueprint $table) {
@@ -176,6 +214,8 @@ return new class extends Migration
             $table->enum('content_type', array_column(ContentType::cases(), 'value'));
             $table->tinyInteger('priority');
             $table->text('path');
+            $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('documents', function (Blueprint $table) {
@@ -190,6 +230,9 @@ return new class extends Migration
             $table->enum('content_type', array_column(ContentType::cases(), 'value'));
             $table->enum('language', array_column(LANGUAGE::cases(), 'value'));
             $table->longText('data');
+            $table->enum('status', array_column(Status::cases(), 'value'));
+            $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('cart_items', function (Blueprint $table) {
@@ -201,12 +244,18 @@ return new class extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string('name', 80);
+            $table->enum('status', array_column(Status::cases(), 'value'));
+            $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('sub_categories', function (Blueprint $table) {
             $table->id();
             $table->string('name', 80);
             $table->unsignedBigInteger('category_id');
+            $table->enum('status', array_column(Status::cases(), 'value'));
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -222,7 +271,7 @@ return new class extends Migration
         Schema::dropIfExists('documents');
         Schema::dropIfExists('resources');
         Schema::dropIfExists('contact_details');
-        Schema::dropIfExists('banner');
+        Schema::dropIfExists('banners');
         Schema::dropIfExists('scheduled_services');
         Schema::dropIfExists('warranties');
         Schema::dropIfExists('invoices');

@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+
 @section('content')
-Dashboard data here !
+aph
+{{ dd($banner) }}
 @stop

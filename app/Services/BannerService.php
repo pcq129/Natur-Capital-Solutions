@@ -100,8 +100,8 @@ class BannerService
                 return redirect()->back()->with('error', 'Banner not found.');
             }
 
-            // Optionally delete image
-            $this->deleteImage(str_replace('storage/', '', $banner->image));
+            // Additionaly, delete image
+            $this->deleteImage($banner->image);
             $banner->delete();
 
             return redirect()->back()->with('success', 'Banner deleted successfully');

@@ -3,15 +3,18 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Enums\Role;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -22,6 +25,13 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'company',
+        'role',
+        'country',
+        'state',
+        'city',
+        'phone',
+        'provider'
     ];
 
     /**
@@ -32,6 +42,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'provider_token'
     ];
 
     /**
@@ -44,6 +55,11 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'country' => 'numeric',
+            'state' => 'numeric',
+            'city' => 'numeric',
+            'phone' => 'string',
+            'role' => Role::class
         ];
     }
 

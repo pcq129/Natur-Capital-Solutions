@@ -23,16 +23,17 @@ return new class extends Migration
             $table->timestamps();
 
 
-            // extra fields required for users (non-admin)
+            // extra fields created other than adminlte's default columns
             $table->string('phone', 20)->nullable(true);
             $table->string('company', 40)->nullable(true);
             $table->string('country', 40)->nullable();
             $table->string('city', 40)->nullable();
             $table->string('provider', 60)->nullable();
-            $table->text('token')->nullable();
+            $table->text('provider_token')->nullable();
             $table->date('token_expiration')->nullable();
             $table->enum('role',array_column(Role::cases(), 'value') )->default(ROLE::User);
             $table->enum('status',array_column(Status::cases(), 'value') )->default(STATUS::Active);
+            $table->softDeletes();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

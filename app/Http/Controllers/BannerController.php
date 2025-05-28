@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Banner;
 
 class BannerController extends Controller
 {
@@ -11,7 +12,9 @@ class BannerController extends Controller
      */
     public function index()
     {
-        //
+        // dd('test');
+        $data = Banner::orderBy('created_at', 'desc')->get();
+        return view('pages.banner.index', ['data' => $data]);
     }
 
     /**
@@ -19,15 +22,15 @@ class BannerController extends Controller
      */
     public function create()
     {
-        //
+        return view('Pages.Banner.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateBannerRequest $request)
     {
-        //
+        dd($request);
     }
 
     /**
@@ -43,7 +46,8 @@ class BannerController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $banner = Banner::find($id)->get();
+        return view('Pages.Banner.update', ['banner'=> $banner]);
     }
 
     /**
@@ -59,6 +63,7 @@ class BannerController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        Banner::find($id)->delete();
+        return redirect()->back()->with('success', 'Banner deleted successfully');
     }
 }

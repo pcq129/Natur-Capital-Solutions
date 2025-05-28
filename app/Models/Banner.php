@@ -2,8 +2,16 @@
 
 namespace App\Models;
 
+use App\Enums\Status;
 use Illuminate\Database\Eloquent\Model;
-// use App\Services\Banner;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Mews\Purifier\Casts\CleanHtml;
+
+// Other entities relating to this model
+
+// App\Services\Banner,
+// App\Traits\BaseBannerValidationRules,
+// App\Requests\Banner\*,
 
 class Banner extends Model
 {
@@ -26,23 +34,25 @@ class Banner extends Model
         'id',
         'image',
         'buttons',
-        'links'
-    ];
-
-    // validation rules
-    public $validationRules = [
-        'links' => 'required|array|size:2',
-        'image' => 'required|image|mimes:jpeg,png,jpg,svg,gif|max:2048',
-        'buttons' => 'required|array|size:2',
+        'links',
+        'overlay_heading',
+        'overlay_sub_text',
+        'order',
+        'status'
     ];
 
     // casting
     protected function casts(): array
     {
         return [
-            'id' => 'numeric',
-            'buttons' => 'array',
-            'links' => 'array'
+            'id' => 'integer',
+            'buttons' => 'json',
+            'image' => 'string',
+            'links' => 'array',
+            'overlay_heading' => 'string',
+            'overlay_sub_text' =>'string',
+            'order'=>'integer',
+            'status' => Status::class
         ];
     }
 }

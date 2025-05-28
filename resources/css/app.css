@@ -1,0 +1,18 @@
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+
+input[type="file"] {
+    display: none;
+}
+
+.bannerImageUpload   {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+.content-wrapper {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+}
