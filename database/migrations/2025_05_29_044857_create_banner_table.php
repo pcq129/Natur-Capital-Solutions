@@ -18,6 +18,7 @@ return new class extends Migration
 
         Schema::create('banners', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('banner_id');
             $table->string('name', 40);
             $table->text('image');
             $table->string('banner_link', 255);
@@ -27,6 +28,7 @@ return new class extends Migration
             $table->text('links')->nullable();
             $table->integer('priority');
             $table->tinyInteger('status');
+            $table->enum('lang', ['en', 'fr'])->default('en');
             $table->timestamps();
             $table->softDeletes();
         });

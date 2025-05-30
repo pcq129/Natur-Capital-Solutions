@@ -16,3 +16,7 @@ input[type="file"] {
     padding-bottom: 0 !important;
     margin-bottom: 0 !important;
 }
+
+#toast-container {
+    z-index: 9999 !important;
+}

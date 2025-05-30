@@ -98,10 +98,16 @@
                 </table>
                 {{-- {{ $data }} --}}
                 <div class="me-2 float-right">
-                    {{ $data->links('pagination::bootstrap-4') }}
+                    {{ $data->links('pagination::bootstrap-4')  }}
                 </div>
             </div>
             <!-- /.card-body -->
         </div>
     </div>
 @stop
+
+@push('js')
+<script>
+    
+</script>
+@endpush
