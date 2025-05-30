@@ -32,13 +32,15 @@ class Banner extends Model
     // definations
     protected $fillable = [
         'id',
+        'name',
         'image',
+        'banner_link',
+        'overlay_heading',
+        'overlay_text',
         'buttons',
         'links',
-        'overlay_heading',
-        'overlay_sub_text',
-        'order',
-        'status'
+        'priority',
+        'status',
     ];
 
     // casting
@@ -46,13 +48,14 @@ class Banner extends Model
     {
         return [
             'id' => 'integer',
-            'buttons' => 'json',
             'image' => 'string',
-            'links' => 'array',
+            'buttons' => 'json',
+            'links' => 'json',
             'overlay_heading' => 'string',
-            'overlay_sub_text' =>'string',
-            'order'=>'integer',
+            'overlay_sub_text' => 'string',
+            'order' => 'integer',
             'status' => Status::class
         ];
     }
+
 }

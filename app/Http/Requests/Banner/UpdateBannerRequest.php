@@ -2,17 +2,20 @@
 
 namespace App\Http\Requests\Banner;
 
+use App\Traits\BaseBannerValidationRules;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
 class UpdateBannerRequest extends FormRequest
 {
+
+    use BaseBannerValidationRules;
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        if (Auth::check() && Auth::user()->role == Role::Admin) {
+        if (Auth::check()) {
             return true;
         }
         return false;
@@ -25,6 +28,10 @@ class UpdateBannerRequest extends FormRequest
      */
     public function rules(): array
     {
-        return array_merge(Banner::$validationRules, ['id' => 'required|numeric']);
+        return array_merge($this->baseBannerValidationRules(),
+        [
+            'id' => 'required|numeric',
+            'status' => 'required'
+        ]);
     }
 }

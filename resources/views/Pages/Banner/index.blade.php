@@ -1,5 +1,7 @@
 @extends('layouts.app')
-
+@php
+    use App\Enums\Status;
+@endphp
 
 @section('content')
 
@@ -31,12 +33,13 @@
                     <thead>
                         <tr>
                             <th style="width: 5%">#</th>
-                            <th style="width: 20%">Name</th>
-                            {{-- <th style="width: 20%">Buttons</th> --}}
-                            {{-- <th style="width: 30%">Links</th> --}}
-                            <th style="width: 30%">Content</th>
-                            <th style="width: 25%">Image</th>
-                            <th style="width: 20%">Actions</th>
+                            <th style="width: 10%">Name</th>
+                            <th style="width: 20%">Banner Link</th>
+                            <th style="width: 20%">Heading</th>
+                            <th style="width: 10%">Priority</th>
+                            <th style="width: 10%">Status</th>
+                            <th style="width: 15%">Image</th>
+                            <th style="width: 10%">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -47,21 +50,19 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $banner->name }}</td>
                                     <td>
-                                        @if (!empty($banner->buttons))
-                                            @foreach ($banner->buttons as $button)
-                                                <span>{{ $button }}</span><br>
-                                            @endforeach
-                                        @else
-                                            <span>-</span>
-                                        @endif
+                                        {{ $banner->banner_link }}
                                     </td>
                                     <td>
-                                        @if (!empty($banner->links))
-                                            @foreach ($banner->links as $link)
-                                                <span class="badge badge-info mt-1">{{ $link }}</span><br>
-                                            @endforeach
-                                        @else
-                                            <span>-</span>
+                                        {{ $banner->overlay_heading }}
+                                    </td>
+                                    <td>
+                                        {{ $banner->priority }}
+                                    </td>
+                                    <td>
+                                        @if ($banner->status == Status::Active)
+                                            Active
+                                            @else
+                                            Inactive
                                         @endif
                                     </td>
                                     <td>{{ $banner->image }}</td>
@@ -96,6 +97,9 @@
                     </tbody>
                 </table>
                 {{-- {{ $data }} --}}
+                <div class="me-2 float-right">
+                    {{ $data->links('pagination::bootstrap-4') }}
+                </div>
             </div>
             <!-- /.card-body -->
         </div>

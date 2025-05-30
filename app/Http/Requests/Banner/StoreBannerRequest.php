@@ -3,16 +3,21 @@
 namespace App\Http\Requests\Banner;
 
 use App\Enums\Role;
+use App\Traits\BaseBannerValidationRules;
 use Illuminate\Foundation\Http\FormRequest;
+
+use Illuminate\Support\Facades\Auth;
 
 class StoreBannerRequest extends FormRequest
 {
+    use BaseBannerValidationRules;
+
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        if(Auth::check() && Auth::user()->role == Role::Admin){
+        if (Auth::check()) {
             return true;
         }
         return false;
@@ -25,6 +30,11 @@ class StoreBannerRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [Banner::$validationRules];
+        return array_merge(
+            $this->baseBannerValidationRules(),
+            [
+                'image' => 'required'
+            ]
+        );
     }
 }

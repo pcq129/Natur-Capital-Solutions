@@ -188,11 +188,12 @@ return new class extends Migration
             $table->id();
             $table->string('name', 40);
             $table->text('image');
+            $table->string('banner_link', 255);
             $table->text('overlay_heading');
-            $table->text('overlay_sub_text');
+            $table->text('overlay_text');
             $table->text('buttons');
             $table->text('links');
-            $table->integer('order');
+            $table->integer('priority');
             $table->enum('status', array_column(Status::cases(), 'value'));
             $table->timestamps();
             $table->softDeletes();

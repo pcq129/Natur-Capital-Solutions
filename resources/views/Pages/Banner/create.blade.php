@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 
-
 @section('content_header')
     <div class="row mb-2 justify-content-between">
         <div class="col-sm-6">
@@ -16,66 +15,108 @@
 
             <div class="row mb-3">
                 <div class="col-12">
-                    <label for="bannerName" class="form-label">Name</label>
-                    <input name="bannerName" type="text" id="bannerName" class="form-control">
+                    <label for="name" class="form-label">Name</label>
+                    <input name="name" type="text" value="{{ old('name') }}" id="name" class="form-control" required>
+                    @error('name')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
             </div>
 
             <div class="row mb-3">
                 <div class="col-12">
-                    <label for="overlayHeading" class="form-label">Overlay Heading</label>
-                    <input name="overlayHeading" type="text" id="overlayHeading" class="form-control">
+                    <label for="overlay_heading" class="form-label">Overlay Heading</label>
+                    <input name="overlay_heading" value="{{ old('overlay_heading') }}" type="text" id="overlay_heading"
+                        class="form-control" required>
+                    @error('overlay_heading')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
             </div>
 
             <div class="row mb-3">
                 <div class="col-12">
-                    <label for="overlaySubText" class="form-label">Overlay Sub-Text</label>
-                    <textarea name="overlaySubtext" type="text" id="overlaySubText" class="form-control" rows="4"></textarea>
+                    <label for="overlay_text" class="form-label">Overlay Sub-Text</label>
+                    <textarea name="overlay_text" type="text" id="overlay_text" class="form-control" rows="4">{{ old('overlay_text') }}</textarea>
+                    @error('overlay_text')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
             </div>
 
             <div class="row mb-3">
                 <div class="col-12">
-                    <label for="bannerLink" class="form-label">Banner Link</label>
-                    <input name="bannerLink" type="text" id="bannerLink" class="form-control">
+                    <label for="banner_link" class="form-label">Banner Link</label>
+                    <input name="banner_link" value="{{ old('banner_link') }}" type="text" id="banner_link"
+                        class="form-control" required>
+                    @error('banner_link')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
-            </div>
 
-            <div class="row mb-3 g-3">
+                <div class="row mb-3 g-3">
+                </div>
                 <div class="col-6">
                     <label class="form-label">Image</label>
                     <br>
-                    <label for="file-upload" class="bannerImageUpload fw-bold mb-2">Upload</label>
-                    <input id="file-upload" name="bannerImage" type="file" accept=".jpg, .jpeg, .png" class="form-control">
+                    <label for="file-upload" class="bannerImageUpload fw-bold mb-2">Select</label>
+                    <input id="file-upload" name="image" type="file" accept=".jpg, .jpeg, .png" class="form-control">
+                    @error('image')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="col-6">
                     <label class="form-label">Priority/Order</label>
                     <br>
-                    <input name="priority" type="number" class="form-control col-3" min="0" max=>
+                    <input name="priority" value="{{ old('priority') }}" type="number" class="form-control col-3"
+                        min="0" max="10" required>
+                    @error('priority')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
             </div>
 
+            {{-- not adding status field, considering newly added banner to be active by default --}}
+
             <div class="row mb-3">
                 <div class="col-12">
-                    <label for="bannerButtonText" class="form-label">Buttons</label>
+                    <label for="bannerButtonOneText" class="form-label">Buttons</label>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <input name="bannerButtonOneText" type="text" id="bannerButtonText" class="form-control" placeholder="Button Text">
+                            <input name="banner_button_one_text" value="{{ old('banner_button_one_text') }}" type="text"
+                                id="bannerButtonOneText" class="form-control" placeholder="Button Text" required>
+
+                            @error('banner_button_one_text')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-md-6">
-                            <input name="bannerButtonOneAction" type="text" id="bannerButtonAction" class="form-control"
-                                placeholder="Button Action (Redirection Link)">
+                            <input name="banner_button_one_action" value="{{ old('banner_button_one_action') }}"
+                                type="text" id="bannerButtonOneAction" class="form-control"
+                                placeholder="Button Action (Redirection Link)" required>
+
+                            @error('banner_button_one_action')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                     <div class="row g-3 mt-2">
                         <div class="col-md-6">
-                            <input type="text" name="bannerButtonTwoText" id="bannerButtonText" class="form-control" placeholder="Button 2 Text">
+                            <input type="text" name="banner_button_two_text" value="{{ old('banner_button_two_text') }}"
+                                id="bannerButtonTwoText" class="form-control" placeholder="Button 2 Text" >
+                            @error('banner_button_two_text')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-md-6">
-                            <input type="text" name="bannerButtonTwoAction" id="bannerButtonAction" class="form-control"
-                                placeholder="Button 2 Action (Redirection Link)">
+                            <input type="text" name="banner_button_two_action"
+                                value="{{ old('banner_button_two_action') }}" id="bannerButtonTwoAction"
+                                class="form-control" placeholder="Button 2 Action (Redirection Link)">
+
+                            @error('banner_button_two_action')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                 </div>
@@ -84,23 +125,39 @@
 
             <div class="row mb-3">
                 <div class="col-12">
-                    <label for="bannerLinkText" class="form-label">Links</label>
+                    <label for="bannerLinkOneText" class="form-label">Links</label>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <input type="text" name="bannerLinkOneText" id="bannerLinkText" class="form-control" placeholder="Link Text">
+                            <input type="text" name="banner_link_one_text" value="{{ old('banner_link_one_text') }}"
+                                id="bannerLinkOneText" class="form-control" placeholder="Link Text">
+                            @error('banner_link_one_text')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-md-6">
-                            <input type="text" name="bannerLinkOneAction" id="bannerLinkAction" class="form-control"
-                                placeholder="Link Action (Redirection Link)">
+                            <input type="text" name="banner_link_one_action"
+                                value="{{ old('banner_link_one_action') }}" id="bannerLinkOneAction"
+                                class="form-control" placeholder="Link Action (Redirection Link)">
+                            @error('banner_link_one_action')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                     <div class="row g-3 mt-2">
                         <div class="col-md-6">
-                            <input type="text" name="bannerLinkTwoText" id="bannerLinkText" class="form-control" placeholder="Link 2 Text">
+                            <input type="text" name="banner_link_two_text" value="{{ old('banner_link_two_text') }}"
+                                id="bannerLinkTwoText" class="form-control" placeholder="Link 2 Text">
+                            @error('banner_link_two_text')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-md-6">
-                            <input type="text" name="bannerLinkTwoAction" id="bannerLinkAction" class="form-control"
-                                placeholder="Link 2 Action (Redirection Link)">
+                            <input type="text" name="banner_link_two_action"
+                                value="{{ old('banner_link_two_action') }}" id="bannerLinkTwoAction"
+                                class="form-control" placeholder="Link 2 Action (Redirection Link)">
+                            @error('banner_link_two_action')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                 </div>
