@@ -11,7 +11,7 @@
 @section('content')
 
     <div class="row">
-        <form class="card ms-4 col-8 p-3" action="{{ route('banners.update', $banner->id) }}" method="POST"
+        <form data-validate class="card ms-4 col-8 p-3" action="{{ route('banners.update', $banner->id) }}" method="POST"
             enctype="multipart/form-data">
             @csrf
             @method('PUT')

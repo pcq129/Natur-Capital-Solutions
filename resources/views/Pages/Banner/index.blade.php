@@ -4,27 +4,27 @@
 @endphp
 
 @section('content_header')
-<section class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2 justify-content-between">
-            <div class="col-sm-6">
-                <h1>Banners</h1>
-            </div>
-            <div class="col-sm-4 input-group input-group-sm h-100" style="width: 150px;">
-                <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
-                <div class="input-group-append">
-                    <button type="submit" class="btn btn-default">
-                        <i class="fas fa-search"></i>
-                    </button>
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2 justify-content-between">
+                <div class="col-sm-6">
+                    <h1>Banners</h1>
                 </div>
-            </div>
-            <div>
-                <a class="btn ms-6 btn-success bi bi-plus" href="{{ route('banners.create') }}"></a>
-            </div>
+                <div class="col-sm-4 input-group input-group-sm h-100" style="width: 150px;">
+                    <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-default">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <a class="btn ms-6 btn-success bi bi-plus" href="{{ route('banners.create') }}"></a>
+                </div>
 
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 @stop
 
 @section('content')
@@ -32,7 +32,7 @@
     <div>
         <div class="card">
             <div class="card-body p-0">
-                <table class="table table-striped border-bottom">
+                <table class="table table-striped border-bottom" id="bannerDataTable">
                     <thead>
                         <tr>
                             <th style="width: 5%">#</th>
@@ -128,6 +128,7 @@
             </div>
         </div>
 
+
     </div>
 
 
@@ -135,6 +136,12 @@
 
 @push('js')
     <script>
+        $(document).ready(function() {
+            $('#bannerDataTable').DataTable({
+                paging: true,
+            });
+        });
+
         $('#deleteBannerModal').on('show.bs.modal', function(event) {
             const button = $(event.relatedTarget);
             const bannerId = button.data('id');

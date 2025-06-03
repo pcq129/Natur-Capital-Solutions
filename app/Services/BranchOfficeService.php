@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\ServiceResponseType;
 use App\Enums\Status;
+use App\Http\Requests\BranchOffice\UpdateBranchOfficeRequest;
 use App\Models\BranchOffice;
 use App\Services\DTO\ServiceResponse;
 use App\Traits\Validations\BaseBannerValidationRules;
@@ -37,9 +38,47 @@ class BranchOfficeService
         }
     }
 
-    public function updateBranchOffice() {}
+    public function updateBranchOffice(UpdateBranchOfficeRequest $request, int $id) {
+        $updatedBranchOffice = $request->validated();
+        $branchOffice = BranchOffice::find($id);
+        if(!$branchOffice){
+            return ServiceResponse::error('Branch not found');
+        }
+        $branchOffice->fill([
+            'name'=> $updatedBranchOffice['name'],
+            'address' => $updatedBranchOffice['address'],
+            'email' => $updatedBranchOffice['email'],
+            'mobile' => $updatedBranchOffice['mobile'],
+            'location' => $updatedBranchOffice['location'],
+            'status' => $updatedBranchOffice['status']
+        ]);
 
-    public function deleteBranchOffice() {}
+        if($branchOffice->isDirty()){
+            $branchOffice->save();
+            return ServiceResponse::success('Branch updated successfully');
+        }else{
+            return ServiceResponse::info('No changes detected');
+        }
+    }
 
-    public function getSingleBranchOffice() {}
+    public function deleteBranchOffice(int $id)
+    {
+        $branchOffice = BranchOffice::find($id);
+        if($branchOffice){
+            $branchOffice->delete();
+            return ServiceResponse::success('Branch deleted successfully');
+        }else{
+            return ServiceResponse::error('Branch not found');
+        }
+    }
+
+    public function getSingleBranchOffice($id): ServiceResponse
+    {
+        $branchOffice = BranchOffice::find($id);
+        if($branchOffice){
+            return ServiceResponse::success("Branch fetched successfully", $branchOffice);
+        }else{
+            return ServiceResponse::error("Branch not found");
+        }
+    }
 }

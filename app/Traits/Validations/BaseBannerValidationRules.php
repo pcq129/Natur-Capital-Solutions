@@ -20,7 +20,7 @@ trait BaseBannerValidationRules
 
                 // redirection link on banner click
                 'banner_link' => 'required|string',
-
+                
                 // to define order of banners
                 'priority' => ['integer','required',Rule::unique('App\Models\Banner','priority')->ignore($this->id)],
 

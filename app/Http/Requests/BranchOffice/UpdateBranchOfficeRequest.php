@@ -35,4 +35,14 @@ class UpdateBranchOfficeRequest extends FormRequest
             ]
         );
     }
+
+    public function messages(): array
+    {
+        return array_merge(
+            $this->baseBranchOfficeValidationMessages(),
+            [
+                'status.required' => 'You must provice a status of current Branch'
+            ]
+            );
+    }
 }

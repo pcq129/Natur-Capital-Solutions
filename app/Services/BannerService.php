@@ -18,7 +18,7 @@ use App\Enums\ServiceResponseType;
 class BannerService
 {
 
-    public function __construct(protected FileService $imageUploadService){}
+    public function __construct(protected FileService $imageUploadService) {}
 
     public function createBanner($newBannerData): ServiceResponse
     {
@@ -80,8 +80,9 @@ class BannerService
         if ($banner->isDirty()) {
             $banner->save();
             return new ServiceResponse(ServiceResponseType::Success, 'Banner updated successfully');
+        } else {
+            return ServiceResponse::info('No changes detected');
         }
-        return ServiceResponse::info('No changes detected');
     }
 
 
@@ -106,7 +107,7 @@ class BannerService
         return ServiceResponse::Success('Banners fetched successfully', $bannerData);
     }
 
-    private function formatButtons($userInputs):array
+    private function formatButtons($userInputs): array
     {
         $buttons = array_filter([
             'button_one' => array_filter([
@@ -122,7 +123,7 @@ class BannerService
         return $buttons;
     }
 
-    private function formatLinks($userInputs):array
+    private function formatLinks($userInputs): array
     {
         $links = array_filter([
             'link_one' => array_filter([

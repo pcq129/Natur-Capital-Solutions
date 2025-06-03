@@ -10,7 +10,8 @@
 @stop
 @section('content')
     <div class="row">
-        <form class="card ms-4 col-8 p-3" action="{{ route('banners.store') }}" method="POST" enctype="multipart/form-data">
+        <form data-validate class="card ms-4 col-8 p-3" id="newBannerForm" action="{{ route('banners.store') }}" method="POST"
+            enctype="multipart/form-data">
             @csrf
 
             <div class="row mb-3 form-group">
@@ -164,7 +165,8 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary">Create</button>
+            <button type="submit" id="newBannerSubmit" class="btn btn-primary">Create</button>
         </form>
     </div>
 @stop
+

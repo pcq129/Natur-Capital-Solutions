@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Banner\DeleteBannerRequest;
 use Illuminate\Http\Request;
 use App\Models\Banner;
+use App\Http\Requests\Banner\DeleteBannerRequest;
 use App\Http\Requests\Banner\CreateBannerRequest;
 use App\Http\Requests\Banner\UpdateBannerRequest;
 use App\Services\BannerService;
@@ -59,11 +59,11 @@ class BannerController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
         try {
             $banner = $this->bannerService->getSingleBanner((int) $id);
-            // decode json data for better operability at frontend.
+            // decode json data for better operability on frontend.
             $banner->buttons = json_decode($banner->buttons);
             $banner->links = json_decode($banner->links);
             return view('Pages.Banner.update', ['banner' => $banner]);
@@ -93,7 +93,7 @@ class BannerController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
         try{
             $action = $this->bannerService->deleteBanner((int) $id);
