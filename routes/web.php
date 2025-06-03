@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\BannerController;
+use App\Http\Controllers\BranchOfficeController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -16,4 +17,5 @@ Auth::routes();
 Route::middleware('auth')->group(function(){
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::resource('/banners', BannerController::class);
+    Route::resource('/branchoffices', BranchOfficeController::class);
 });

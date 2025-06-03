@@ -311,63 +311,63 @@ return [
         // ],
 
         // Sidebar items:
-        [
-            'type' => 'sidebar-menu-search',
-            'text' => 'search',
-        ],
+        // [
+        //     'type' => 'sidebar-menu-search',
+        //     'text' => 'Search',
+        // ],
         [
             'icon'=> 'nav-icon fas fa-th',
-            'text' => 'dashboard',
+            'text' => 'Dashboard',
             'url' => '/',
         ],
         [
             'icon'=> 'nav-icon fas fa-image',
-            'text' => 'banners',
+            'text' => 'Banners',
             'url' => 'banners',
         ],
         [
             'icon'=> 'nav-icon fas fa-columns',
-            'text' => 'branch offices',
-            'url' => '/branches',
+            'text' => 'Branch & Offices',
+            'url' => '/branchoffices',
         ],
         [
             'icon'=> 'nav-icon fas fa-copy',
-            'text' => 'cms-pages',
+            'text' => 'CMS-pages',
             'url' => '/cms-pages',
         ],
         [
             'icon'=> 'nav-icon fas fa-envelope',
-            'text' => 'contact-details',
+            'text' => 'Contact-Details',
             'url' => '/contact-details',
         ],
         [
             'icon'=> 'nav-icon fas fa-paper-plane',
-            'text' => 'email-templates',
+            'text' => 'Email-Templates',
             'url' => '/email-templates',
         ],
         [
             'icon'=> 'nav-icon fas fa-comments',
-            'text' => 'enquiries',
+            'text' => 'Enquiries',
             'url' => '/enquiries',
         ],
         [
             'icon'=> 'nav-icon fas fa-book',
-            'text' => 'orders',
+            'text' => 'Orders',
             'url' => '/orders',
         ],
         [
             'icon'=> 'nav-icon fas fa-cubes',
-            'text' => 'products',
+            'text' => 'Products',
             'url' => '/products',
         ],
         [
             'icon'=> 'nav-icon fas fa-cogs',
-            'text' => 'services',
+            'text' => 'Services',
             'url' => '/services',
         ],
         [
             'icon'=> 'nav-icon fas fa-tasks',
-            'text' => 'categories',
+            'text' => 'Categories',
             'url' => '/categories',
         ],
         // [
@@ -377,12 +377,12 @@ return [
         // ],
         [
             'icon'=> 'nav-icon fas fa-plus-square',
-            'text' => 'warranties',
+            'text' => 'Warranties',
             'url' => '/warranties',
         ],
         [
             'icon'=> 'nav-icon fas fa-cube',
-            'text' => 'scheduled-services',
+            'text' => 'Scheduled-Services',
             'url' => '/scheduled-services',
         ],
 

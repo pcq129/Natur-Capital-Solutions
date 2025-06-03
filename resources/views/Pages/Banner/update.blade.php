@@ -10,31 +10,6 @@
 @stop
 @section('content')
 
-    @if (session('success'))
-        {{-- <div class="alert alert-success">
-        {{ session('success') }}
-    </div> --}}
-        <script>
-            alert("success")
-        </script>
-    @endif
-
-    @if (session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            {{ $errors }}
-            <span>
-            </span>
-        </div>
-    @endif
-
-
-
     <div class="row">
         <form class="card ms-4 col-8 p-3" action="{{ route('banners.update', $banner->id) }}" method="POST"
             enctype="multipart/form-data">
@@ -109,7 +84,7 @@
                     <label class="form-label">Priority/Order</label>
                     <br>
                     <input name="priority" value="{{ old('priority') ?? $banner->priority }}" type="number"
-                        class="form-control col-3" min="0" max="10" required>
+                        class="form-control col-3" min="1" max="10" required>
                     @error('priority')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror

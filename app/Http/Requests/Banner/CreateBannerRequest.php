@@ -3,12 +3,11 @@
 namespace App\Http\Requests\Banner;
 
 use App\Enums\Role;
-use App\Traits\BaseBannerValidationRules;
+use App\Traits\Validations\BaseBannerValidationRules;
 use Illuminate\Foundation\Http\FormRequest;
-
 use Illuminate\Support\Facades\Auth;
 
-class StoreBannerRequest extends FormRequest
+class CreateBannerRequest extends FormRequest
 {
     use BaseBannerValidationRules;
 
@@ -33,8 +32,20 @@ class StoreBannerRequest extends FormRequest
         return array_merge(
             $this->baseBannerValidationRules(),
             [
-                'image' => 'required'
+                'image' => 'required|dimensions:min_width=800,min_height=600,max_width=1920,max_height=1080'
             ]
         );
     }
+
+
+    public function messages(): array
+    {
+        return [
+            'image.required' => 'Banner image is required',
+            'image.dimensions' => 'The image must be between 800x600 and 1920x1080 pixels'
+        ];
+    }
+
+
+
 }

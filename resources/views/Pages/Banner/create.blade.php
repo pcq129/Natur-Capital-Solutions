@@ -13,17 +13,18 @@
         <form class="card ms-4 col-8 p-3" action="{{ route('banners.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
-            <div class="row mb-3">
+            <div class="row mb-3 form-group">
                 <div class="col-12">
                     <label for="name" class="form-label">Name</label>
-                    <input name="name" type="text" value="{{ old('name') }}" id="name" class="form-control" required>
+                    <input name="name" type="text" value="{{ old('name') }}" id="name" class="form-control"
+                        required>
                     @error('name')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
             </div>
 
-            <div class="row mb-3">
+            <div class="row mb-3 form-group">
                 <div class="col-12">
                     <label for="overlay_heading" class="form-label">Overlay Heading</label>
                     <input name="overlay_heading" value="{{ old('overlay_heading') }}" type="text" id="overlay_heading"
@@ -34,7 +35,7 @@
                 </div>
             </div>
 
-            <div class="row mb-3">
+            <div class="row mb-3 form-group">
                 <div class="col-12">
                     <label for="overlay_text" class="form-label">Overlay Sub-Text</label>
                     <textarea name="overlay_text" type="text" id="overlay_text" class="form-control" rows="4">{{ old('overlay_text') }}</textarea>
@@ -44,7 +45,7 @@
                 </div>
             </div>
 
-            <div class="row mb-3">
+            <div class="row mb-3 form-group">
                 <div class="col-12">
                     <label for="banner_link" class="form-label">Banner Link</label>
                     <input name="banner_link" value="{{ old('banner_link') }}" type="text" id="banner_link"
@@ -54,8 +55,8 @@
                     @enderror
                 </div>
 
-                <div class="row mb-3 g-3">
-                </div>
+            </div>
+            <div class="row mb-3 g-3 form-group">
                 <div class="col-6">
                     <label class="form-label">Image</label>
                     <br>
@@ -66,7 +67,7 @@
                     @enderror
                 </div>
 
-                <div class="col-6">
+                <div class="col-6 form-group">
                     <label class="form-label">Priority/Order</label>
                     <br>
                     <input name="priority" value="{{ old('priority') }}" type="number" class="form-control col-3"
@@ -80,7 +81,7 @@
             {{-- not adding status field, considering newly added banner to be active by default --}}
 
             <div class="row mb-3">
-                <div class="col-12">
+                <div class="col-12 form-group">
                     <label for="bannerButtonOneText" class="form-label">Buttons</label>
                     <div class="row g-3">
                         <div class="col-md-6">
@@ -104,7 +105,7 @@
                     <div class="row g-3 mt-2">
                         <div class="col-md-6">
                             <input type="text" name="banner_button_two_text" value="{{ old('banner_button_two_text') }}"
-                                id="bannerButtonTwoText" class="form-control" placeholder="Button 2 Text" >
+                                id="bannerButtonTwoText" class="form-control" placeholder="Button 2 Text">
                             @error('banner_button_two_text')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -124,7 +125,7 @@
 
 
             <div class="row mb-3">
-                <div class="col-12">
+                <div class="col-12 form-group">
                     <label for="bannerLinkOneText" class="form-label">Links</label>
                     <div class="row g-3">
                         <div class="col-md-6">

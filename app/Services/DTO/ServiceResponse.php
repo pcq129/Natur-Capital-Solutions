@@ -6,9 +6,6 @@ use App\Enums\ServiceResponseType;
 
 class ServiceResponse
 {
-
-
-
     public function __construct(
         public ServiceResponseType $status,
         public string $message,

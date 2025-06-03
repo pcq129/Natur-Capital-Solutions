@@ -1,0 +1,10 @@
+Follow Naming Conventions:
+"Medium Models, fat services, Skinny Controllers":
+Mass Assignment Protection ($fillable or $guarded):
+Define Relationships:
+Accessors and Mutators:
+Attribute Casting ($casts):
+Query Scopes:
+Soft Deleting:
+Validation (Use Form Requests):
+Hide Sensitive Attributes ($hidden):

@@ -5,16 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Banner\DeleteBannerRequest;
 use Illuminate\Http\Request;
 use App\Models\Banner;
-use App\Http\Requests\Banner\StoreBannerRequest;
+use App\Http\Requests\Banner\CreateBannerRequest;
 use App\Http\Requests\Banner\UpdateBannerRequest;
 use App\Services\BannerService;
 use Illuminate\Support\Facades\Log;
-use App\Enums\ServiceResponseType;
 use App\Services\ToasterService;
-use PhpParser\Node\Stmt\TryCatch;
-
-// TODO : IMPLEMENT ERROR HANDLING IN CONTROLLER METHOD
-// DO NOT : implement try catch in services, only let the controller methods handle the exceptions/errors.
 
 
 class BannerController extends Controller
@@ -25,10 +20,10 @@ class BannerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $action = $this->bannerService->getAllBanner();
+            $action = $this->bannerService->fetchBanners();
             return view('pages.banner.index', ['data' => $action->data]);
         } catch (\Exception $e) {
             Log::error('Banner list fetching failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
@@ -48,7 +43,7 @@ class BannerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreBannerRequest $request)
+    public function store(CreateBannerRequest $request)
     {
         try {
             $action = $this->bannerService->createBanner($request->validated());

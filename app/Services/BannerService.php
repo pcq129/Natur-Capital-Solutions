@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Http\Requests\Banner\DeleteBannerRequest;
-// use App\Http\Requests\Banner\StoreBannerRequest;
+// use App\Http\Requests\Banner\CreateBannerRequest;
 use App\Http\Requests\Banner\UpdateBannerRequest;
 use App\Models\Banner;
 // use Illuminate\Http\RedirectResponse;
@@ -41,7 +41,7 @@ class BannerService
             'links'  => json_encode($links),
             'status' => Status::Active,
         ]);
-        return new ServiceResponse(ServiceResponseType::Success, 'Banner added successfully');
+        return ServiceResponse::success('Banner added successfully');
     }
 
     public function updateBanner(UpdateBannerRequest $request, $id): ServiceResponse
@@ -81,7 +81,7 @@ class BannerService
             $banner->save();
             return new ServiceResponse(ServiceResponseType::Success, 'Banner updated successfully');
         }
-        return new ServiceResponse(ServiceResponseType::Information, 'No changes detected');
+        return ServiceResponse::info('No changes detected');
     }
 
 
@@ -91,19 +91,19 @@ class BannerService
         $banner = Banner::find($id);
 
         if (!$banner) {
-            return new ServiceResponse(ServiceResponseType::Error, 'Banner not found');
+            return ServiceResponse::Error('Banner not found');
         }
 
         // Additionaly, delete image
         $this->imageUploadService->deleteImage($banner->image);
         $banner->delete();
-        return new ServiceResponse(ServiceResponseType::Success, 'Banner deleted successfully');
+        return ServiceResponse::Success('Banner deleted successfully');
     }
 
-    public function getAllBanner(): ServiceResponse
+    public function fetchBanners($pageLength = null): ServiceResponse
     {
-        $bannerData = Banner::paginate(5);
-        return new ServiceResponse(ServiceResponseType::Success, 'Banners fetched successfully', $bannerData);
+        $bannerData = Banner::orderBy('id', 'desc')->paginate($pagelength ?? 5);
+        return ServiceResponse::Success('Banners fetched successfully', $bannerData);
     }
 
     private function formatButtons($userInputs):array
