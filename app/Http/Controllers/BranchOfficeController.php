@@ -11,6 +11,7 @@ use App\Services\BranchOfficeService;
 use App\Http\Requests\BranchOffice\CreateBranchOfficeRequest;
 use App\Http\Requests\BranchOffice\UpdateBranchOfficeRequest;
 use App\Services\ToasterService;
+use Yajra\DataTables\Facades\DataTables;
 
 class BranchOfficeController extends Controller
 {
@@ -22,8 +23,28 @@ class BranchOfficeController extends Controller
      */
     public function index(Request $request)
     {
-        $action = $this->branchOfficeService->fetchBranchOffices();
-        return view('Pages.BranchOffice.index', ['data' => $action->data]);
+     try {
+        if ($request->ajax()) {
+            $query = BranchOffice::query();
+
+            return DataTables::of($query)
+                ->addColumn('status', function ($row) {
+                    return $row->status == Status::Active ? 'Active' : 'Inactive';
+                })
+                ->addColumn('actions', function ($row) {
+                    $editUrl = route('branchoffices.edit', $row->id);
+                    return view('Pages.BranchOffice.Partials.actions', ['edit' => $editUrl,  'row' => $row]);
+                })
+                ->rawColumns(['actions'])
+                ->make(true);
+        } else {
+
+            $action = $this->branchOfficeService->fetchBranchOffices();
+            return view('Pages.BranchOffice.index', ['data' => $action->data]);
+        }
+     } catch (\Throwable $e) {
+        # code...
+     }
     }
 
     /**

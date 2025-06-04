@@ -18,4 +18,6 @@ Route::middleware('auth')->group(function(){
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::resource('/banners', BannerController::class);
     Route::resource('/branchoffices', BranchOfficeController::class);
+    Route::get('/banners/data', [BannerController::class, 'data'])->name('banners.data');
+
 });

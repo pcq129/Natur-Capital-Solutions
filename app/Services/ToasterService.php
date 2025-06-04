@@ -18,10 +18,12 @@ class ToasterService
         else if($response->status == ServiceResponseType::Information){
             toastr()->info($response->message);
         }
+        else {
+            toastr()->error($response->message);
+        }
     }
 
-    public static function errorToast(string $message):void
-    {
+    public static function exceptionToast(String $message): void{
         toastr()->error($message);
     }
 }

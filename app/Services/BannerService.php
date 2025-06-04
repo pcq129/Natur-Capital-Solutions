@@ -2,18 +2,20 @@
 
 namespace App\Services;
 
-use App\Http\Requests\Banner\DeleteBannerRequest;
-// use App\Http\Requests\Banner\CreateBannerRequest;
 use App\Http\Requests\Banner\UpdateBannerRequest;
+use Yajra\DataTables\Facades\DataTables;
 use App\Models\Banner;
-// use Illuminate\Http\RedirectResponse;
-// use Illuminate\Support\Facades\Storage;
-// use Illuminate\Support\Facades\Log;
 use App\Services\FileService;
 use App\Constants\AppConstants;
 use App\Enums\Status;
 use App\Services\DTO\ServiceResponse;
 use App\Enums\ServiceResponseType;
+use App\Exceptions\Handler;
+use Exception;
+// use App\Http\Requests\Banner\CreateBannerRequest;
+// use Illuminate\Http\RedirectResponse;
+// use Illuminate\Support\Facades\Storage;
+// use Illuminate\Support\Facades\Log;
 
 class BannerService
 {
@@ -22,90 +24,171 @@ class BannerService
 
     public function createBanner($newBannerData): ServiceResponse
     {
+        try {
+            // formatting and preparing data for db storage
+            $saveImage = $this->imageUploadService->uploadImage($newBannerData['image'], AppConstants::BANNER_STORAGE_FOLDER);
+            $imageLocation = $saveImage->data;
+            if ($imageLocation) {
+                $buttons = $this->formatButtons($newBannerData);
+                $links = $this->formatLinks($newBannerData);
 
-
-        // formatting and preparing data for db storage
-        $imageLocation = $this->imageUploadService->uploadImage($newBannerData['image'], AppConstants::BANNER_STORAGE_FOLDER);
-
-        $buttons = $this->formatButtons($newBannerData);
-        $links = $this->formatLinks($newBannerData);
-
-        Banner::create([
-            'name' => $newBannerData['name'],
-            'image' => $imageLocation,
-            'banner_link' => $newBannerData['banner_link'],
-            'overlay_heading' => $newBannerData['overlay_heading'],
-            'overlay_text' => $newBannerData['overlay_text'],
-            'priority' => $newBannerData['priority'],
-            'buttons' => json_encode($buttons),
-            'links'  => json_encode($links),
-            'status' => Status::Active,
-        ]);
-        return ServiceResponse::success('Banner added successfully');
+                Banner::create([
+                    'name' => $newBannerData['name'],
+                    'image' => $imageLocation,
+                    'banner_link' => $newBannerData['banner_link'],
+                    'overlay_heading' => $newBannerData['overlay_heading'],
+                    'overlay_text' => $newBannerData['overlay_text'],
+                    'priority' => $newBannerData['priority'],
+                    'buttons' => json_encode($buttons),
+                    'links'  => json_encode($links),
+                    'status' => Status::Active,
+                ]);
+                return ServiceResponse::success('Banner added successfully');
+            } else {
+                return ServiceResopnse::error();
+            }
+        } catch (\Exception $e) {
+            $message = 'Error while creating Banner';
+            Handler->logError($e, $message);
+            return ServiceResponse::error($message);
+        }
     }
 
     public function updateBanner(UpdateBannerRequest $request, $id): ServiceResponse
     {
-        $bannerData = $request->validated();
-        $banner = Banner::find($id);
-        // dd($bannerData);
-        if (!$banner) {
-            return new ServiceResponse(ServiceResponseType::Error, 'Banner not found');
-        }
+        try {
+            $bannerData = $request->validated();
+            $banner = Banner::findOrFail($id);
+            // dd($bannerData);
+            if (!$banner) {
+                return new ServiceResponse(ServiceResponseType::Error, 'Banner not found');
+            }
 
-        // Only update image if is changed
-        if ($request->hasFile('image')) {
-            $oldImage = $banner->image;
+            // Only update image if is changed
+            if ($request->hasFile('image')) {
+                $oldImage = $banner->image;
+                $saveImage = $this->imageUploadService->uploadImage($request->image, AppConstants::BANNER_STORAGE_FOLDER);
+                $imageLocation = $saveImage->data;
+                $banner->fill([
+                    'image' => $imageLocation,
+                ]);
+                // Attempt to delete old image
+                $this->imageUploadService->deleteImage($oldImage);
+            }
+
+            $buttons = json_encode($this->formatButtons($bannerData));
+            $links = json_encode($this->formatLinks($bannerData));
+
             $banner->fill([
-                'image' => $this->imageUploadService->uploadImage($request->image, AppConstants::BANNER_STORAGE_FOLDER),
+                'name' => $bannerData['name'],
+                'banner_link' => $bannerData['banner_link'],
+                'overlay_heading' => $bannerData['overlay_heading'],
+                'overlay_text' => $bannerData['overlay_text'],
+                'priority' => $bannerData['priority'],
+                'status' => $bannerData['status'] ? Status::Active : Status::Inactive,
+                'buttons' => $buttons,
+                'links' => $links,
             ]);
-            // Attempt to delete old image
-            $this->imageUploadService->deleteImage($oldImage);
-        }
 
-        $buttons = json_encode($this->formatButtons($bannerData));
-        $links = json_encode($this->formatLinks($bannerData));
-
-        $banner->fill([
-            'name' => $bannerData['name'],
-            'banner_link' => $bannerData['banner_link'],
-            'overlay_heading' => $bannerData['overlay_heading'],
-            'overlay_text' => $bannerData['overlay_text'],
-            'priority' => $bannerData['priority'],
-            'status' => $bannerData['status'] ? Status::Active : Status::Inactive,
-            'buttons' => $buttons,
-            'links' => $links,
-        ]);
-
-        if ($banner->isDirty()) {
-            $banner->save();
-            return new ServiceResponse(ServiceResponseType::Success, 'Banner updated successfully');
-        } else {
-            return ServiceResponse::info('No changes detected');
+            if ($banner->isDirty()) {
+                $banner->save();
+                return new ServiceResponse(ServiceResponseType::Success, 'Banner updated successfully');
+            } else {
+                return ServiceResponse::info('No changes detected');
+            }
+        } catch (\Exception $e) {
+            $message = 'Error while updating Banner';
+            Handler->logError($e, $message);
+            return ServiceResponse::error($message);
         }
     }
 
 
     public function deleteBanner(int $id): ServiceResponse
     {
+        try {
+            $banner = Banner::findOrFail($id);
 
-        $banner = Banner::find($id);
+            if (!$banner) {
+                return ServiceResponse::Error('Banner not found');
+            }
 
-        if (!$banner) {
-            return ServiceResponse::Error('Banner not found');
+            // Additionaly, delete image
+            $this->imageUploadService->deleteImage($banner->image);
+            $banner->delete();
+            return ServiceResponse::Success('Banner deleted successfully');
+        } catch (\Exception $e) {
+            $message = 'Error while deleting Banner';
+            Handler::logError($e, $message);
+            return ServiceResponse::error($message);
         }
-
-        // Additionaly, delete image
-        $this->imageUploadService->deleteImage($banner->image);
-        $banner->delete();
-        return ServiceResponse::Success('Banner deleted successfully');
     }
 
-    public function fetchBanners($pageLength = null): ServiceResponse
+    public function fetchBanners($request): ServiceResponse
     {
-        $bannerData = Banner::orderBy('id', 'desc')->paginate($pagelength ?? 5);
-        return ServiceResponse::Success('Banners fetched successfully', $bannerData);
+        try {
+            if ($request->ajax()) {
+                $query = Banner::query();
+                $bannerData = DataTables::of($query)
+                    ->addColumn('status', function ($row) {
+                        return $row->status == Status::Active ? 'Active' : 'Inactive';
+                    })
+                    ->addColumn('image', function ($row) {
+                        return '<img src="' . $row->image . '" height="50px">';
+                    })
+                    ->addColumn('actions', function ($row) {
+                        $editUrl = route('banners.edit', $row->id);
+                        return view('Pages.Banner.Partials.actions', ['edit' => $editUrl,  'row' => $row]);
+                    })
+                    ->rawColumns(['image', 'actions'])
+                    ->make(true);
+
+                return ServiceResponse::success('Banners fetched successfully', $bannerData);
+            } else {
+                return ServiceResponse::error('Non ajax request');
+            }
+        } catch (\Exception $e) {
+            $message = 'Error while fetching Banners';
+            Handler::logError($e, $message);
+            return ServiceResponse::error($message);
+        }
     }
+
+    public function getSingleBanner(int $id): ServiceResponse
+    {
+        try {
+            $bannerData = Banner::findOrFail($id);
+
+            if ($bannerData) {
+                return ServiceResponse::success('Banner fetched successfully', $bannerData);
+            } else {
+                return ServiceResponse::error('Banner not found');
+            }
+        } catch (\Throwable $e) {
+            $message = 'Error while fetching Banner details';
+            Handler::logError($e, $message);
+            return ServiceResponse::error($message);
+        }
+    }
+
+
+
+
+
+
+
+
+
+    /*
+    The following function are for small scope changes and
+    do not require error handling (as of 4/6/25). Thus for
+    now no error handlind is implemented in the following
+    methods.
+
+    Also exception in these methods might bubble up in the
+    host method that calls it. Thus technically beingh ha-
+    ndled automatically.
+    */
 
     private function formatButtons($userInputs): array
     {
@@ -137,11 +220,5 @@ class BannerService
         ]);
 
         return $links;
-    }
-
-    public function getSingleBanner(int $id)
-    {
-        $bannerData = Banner::find($id);
-        return $bannerData;
     }
 }

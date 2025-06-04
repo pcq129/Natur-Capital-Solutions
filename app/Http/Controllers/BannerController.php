@@ -3,14 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Banner;
-use App\Http\Requests\Banner\DeleteBannerRequest;
 use App\Http\Requests\Banner\CreateBannerRequest;
 use App\Http\Requests\Banner\UpdateBannerRequest;
 use App\Services\BannerService;
 use Illuminate\Support\Facades\Log;
 use App\Services\ToasterService;
-
 
 class BannerController extends Controller
 {
@@ -23,11 +20,16 @@ class BannerController extends Controller
     public function index(Request $request)
     {
         try {
-            $action = $this->bannerService->fetchBanners();
-            return view('pages.banner.index', ['data' => $action->data]);
+            $action = null;
+            if ($request->ajax()) {
+                $action = $this->bannerService->fetchBanners($request);
+                return ($action->data);
+            } else {
+                return view('Pages.Banner.index');
+            }
         } catch (\Exception $e) {
             Log::error('Banner list fetching failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            $this->toasterService->error('Error while fetching Banners');
+            $this->toasterService->exceptionToast('Error while fetching Banners');
             return redirect()->back();
         }
     }
@@ -51,7 +53,7 @@ class BannerController extends Controller
             return redirect()->route('banners.index');
         } catch (\Exception $e) {
             Log::error('Banner creation failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            $this->toasterService->error('Error while adding banner');
+            $this->toasterService->exceptionToast('Error while fetching Banners');
             return redirect()->back();
         }
     }
@@ -62,14 +64,17 @@ class BannerController extends Controller
     public function edit($id)
     {
         try {
-            $banner = $this->bannerService->getSingleBanner((int) $id);
+            $action = $this->bannerService->getSingleBanner((int) $id);
+            $banner = $action->data;
             // decode json data for better operability on frontend.
-            $banner->buttons = json_decode($banner->buttons);
-            $banner->links = json_decode($banner->links);
-            return view('Pages.Banner.update', ['banner' => $banner]);
+            if ($banner) {
+                $banner->buttons = json_decode($banner->buttons);
+                $banner->links = json_decode($banner->links);
+                return view('Pages.Banner.update', ['banner' => $banner]);
+            }
         } catch (\Exception $e) {
             Log::error('Fetching single banner failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            $this->toasterService->error('Error fetching Banner data');
+            toastr()->error('Error fetching Banner data');
             return redirect()->back();
         }
     }
@@ -95,11 +100,11 @@ class BannerController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
             $action = $this->bannerService->deleteBanner((int) $id);
-        $this->toasterService->toast($action);
-        return redirect()->back();
-        }catch(\Exception $e){
+            $this->toasterService->toast($action);
+            return redirect()->back();
+        } catch (\Exception $e) {
             Log::error('Banner delete failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             $this->toasterService->error('Error while deleting  banner');
             return redirect()->back();
