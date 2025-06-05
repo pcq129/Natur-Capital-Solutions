@@ -22,7 +22,18 @@
 @section('content')
     <div class="card">
         <div class="card-body">
-            <div class="table-responsive" >
+            <div class="table-responsive">
+                <div class="mb-3">
+                    <label for="statusFilter">Filter by Status:</label>
+                    <select id="statusFilter" class="form-control" style="width: 200px;">
+                        <option value="">All</option>
+                        <option value="{{ Status::Active }}">Active</option>
+                        <option value="{{ Status::Inactive }}">Inactive</option>
+                        {{-- <option value="-1">Deleted</option>
+                        {{-- not accessing deleted values for now. --}}
+                        --}}
+                    </select>
+                </div>
                 <table class="table table-bordered display table-striped table-hover" id="bannerDataTable"
                     style="width:100%">
                     <thead class="thead-dark">
@@ -94,9 +105,13 @@
                     headers: {
                         'Accept': 'application/json'
                     },
+                    data: function(d) {
+                        console.log($('#statusFilter').val());
+
+                        d.status = $('#statusFilter').val();
+                    }
                 },
-                columns: [
-                    {
+                columns: [{
                         data: 'id',
                         name: 'id',
                         className: 'text-center'
@@ -142,6 +157,10 @@
                     }
                 ]
 
+            });
+
+            $('#statusFilter').on('change', function() {
+                table.ajax.reload();
             });
 
             $('#deleteBannerModal').on('show.bs.modal', function(event) {

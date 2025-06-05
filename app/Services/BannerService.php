@@ -129,6 +129,11 @@ class BannerService
         try {
             if ($request->ajax()) {
                 $query = Banner::query();
+                
+                if ($request->filled('status')) {
+                    $query->where('status', (int) $request->status);
+                }
+
                 $bannerData = DataTables::of($query)
                     ->addColumn('status', function ($row) {
                         return $row->status == Status::Active ? 'Active' : 'Inactive';
@@ -145,6 +150,8 @@ class BannerService
 
                 return ServiceResponse::success('Banners fetched successfully', $bannerData);
             } else {
+                // non ajax request are handled by controller directly and return banner index view.
+                // thus no logic to be included here.
                 return ServiceResponse::error('Non ajax request');
             }
         } catch (\Exception $e) {
