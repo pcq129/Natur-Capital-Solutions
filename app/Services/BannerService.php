@@ -45,9 +45,9 @@ class BannerService
                 ]);
                 return ServiceResponse::success('Banner added successfully');
             } else {
-                return ServiceResopnse::error();
+                return ServiceResopnse::error('Error while storing image');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $message = 'Error while creating Banner';
             Handler->logError($e, $message);
             return ServiceResponse::error($message);
@@ -124,42 +124,42 @@ class BannerService
         }
     }
 
-    public function fetchBanners($request): ServiceResponse
-    {
-        try {
-            if ($request->ajax()) {
-                $query = Banner::query();
-                
-                if ($request->filled('status')) {
-                    $query->where('status', (int) $request->status);
+        public function fetchBanners($request): ServiceResponse
+        {
+            try {
+                if ($request->ajax()) {
+                    $query = Banner::query()->orderBy('id','desc');
+
+                    if ($request->filled('status')) {
+                        $query->where('status', (int) $request->status);
+                    }
+
+                    $bannerData = DataTables::of($query)
+                        ->addColumn('status', function ($row) {
+                            return $row->status == Status::Active ? 'Active' : 'Inactive';
+                        })
+                        ->addColumn('image', function ($row) {
+                            return '<img src="' . $row->image . '" height="50px">';
+                        })
+                        ->addColumn('actions', function ($row) {
+                            $editUrl = route('banners.edit', $row->id);
+                            return view('Pages.Banner.Partials.actions', ['edit' => $editUrl,  'row' => $row]);
+                        })
+                        ->rawColumns(['image', 'actions'])
+                        ->make(true);
+
+                    return ServiceResponse::success('Banners fetched successfully', $bannerData);
+                } else {
+                    // non ajax request are handled by controller directly and return banner index view.
+                    // thus no logic to be included here.
+                    return ServiceResponse::error('Non ajax request');
                 }
-
-                $bannerData = DataTables::of($query)
-                    ->addColumn('status', function ($row) {
-                        return $row->status == Status::Active ? 'Active' : 'Inactive';
-                    })
-                    ->addColumn('image', function ($row) {
-                        return '<img src="' . $row->image . '" height="50px">';
-                    })
-                    ->addColumn('actions', function ($row) {
-                        $editUrl = route('banners.edit', $row->id);
-                        return view('Pages.Banner.Partials.actions', ['edit' => $editUrl,  'row' => $row]);
-                    })
-                    ->rawColumns(['image', 'actions'])
-                    ->make(true);
-
-                return ServiceResponse::success('Banners fetched successfully', $bannerData);
-            } else {
-                // non ajax request are handled by controller directly and return banner index view.
-                // thus no logic to be included here.
-                return ServiceResponse::error('Non ajax request');
+            } catch (\Exception $e) {
+                $message = 'Error while fetching Banners';
+                Handler::logError($e, $message);
+                return ServiceResponse::error($message);
             }
-        } catch (\Exception $e) {
-            $message = 'Error while fetching Banners';
-            Handler::logError($e, $message);
-            return ServiceResponse::error($message);
         }
-    }
 
     public function getSingleBanner(int $id): ServiceResponse
     {

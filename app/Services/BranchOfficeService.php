@@ -2,21 +2,35 @@
 
 namespace App\Services;
 
-use App\Enums\ServiceResponseType;
 use App\Enums\Status;
-use App\Http\Requests\BranchOffice\UpdateBranchOfficeRequest;
 use App\Models\BranchOffice;
 use App\Services\DTO\ServiceResponse;
-use App\Traits\Validations\BaseBannerValidationRules;
+use Yajra\DataTables\Facades\DataTables;
+use App\Http\Requests\BranchOffice\UpdateBranchOfficeRequest;
 
 class BranchOfficeService
 {
 
-    // public function __construct(private ServiceResposne $serviceResponse){}
-
-    public function fetchBranchOffices($pageLength = null): ServiceResponse
+    public function fetchBranchOffices($request): ServiceResponse
     {
-        $branchOffices = BranchOffice::orderBy('id', 'desc')->paginate($pageLength ?? 5);
+
+        $query = BranchOffice::query();
+
+        if($request->filled('status')){
+            $query->where('status', (int) $request->status);
+        }
+
+        $branchOffices = DataTables::of($query)
+            ->addColumn('status', function ($row) {
+                return $row->status == Status::Active ? 'Active' : 'Inactive';
+            })
+            ->addColumn('actions', function ($row) {
+                $editUrl = route('branchoffices.edit', $row->id);
+                return view('Pages.BranchOffice.Partials.actions', ['edit' => $editUrl,  'row' => $row]);
+            })
+            ->rawColumns(['actions'])
+            ->make(true);
+
         return ServiceResponse::success("Branches fetched successfully",  $branchOffices);
     }
 
@@ -33,19 +47,20 @@ class BranchOfficeService
         ]);
         if ($branchOffice->wasRecentlyCreated) {
             return ServiceResponse::success("Branch Office created successfully");
-        }else{
+        } else {
             return ServiceResponse::error("Error while adding Branch Office");
         }
     }
 
-    public function updateBranchOffice(UpdateBranchOfficeRequest $request, int $id) {
+    public function updateBranchOffice(UpdateBranchOfficeRequest $request, int $id)
+    {
         $updatedBranchOffice = $request->validated();
         $branchOffice = BranchOffice::find($id);
-        if(!$branchOffice){
+        if (!$branchOffice) {
             return ServiceResponse::error('Branch not found');
         }
         $branchOffice->fill([
-            'name'=> $updatedBranchOffice['name'],
+            'name' => $updatedBranchOffice['name'],
             'address' => $updatedBranchOffice['address'],
             'email' => $updatedBranchOffice['email'],
             'mobile' => $updatedBranchOffice['mobile'],
@@ -53,10 +68,10 @@ class BranchOfficeService
             'status' => $updatedBranchOffice['status']
         ]);
 
-        if($branchOffice->isDirty()){
+        if ($branchOffice->isDirty()) {
             $branchOffice->save();
             return ServiceResponse::success('Branch updated successfully');
-        }else{
+        } else {
             return ServiceResponse::info('No changes detected');
         }
     }
@@ -64,10 +79,10 @@ class BranchOfficeService
     public function deleteBranchOffice(int $id)
     {
         $branchOffice = BranchOffice::find($id);
-        if($branchOffice){
+        if ($branchOffice) {
             $branchOffice->delete();
             return ServiceResponse::success('Branch deleted successfully');
-        }else{
+        } else {
             return ServiceResponse::error('Branch not found');
         }
     }
@@ -75,9 +90,9 @@ class BranchOfficeService
     public function getSingleBranchOffice($id): ServiceResponse
     {
         $branchOffice = BranchOffice::find($id);
-        if($branchOffice){
+        if ($branchOffice) {
             return ServiceResponse::success("Branch fetched successfully", $branchOffice);
-        }else{
+        } else {
             return ServiceResponse::error("Branch not found");
         }
     }

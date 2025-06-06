@@ -68,7 +68,7 @@
                     <div class="form-group col">
                         <label for="branchStatus" class="col col-form-label">Status</label>
                         <div class="col">
-                            <select id="status" required name="status" class="custom-select" required>
+                            <select id="status" name="status" class="custom-select" required>
                                 <option value="{{ Status::Inactive }}"
                                     {{ $data->status == Status::Inactive ? 'selected' : '' }}>Inactive
                                 </option>

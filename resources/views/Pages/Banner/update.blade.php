@@ -73,7 +73,7 @@
 
                 <div class="col-4">
                     <label for="status">Status</label><br>
-                    <select id="status" required name="status" class="custom-select w-50" required>
+                    <select id="status" name="status" class="custom-select w-50" required>
                         <option value="{{ Status::Inactive }}" {{ $banner->status == Status::Inactive ? 'selected' : '' }}>Inactive
                         </option>
                         <option value="{{ Status::Active }}" {{ $banner->status == Status::Active ? 'selected' : '' }}>Active</option>

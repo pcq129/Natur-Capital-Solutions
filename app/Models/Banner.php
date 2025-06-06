@@ -6,18 +6,19 @@ use App\Enums\Status;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/*
+
 // Entities relating to this model.
-//
 // App\Services\BannerService,
 // App\Traits\Validations\BaseBannerValidationRules;
 // App\Requests\Banner\*,
-*/
+
 
 class Banner extends Model
 {
 
     use softDeletes;
+
+    public const DELETE_MODAL_ID = '#deleteBannerModal';
 
     // definations
     protected $fillable = [

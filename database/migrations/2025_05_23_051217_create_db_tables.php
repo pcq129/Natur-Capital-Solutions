@@ -95,15 +95,6 @@ return new class extends Migration
             $table->softDeletes();
         });
 
-        Schema::create('cms_pages', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->longText('data');
-            $table->string('language', 20);
-            $table->enum('status', array_column(Status::cases(), 'value'));
-            $table->timestamps();
-            $table->softDeletes();
-        });
 
         Schema::create('email_templates', function (Blueprint $table) {
             $table->id();

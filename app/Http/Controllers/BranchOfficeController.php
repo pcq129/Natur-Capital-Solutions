@@ -2,16 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\ServiceResponseType;
-use App\Enums\ServiceStatus;
-use App\Enums\Status;
-use App\Models\BranchOffice;
 use Illuminate\Http\Request;
 use App\Services\BranchOfficeService;
 use App\Http\Requests\BranchOffice\CreateBranchOfficeRequest;
 use App\Http\Requests\BranchOffice\UpdateBranchOfficeRequest;
 use App\Services\ToasterService;
-use Yajra\DataTables\Facades\DataTables;
+use App\Exceptions\Handler;
 
 class BranchOfficeController extends Controller
 {
@@ -23,28 +19,19 @@ class BranchOfficeController extends Controller
      */
     public function index(Request $request)
     {
-     try {
-        if ($request->ajax()) {
-            $query = BranchOffice::query();
-
-            return DataTables::of($query)
-                ->addColumn('status', function ($row) {
-                    return $row->status == Status::Active ? 'Active' : 'Inactive';
-                })
-                ->addColumn('actions', function ($row) {
-                    $editUrl = route('branchoffices.edit', $row->id);
-                    return view('Pages.BranchOffice.Partials.actions', ['edit' => $editUrl,  'row' => $row]);
-                })
-                ->rawColumns(['actions'])
-                ->make(true);
-        } else {
-
-            $action = $this->branchOfficeService->fetchBranchOffices();
-            return view('Pages.BranchOffice.index', ['data' => $action->data]);
+        try {
+            if ($request->ajax()) {
+                $action = $this->branchOfficeService->fetchBranchOffices($request);
+                return $action->data;
+            } else {
+                return view('Pages.BranchOffice.index');
+            }
+        } catch (\Exception $e) {
+            $message = "Error while fetching Branch Offices";
+            $this->toasterService->exceptionToast($message);
+            Handler::logError($e, $message);
+            return redirect()->back();
         }
-     } catch (\Throwable $e) {
-        # code...
-     }
     }
 
     /**
@@ -60,10 +47,17 @@ class BranchOfficeController extends Controller
      */
     public function store(CreateBranchOfficeRequest $request)
     {
-        $branchOffice = $request->validated();
-        $action = $this->branchOfficeService->createBranchOffice($branchOffice);
-        $this->toasterService->toast($action);
-        return redirect()->route('branchoffices.index');
+        try {
+            $branchOffice = $request->validated();
+            $action = $this->branchOfficeService->createBranchOffice($branchOffice);
+            $this->toasterService->toast($action);
+            return redirect()->route('branchoffices.index');
+        } catch (\Throwable $e) {
+            $message = "Error creating Branch Office";
+            $this->toasterService->exceptionToast($message);
+            Handler::logError($e, $message);
+            return redirect()->back();
+        }
     }
 
     /**
@@ -71,12 +65,18 @@ class BranchOfficeController extends Controller
      */
     public function edit($id)
     {
-        $action = $this->branchOfficeService->getSingleBranchOffice($id);
-        if ($action->status == ServiceResponseType::Success) {
-            return view('Pages.BranchOffice.update', ['data' => $action->data]);
-        } else {
-            $this->toasterService->toast($action);
-            return redirect()->back();
+        try {
+            $action = $this->branchOfficeService->getSingleBranchOffice($id);
+            $branchOfficeData = $action->data;
+            if($branchOfficeData){
+                return view('Pages.BranchOffice.update', ['data' => $branchOfficeData]);
+            }else{
+                return redirect()->back();
+            }
+        } catch (\Throwable $e) {
+            $message = "Error while fetching Branch data for editing";
+            $this->toasterService->exceptionToast($message);
+            Handler::logError($e, $message);
         }
     }
 
@@ -85,9 +85,15 @@ class BranchOfficeController extends Controller
      */
     public function update(UpdateBranchOfficeRequest $request, $id)
     {
-        $action = $this->branchOfficeService->updateBranchOffice($request, $id);
-        $this->toasterService->toast($action);
-        return redirect()->back();
+        try {
+            $action = $this->branchOfficeService->updateBranchOffice($request, $id);
+            $this->toasterService->toast($action);
+            return redirect()->back();
+        } catch (\Throwable $e) {
+            $message = "Error while updating Branch Office";
+            $this->toasterService->exceptionToast($message);
+            Handler::logError($e, $message);
+        }
     }
 
     /**
@@ -95,8 +101,14 @@ class BranchOfficeController extends Controller
      */
     public function destroy($id)
     {
-        $action = $this->branchOfficeService->deleteBranchOffice($id);
-        $this->toasterService->toast($action);
-        return redirect()->back();
+        try {
+            $action = $this->branchOfficeService->deleteBranchOffice($id);
+            $this->toasterService->toast($action);
+            return redirect()->back();
+        } catch (\Throwable $e) {
+            $message = "Error while deleting Branch Office";
+            $this->toasterService->exceptionToast($message);
+            Handler::logError($e, $message);
+        }
     }
 }

@@ -26,4 +26,16 @@ class Category extends Model
     {
         return $this->hasMany(SubCategory::class, 'category_id', 'id');
     }
+
+    protected $fillable = [
+        'name'
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'id'=>'integer',
+            'name'=>'string',
+        ];
+    }
 }

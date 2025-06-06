@@ -2,14 +2,11 @@
 
 namespace App\Exceptions;
 
-use App\Services\DTO\ServiceResponse;
-use App\Enums\ServiceResponseType;
-use Exception;
-
+use Throwable;
 
 class Handler
 {
-    public static function logError(Exception $e, string $message){
+    public static function logError(Throwable $e, string $message){
         \Log::error(`$message`.$e->getMessage(), ['trace'=>$e->getTraceAsString()]);
     }
 }

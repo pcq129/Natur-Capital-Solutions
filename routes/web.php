@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\BannerController;
+use App\Http\Controllers\CmsPageController;
 use App\Http\Controllers\BranchOfficeController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Auth;
@@ -18,6 +19,5 @@ Route::middleware('auth')->group(function(){
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::resource('/banners', BannerController::class);
     Route::resource('/branchoffices', BranchOfficeController::class);
-    Route::get('/banners/data', [BannerController::class, 'data'])->name('banners.data');
-
+    Route::resource('/cms-pages', CmsPageController::class);
 });

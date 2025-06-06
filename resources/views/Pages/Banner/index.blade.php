@@ -2,6 +2,7 @@
 
 @php
     use App\Enums\Status;
+    use App\Models\Banner;
 @endphp
 
 @section('content_header')
@@ -20,20 +21,25 @@
 @stop
 
 @section('content')
+
+    <div class="card p-3">
+        <div class="row align-items-center">
+            <div class="col-auto d-flex align-items-center">
+                <label for="statusFilter" class="mb-0 me-2 col">Filter by Status:</label>
+                <select id="statusFilter" class="form-control ms-2" style="width: 200px;">
+                    <option value="">All</option>
+                    <option value="{{ Status::Active }}">Active</option>
+                    <option value="{{ Status::Inactive }}">Inactive</option>
+                    {{-- <option value="-1">Deleted</option> --}}
+                    {{-- not accessing deleted values for now --}}
+                </select>
+            </div>
+        </div>
+    </div>
+
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
-                <div class="mb-3">
-                    <label for="statusFilter">Filter by Status:</label>
-                    <select id="statusFilter" class="form-control" style="width: 200px;">
-                        <option value="">All</option>
-                        <option value="{{ Status::Active }}">Active</option>
-                        <option value="{{ Status::Inactive }}">Inactive</option>
-                        {{-- <option value="-1">Deleted</option>
-                        {{-- not accessing deleted values for now. --}}
-                        --}}
-                    </select>
-                </div>
                 <table class="table table-bordered display table-striped table-hover" id="bannerDataTable"
                     style="width:100%">
                     <thead class="thead-dark">
@@ -54,7 +60,7 @@
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <div class="modal fade" id="deleteBannerModal" tabindex="-1" aria-labelledby="deleteBannerModalLabel"
+    <div class="modal fade" id="{!! Banner::DELETE_MODAL_ID !!}" tabindex="-1" aria-labelledby="deleteBannerModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
             <form method="POST" id="deleteBannerForm">
@@ -163,7 +169,7 @@
                 table.ajax.reload();
             });
 
-            $('#deleteBannerModal').on('show.bs.modal', function(event) {
+            $('{!! Banner::DELETE_MODAL_ID !!}').on('show.bs.modal', function(event) {
                 const button = $(event.relatedTarget);
                 const bannerId = button.data('id');
                 const bannerName = button.data('name');

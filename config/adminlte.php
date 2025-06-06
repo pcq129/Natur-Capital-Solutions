@@ -315,11 +315,11 @@ return [
         //     'type' => 'sidebar-menu-search',
         //     'text' => 'Search',
         // ],
-        [
-            'icon'=> 'nav-icon fas fa-th',
-            'text' => 'Dashboard',
-            'url' => '/',
-        ],
+        // [
+        //     'icon'=> 'nav-icon fas fa-th',
+        //     'text' => 'Dashboard',
+        //     'url' => '/',
+        // ],
         [
             'icon'=> 'nav-icon fas fa-image',
             'text' => 'Banners',
@@ -330,61 +330,63 @@ return [
             'text' => 'Branch & Offices',
             'url' => '/branchoffices',
         ],
+        // [
+        //     'icon'=> 'nav-icon fas fa-tasks',
+        //     'text' => 'Categories',
+        //     'url' => '/categories',
+        // ],
         [
             'icon'=> 'nav-icon fas fa-copy',
             'text' => 'CMS-pages',
             'url' => '/cms-pages',
         ],
-        [
-            'icon'=> 'nav-icon fas fa-envelope',
-            'text' => 'Contact-Details',
-            'url' => '/contact-details',
-        ],
-        [
-            'icon'=> 'nav-icon fas fa-paper-plane',
-            'text' => 'Email-Templates',
-            'url' => '/email-templates',
-        ],
-        [
-            'icon'=> 'nav-icon fas fa-comments',
-            'text' => 'Enquiries',
-            'url' => '/enquiries',
-        ],
-        [
-            'icon'=> 'nav-icon fas fa-book',
-            'text' => 'Orders',
-            'url' => '/orders',
-        ],
-        [
-            'icon'=> 'nav-icon fas fa-cubes',
-            'text' => 'Products',
-            'url' => '/products',
-        ],
-        [
-            'icon'=> 'nav-icon fas fa-cogs',
-            'text' => 'Services',
-            'url' => '/services',
-        ],
-        [
-            'icon'=> 'nav-icon fas fa-tasks',
-            'text' => 'Categories',
-            'url' => '/categories',
-        ],
         // [
-        //     'icon'=> 'nav-icon fas fa-tree',
-        //     'text' => 'sub-categories',
-        //     'url' => '/sub-categories',
+        //     'icon'=> 'nav-icon fas fa-envelope',
+        //     'text' => 'Contact-Details',
+        //     'url' => '/contact-details',
         // ],
-        [
-            'icon'=> 'nav-icon fas fa-plus-square',
-            'text' => 'Warranties',
-            'url' => '/warranties',
-        ],
-        [
-            'icon'=> 'nav-icon fas fa-cube',
-            'text' => 'Scheduled-Services',
-            'url' => '/scheduled-services',
-        ],
+        // [
+        //     'icon'=> 'nav-icon fas fa-paper-plane',
+        //     'text' => 'Email-Templates',
+        //     'url' => '/email-templates',
+        // ],
+        // [
+        //     'icon'=> 'nav-icon fas fa-comments',
+        //     'text' => 'Enquiries',
+        //     'url' => '/enquiries',
+        // ],
+        // [
+        //     'icon'=> 'nav-icon fas fa-book',
+        //     'text' => 'Orders',
+        //     'url' => '/orders',
+        // ],
+        // [
+        //     'icon'=> 'nav-icon fas fa-cubes',
+        //     'text' => 'Products',
+        //     'url' => '/products',
+        // ],
+        // [
+        //     'icon'=> 'nav-icon fas fa-cube',
+        //     'text' => 'Scheduled-Services',
+        //     'url' => '/scheduled-services',
+        // ],
+        // [
+        //     'icon'=> 'nav-icon fas fa-cogs',
+        //     'text' => 'Services',
+        //     'url' => '/services',
+        // ],
+
+        // // [
+        // //     'icon'=> 'nav-icon fas fa-tree',
+        // //     'text' => 'sub-categories',
+        // //     'url' => '/sub-categories',
+        // // ],
+        // [
+        //     'icon'=> 'nav-icon fas fa-plus-square',
+        //     'text' => 'Warranties',
+        //     'url' => '/warranties',
+        // ],
+
 
 
 

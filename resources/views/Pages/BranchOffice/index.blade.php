@@ -13,6 +13,23 @@
     </div>
 @stop
 @section('content')
+
+
+    <div class="card p-3">
+        <div class="row align-items-center">
+            <div class="col-auto d-flex align-items-center">
+                <label for="statusFilter" class="mb-0 me-2 col">Filter by Status:</label>
+                <select id="statusFilter" class="form-control ms-2" style="width: 200px;">
+                    <option value="">All</option>
+                    <option value="{{ Status::Active }}">Active</option>
+                    <option value="{{ Status::Inactive }}">Inactive</option>
+                    {{-- <option value="-1">Deleted</option> --}}
+                    {{-- not accessing deleted values for now --}}
+                </select>
+            </div>
+        </div>
+    </div>
+
     <div class="card">
         <div class="card-body p-4">
             <div class="table-responsive">
@@ -87,6 +104,9 @@
                     headers: {
                         'Accept': 'Application/JSON'
                     },
+                    data: function(d) {
+                        d.status = $('#statusFilter').val();
+                    }
                 },
                 columns: [{
                         data: 'id',
@@ -130,18 +150,23 @@
                     },
                 ]
             })
-        });
 
-        $('#deleteBranchModal').on('show.bs.modal', function(event) {
-            const button = $(event.relatedTarget);
-            const branchId = button.data('id');
-            const branchName = button.data('name');
 
-            const form = $('#deleteBranchForm');
-            const action = '{{ route('branchoffices.destroy', ':id') }}'.replace(':id', branchId);
-            form.attr('action', action);
+            $('#statusFilter').on('change', function() {
+                table.ajax.reload();
+            })
 
-            $('#branchName').text(branchName);
+            $('#deleteBranchModal').on('show.bs.modal', function(event) {
+                const button = $(event.relatedTarget);
+                const branchId = button.data('id');
+                const branchName = button.data('name');
+
+                const form = $('#deleteBranchForm');
+                const action = '{{ route('branchoffices.destroy', ':id') }}'.replace(':id', branchId);
+                form.attr('action', action);
+
+                $('#branchName').text(branchName);
+            });
         });
     </script>
 @endpush
