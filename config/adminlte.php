@@ -315,11 +315,11 @@ return [
         //     'type' => 'sidebar-menu-search',
         //     'text' => 'Search',
         // ],
-        // [
-        //     'icon'=> 'nav-icon fas fa-th',
-        //     'text' => 'Dashboard',
-        //     'url' => '/',
-        // ],
+        [
+            'icon'=> 'nav-icon fas fa-th',
+            'text' => 'Dashboard',
+            'url' => '/',
+        ],
         [
             'icon'=> 'nav-icon fas fa-image',
             'text' => 'Banners',
@@ -345,11 +345,11 @@ return [
         //     'text' => 'Contact-Details',
         //     'url' => '/contact-details',
         // ],
-        // [
-        //     'icon'=> 'nav-icon fas fa-paper-plane',
-        //     'text' => 'Email-Templates',
-        //     'url' => '/email-templates',
-        // ],
+        [
+            'icon'=> 'nav-icon fas fa-paper-plane',
+            'text' => 'Email-Templates',
+            'url' => '/email-templates',
+        ],
         // [
         //     'icon'=> 'nav-icon fas fa-comments',
         //     'text' => 'Enquiries',
@@ -360,11 +360,11 @@ return [
         //     'text' => 'Orders',
         //     'url' => '/orders',
         // ],
-        // [
-        //     'icon'=> 'nav-icon fas fa-cubes',
-        //     'text' => 'Products',
-        //     'url' => '/products',
-        // ],
+        [
+            'icon'=> 'nav-icon fas fa-cubes',
+            'text' => 'Products',
+            'url' => '/products',
+        ],
         // [
         //     'icon'=> 'nav-icon fas fa-cube',
         //     'text' => 'Scheduled-Services',

@@ -3,6 +3,6 @@
 namespace App\Enums;
 
 enum PaymentMode:string{
-    case NetBanking = 'net-banking';
-    case CashOnDelivery = 'cash-on-delivery';
+    case NET_BANKING = 'net-banking';
+    case CASH_ON_DELIVERY = 'cash-on-delivery';
 }

@@ -2,8 +2,8 @@
 
 namespace App\Enums;
 
-enum Role:string
+enum Role:int
 {
-    case Admin = 'admin';
-    case User = 'user';
+    case ADMIN = 1;
+    case USER = 2;
 }

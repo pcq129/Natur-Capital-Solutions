@@ -1,5 +1,7 @@
 @extends('layouts.app')
-@php use App\Enums\Status; @endphp
+@php
+    use App\Enums\Status;
+@endphp
 
 @section('content_header')
     <div class="row mb-2 justify-content-between">
@@ -19,7 +21,7 @@
             <input type="hidden" name="id" value="{{ $banner->id }}">
             <div class="row mb-3">
                 <div class="col-12">
-                    <label for="name" class="form-label">Name</label>
+                    <label for="name" class="form-label">Name*</label>
                     <input name="name" type="text" value="{{ old('name') ?? $banner->name }}" id="name"
                         class="form-control" required>
                     @error('name')
@@ -30,7 +32,7 @@
 
             <div class="row mb-3">
                 <div class="col-12">
-                    <label for="overlay_heading" class="form-label">Overlay Heading</label>
+                    <label for="overlay_heading" class="form-label">Overlay Heading*</label>
                     <input name="overlay_heading" value="{{ old('overlay_heading') ?? $banner->overlay_heading }}"
                         type="text" id="overlay_heading" class="form-control" required>
                     @error('overlay_heading')
@@ -51,7 +53,7 @@
 
             <div class="row mb-3">
                 <div class="col-12">
-                    <label for="banner_link" class="form-label">Banner Link</label>
+                    <label for="banner_link" class="form-label">Banner Link*</label>
                     <input name="banner_link" value="{{ old('banner_link') ?? $banner->banner_link }}" type="text"
                         id="banner_link" class="form-control" required>
                     @error('banner_link')
@@ -72,16 +74,18 @@
                 </div>
 
                 <div class="col-4">
-                    <label for="status">Status</label><br>
+                    <label for="status">Status*</label><br>
                     <select id="status" name="status" class="custom-select w-50" required>
-                        <option value="{{ Status::Inactive }}" {{ $banner->status == Status::Inactive ? 'selected' : '' }}>Inactive
+                        <option value="{{ Status::INACTIVE }}"
+                            {{ $banner->status == Status::INACTIVE ? 'selected' : '' }}>Inactive
                         </option>
-                        <option value="{{ Status::Active }}" {{ $banner->status == Status::Active ? 'selected' : '' }}>Active</option>
+                        <option value="{{ Status::ACTIVE }}" {{ $banner->status == Status::ACTIVE ? 'selected' : '' }}>
+                            Active</option>
                     </select>
                 </div>
 
                 <div class="col-4">
-                    <label class="form-label">Priority/Order</label>
+                    <label class="form-label">Priority/Order*</label>
                     <br>
                     <input name="priority" value="{{ old('priority') ?? $banner->priority }}" type="number"
                         class="form-control col-3" min="1" max="10" required>
@@ -95,12 +99,13 @@
 
             <div class="row mb-3">
                 <div class="col-12">
-                    <label for="bannerButtonOneText" class="form-label">Buttons</label>
+                    <label for="bannerButtonOneText" class="form-label">Buttons*</label>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <input name="banner_button_one_text"
                                 value="{{ old('banner_button_one_text') ?? ($banner->buttons['button_one']['text'] ?? null) }}"
-                                type="text" id="bannerButtonOneText" class="form-control" placeholder="Button Text" required>
+                                type="text" id="bannerButtonOneText" class="form-control" placeholder="Button Text"
+                                required>
                             @error('banner_button_one_text')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror

@@ -14,16 +14,16 @@ class ServiceResponse
 
     public static function success(string $message, mixed $data = null): self
     {
-        return new self(ServiceResponseType::Success, $message, $data);
+        return new self(ServiceResponseType::SUCCESS, $message, $data);
     }
 
     public static function error(string $message, mixed $data = null): self
     {
-        return new self(ServiceResponseType::Error, $message, $data);
+        return new self(ServiceResponseType::ERROR, $message, $data);
     }
 
     public static function info(string $message, mixed $data = null): self
     {
-        return new self(ServiceResponseType::Information, $message, $data);
+        return new self(ServiceResponseType::INFORMATION, $message, $data);
     }
 }

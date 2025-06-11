@@ -4,7 +4,7 @@ namespace App\Enums;
 
 enum Status:int
 {
-    case Active = 1;
-    case Inactive = 0;
-    case Deleted = -1;
+    case ACTIVE = 1;
+    case INACTIVE = 0;
+    case DELETED = -1;
 }

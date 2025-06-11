@@ -18,7 +18,7 @@ class Banner extends Model
 
     use softDeletes;
 
-    public const DELETE_MODAL_ID = '#deleteBannerModal';
+    public const DELETE_MODAL_ID = 'deleteBannerModal';
 
     // definations
     protected $fillable = [

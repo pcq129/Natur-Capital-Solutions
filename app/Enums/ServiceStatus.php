@@ -4,11 +4,11 @@ namespace App\Enums;
 
 enum ServiceStatus: int
 {
-    case NotServiced = 0;
-    case FirstServiceCompleted = 1;
-    case SecondServiceCompleted = 2;
-    case ThirdServiceCompleted = 3;
-    case ProblemInFirstService = -1;
-    case ProblemInSecondService = -2;
-    case ProblemInThirdServic = -3;
+    case NOT_SERVICED = 0;
+    case FIRST_SERVICE_COMPLETED = 1;
+    case SECOND_SERVICE_COMPLETED = 2;
+    case THIRD_SERVICE_COMPLETED = 3;
+    case PROBLEM_IN_FIRST_SERVICE = -1;
+    case PROBLEM_IN_SECOND_SERVICE = -2;
+    case PROBLEM_IN_THIRD_SERVICE = -3;
 }

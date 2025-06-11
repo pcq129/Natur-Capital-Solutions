@@ -1,6 +1,7 @@
 @extends('layouts.app')
 @php
     use App\Enums\Status;
+    use App\Models\BranchOffice;
 @endphp
 @section('content_header')
     <div class="row mb-2 justify-content-between">
@@ -21,8 +22,8 @@
                 <label for="statusFilter" class="mb-0 me-2 col">Filter by Status:</label>
                 <select id="statusFilter" class="form-control ms-2" style="width: 200px;">
                     <option value="">All</option>
-                    <option value="{{ Status::Active }}">Active</option>
-                    <option value="{{ Status::Inactive }}">Inactive</option>
+                    <option value="{{ Status::ACTIVE }}">Active</option>
+                    <option value="{{ Status::INACTIVE }}">Inactive</option>
                     {{-- <option value="-1">Deleted</option> --}}
                     {{-- not accessing deleted values for now --}}
                 </select>
@@ -35,7 +36,7 @@
             <div class="table-responsive">
                 <table class="table table-bordered display table-striped table-hover" id="branchOfficeTable"
                     style="width:100%">
-                    <thead>
+                    <thead class="thead-dark">
                         <tr>
                             <th>Id</th>
                             <th>Office Name</th>
@@ -52,8 +53,10 @@
         </div>
         <!-- /.card-body -->
     </div>
+
+
     <!-- Delete Confirmation Modal -->
-    <div class="modal fade" id="deleteBranchModal" tabindex="-1" aria-labelledby="deleteBranchModalLabel"
+    <div class="modal fade" id="{{ BranchOffice::BRANCH_DELETE_ID }}" tabindex="-1" aria-labelledby="deleteBranchModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
             <form method="POST" id="deleteBranchForm">
@@ -61,7 +64,7 @@
                 @method('DELETE')
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="deleteBranchModalLabel">Confirm Delete</h5>
+                        <h5 class="modal-title">Confirm Delete</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span>&times;</span>
                         </button>
@@ -136,18 +139,26 @@
                     {
                         data: 'status',
                         name: 'status',
-                        className: 'text-center'
+                        className: 'text-center',
+                        searchable: false,
+                        orderable: false,
                     },
                     {
                         data: 'location',
                         name: 'location',
-                        className: 'text-center'
+                        className: 'text-center',
+                        searchable: false,
                     },
                     {
                         data: 'actions',
                         name: 'actions',
-                        className: 'text-center'
+                        className: 'text-center',
+                        orderable: false,
+                        searchable: false,
                     },
+                ],
+                order: [
+                    [0,'desc']
                 ]
             })
 
@@ -156,7 +167,7 @@
                 table.ajax.reload();
             })
 
-            $('#deleteBranchModal').on('show.bs.modal', function(event) {
+            $('#{{ BranchOffice::BRANCH_DELETE_ID }}').on('show.bs.modal', function(event) {
                 const button = $(event.relatedTarget);
                 const branchId = button.data('id');
                 const branchName = button.data('name');

@@ -4,6 +4,8 @@ namespace App\Http\Requests\CmsPage;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Traits\Validations\BaseCmsPageValidationRules;
+use Illuminate\Validation\Rules\Enum;
+use App\Enums\Status;
 
 class UpdateCmsPageRequest extends FormRequest
 {
@@ -15,7 +17,7 @@ class UpdateCmsPageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**

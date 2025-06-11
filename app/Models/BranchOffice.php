@@ -19,6 +19,8 @@ class BranchOffice extends Model
 {
     use SoftDeletes;
 
+    public const BRANCH_DELETE_ID = 'branchDeleteModalId';
+
     protected $fillable = [
         'name',
         'address',

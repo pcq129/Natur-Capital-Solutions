@@ -22,7 +22,7 @@
             @csrf
             <div class="m-2 row form-group">
                 <div class="col">
-                    <label for="name" class="form-label">CMS Page Name</label>
+                    <label for="name" class="form-label">CMS Page Name*</label>
                     <input name="name" type="text" value="{{ old('name') }}" id="name" class="form-control" required>
                     @error('name')
                         <div class="text-danger">{{ $message }}</div>
@@ -30,12 +30,12 @@
                 </div>
 
                 <div class="col">
-                    <label for="language" class="form-label">Language</label>
+                    <label for="language" class="form-label">Language*</label>
                     <select id="status" name="language" class="custom-select" required>
-                        <option selected value="{{ Language::English }}"
+                        <option selected value="{{ Language::ENGLISH }}"
                             >English
                         </option>
-                        <option value="{{ Language::French }}">French</option>
+                        <option value="{{ Language::FRENCH }}">French</option>
                     </select>
                     @error('language')
                         <div class="text-danger">{{ $message }}</div>
@@ -45,7 +45,7 @@
 
             <div class="row m-2 mb-3">
                 <div class="col">
-                    <label for="language" class="form-label">Content</label>
+                    <label for="language" class="form-label">Content*</label>
                     @trix(\App\Models\CmsPage::class, 'cmsText', ['hideButtonIcons' => ['attach']])
                 </div>
             </div>

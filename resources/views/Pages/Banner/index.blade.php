@@ -28,8 +28,8 @@
                 <label for="statusFilter" class="mb-0 me-2 col">Filter by Status:</label>
                 <select id="statusFilter" class="form-control ms-2" style="width: 200px;">
                     <option value="">All</option>
-                    <option value="{{ Status::Active }}">Active</option>
-                    <option value="{{ Status::Inactive }}">Inactive</option>
+                    <option value="{{ Status::ACTIVE }}">Active</option>
+                    <option value="{{ Status::INACTIVE }}">Inactive</option>
                     {{-- <option value="-1">Deleted</option> --}}
                     {{-- not accessing deleted values for now --}}
                 </select>
@@ -59,8 +59,10 @@
         </div>
     </div>
 
+
+
     <!-- Delete Confirmation Modal -->
-    <div class="modal fade" id="{!! Banner::DELETE_MODAL_ID !!}" tabindex="-1" aria-labelledby="deleteBannerModalLabel"
+    <div class="modal fade" id="{{ Banner::DELETE_MODAL_ID }}" tabindex="-1" aria-labelledby="deleteBannerModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
             <form method="POST" id="deleteBannerForm">
@@ -82,6 +84,7 @@
                     </div>
                 </div>
             </form>
+
         </div>
     </div>
 @stop
@@ -161,6 +164,9 @@
                         searchable: false,
                         className: 'text-center'
                     }
+                ],
+                order: [
+                    [0,'desc']
                 ]
 
             });
@@ -169,7 +175,8 @@
                 table.ajax.reload();
             });
 
-            $('{!! Banner::DELETE_MODAL_ID !!}').on('show.bs.modal', function(event) {
+            $('#{!!Banner::DELETE_MODAL_ID!!}').on('show.bs.modal', function(event) {
+                console.log(event);
                 const button = $(event.relatedTarget);
                 const bannerId = button.data('id');
                 const bannerName = button.data('name');

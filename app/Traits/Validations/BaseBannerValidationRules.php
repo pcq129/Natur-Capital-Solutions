@@ -15,12 +15,12 @@ trait BaseBannerValidationRules
                 'name'=> 'required|string|max:40',
 
                 // banner_heading and sub_text
-                'overlay_heading'=> 'required|string',
+                'overlay_heading'=> 'required|string|max:80',
                 'overlay_text' => 'string|required',
 
                 // redirection link on banner click
                 'banner_link' => 'required|string',
-                
+
                 // to define order of banners
                 'priority' => ['integer','required',Rule::unique('App\Models\Banner','priority')->ignore($this->id)],
 
@@ -30,14 +30,14 @@ trait BaseBannerValidationRules
                 'status'=> [new Enum(Status::class)],
 
                 // buttons
-                'banner_button_one_text' => 'sometimes|string|nullable',
+                'banner_button_one_text' => 'sometimes|string|nullable|max:20',
                 'banner_button_one_action' => 'required_with:banner_button_one_text,string',
-                'banner_button_two_text' => 'sometimes|string|nullable',
+                'banner_button_two_text' => 'sometimes|string|nullable|max:20',
                 'banner_button_two_action' => 'required_with:banner_button_two_text,string',
                 // links
-                'banner_link_one_text' => 'sometimes|string|nullable',
+                'banner_link_one_text' => 'sometimes|string|nullable|max:20',
                 'banner_link_one_action' => 'required_with:banner_link_one_text,string',
-                'banner_link_two_text' => 'sometimes|string|nullable',
+                'banner_link_two_text' => 'sometimes|string|nullable|max:20',
                 'banner_link_two_action' => 'required_with:banner_link_two_text,string',
             ];
     }
@@ -53,6 +53,7 @@ trait BaseBannerValidationRules
             // Overlay heading and text
             'overlay_heading.required' => 'The heading text is required.',
             'overlay_heading.string' => 'The heading must be a valid string.',
+            'overlay_heading.max' => 'The heading cannot exceed 20 characters.',
             'overlay_text.required' => 'The sub text is required.',
             'overlay_text.string' => 'The sub text must be a valid string.',
 

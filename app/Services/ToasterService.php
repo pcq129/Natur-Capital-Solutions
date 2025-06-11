@@ -9,13 +9,13 @@ class ToasterService
 {
     public static function toast(ServiceResponse $response): void
     {
-        if($response->status == ServiceResponseType::Success){
+        if($response->status == ServiceResponseType::SUCCESS){
             toastr()->success($response->message);
         }
-        else if($response->status == ServiceResponseType::Error){
+        else if($response->status == ServiceResponseType::ERROR){
             toastr()->error($response->message);
         }
-        else if($response->status == ServiceResponseType::Information){
+        else if($response->status == ServiceResponseType::INFORMATION){
             toastr()->info($response->message);
         }
         else {

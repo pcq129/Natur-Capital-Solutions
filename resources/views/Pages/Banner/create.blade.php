@@ -16,7 +16,7 @@
 
             <div class="row mb-3 form-group">
                 <div class="col-12">
-                    <label for="name" class="form-label">Name</label>
+                    <label for="name" class="form-label">Name*</label>
                     <input name="name" type="text" value="{{ old('name') }}" id="name" class="form-control"
                         required>
                     @error('name')
@@ -27,7 +27,7 @@
 
             <div class="row mb-3 form-group">
                 <div class="col-12">
-                    <label for="overlay_heading" class="form-label">Overlay Heading</label>
+                    <label for="overlay_heading" class="form-label">Overlay Heading*</label>
                     <input name="overlay_heading" value="{{ old('overlay_heading') }}" type="text" id="overlay_heading"
                         class="form-control" required>
                     @error('overlay_heading')
@@ -48,7 +48,7 @@
 
             <div class="row mb-3 form-group">
                 <div class="col-12">
-                    <label for="banner_link" class="form-label">Banner Link</label>
+                    <label for="banner_link" class="form-label">Banner Link*</label>
                     <input name="banner_link" value="{{ old('banner_link') }}" type="text" id="banner_link"
                         class="form-control" required>
                     @error('banner_link')
@@ -59,7 +59,7 @@
             </div>
             <div class="row mb-3 g-3 form-group">
                 <div class="col-6">
-                    <label class="form-label">Image</label>
+                    <label class="form-label">Image*</label>
                     <br>
                     <label for="file-upload" class="bannerImageUpload fw-bold mb-2">Select</label>
                     <input id="file-upload" name="image" type="file" accept=".jpg, .jpeg, .png" class="form-control">
@@ -69,7 +69,7 @@
                 </div>
 
                 <div class="col-6 form-group">
-                    <label class="form-label">Priority/Order</label>
+                    <label class="form-label">Priority/Order*</label>
                     <br>
                     <input name="priority" value="{{ old('priority') }}" type="number" class="form-control col-3"
                         min="0" max="10" required>
@@ -83,7 +83,7 @@
 
             <div class="row mb-3">
                 <div class="col-12 form-group">
-                    <label for="bannerButtonOneText" class="form-label">Buttons</label>
+                    <label for="bannerButtonOneText" class="form-label">Buttons*</label>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <input name="banner_button_one_text" value="{{ old('banner_button_one_text') }}" type="text"

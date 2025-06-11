@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use App\Services\CmsPageService;
 use App\Services\ToasterService;
 use App\Exceptions\Handler;
-
+use App\Http\Requests\CmsPage\UpdateCmsPageRequest;
 
 class CmsPageController extends Controller
 {
@@ -18,9 +18,21 @@ class CmsPageController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('Pages.CmsPage.index');
+        try {
+            if ($request->ajax()) {
+                $action = $this->cmsPageService->indexCmsPage($request);
+                return ($action->data);
+            } else {
+                return view('Pages.CmsPage.index');
+            }
+        } catch (\Throwable $e) {
+            $message = 'Error while fetching CMS Page list';
+            Handler::logError($e, $message);
+            $this->toasterService->exceptionToast($message);
+            return redirect()->back();
+        }
     }
 
     /**
@@ -39,11 +51,12 @@ class CmsPageController extends Controller
         try {
             $action = $this->cmsPageService->createCmsPage($request);
             $this->toasterService->toast($action);
-            return redirect()->back();
+            return redirect()->route('cms-pages.index');
         } catch (\Throwable $e) {
             $message = "Error while storing Cms Page";
+            $this->toasterService->exceptionToast($message);
             Handler::logError($e, $message);
-            return redirect()->back();
+            return redirect()->route('cms-pages.index');
         }
     }
 
@@ -52,24 +65,32 @@ class CmsPageController extends Controller
      */
     public function edit($id)
     {
-        // dd('edit');
-        // try {
+        try {
             $action = $this->cmsPageService->fetchCmsPage($id);
             $cmsPage = $action->data;
             return view('Pages.CmsPage.update', ['data' => $cmsPage]);
-        // } catch (\Throwable $e) {
-        //     $message = "Error while fetching Cms Page data";
-        //     Handler::logError($e, $message);
-            // return redirect()->back();
-        // }
+        } catch (\Throwable $e) {
+            $message = "Error while fetching CMS Page data";
+            $this->toasterService->exceptionToast($message);
+            Handler::logError($e, $message);
+            return redirect()->back();
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, CmsPage $cmsPage)
+    public function update(UpdateCmsPageRequest $request, $id)
     {
-        dd($cmsPage, $request);
+        try {
+            $action = $this->cmsPageService->updateCmsPage($request, $id);
+            $this->toasterService->toast($action);
+            return redirect()->route('cms-pages.index');
+        } catch (\Throwable $e) {
+            $message = "Error while updating CMS Page";
+            $this->toasterService->exceptionToast($message);
+            return redirect()->back();
+        }
     }
 
     /**
@@ -77,6 +98,14 @@ class CmsPageController extends Controller
      */
     public function destroy(CmsPage $cmsPage)
     {
-        //
+        try {
+            $action = $this->cmsPageService->deleteCmsPage($cmsPage->id);
+            $this->toasterService->toast($action);
+            return redirect()->back();
+        } catch (\Throwable $e) {
+            $message = "Error while deleting Cms Page";
+            Handler::logError($e, $message);
+            return redirect()->back();
+        }
     }
 }

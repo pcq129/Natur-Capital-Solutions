@@ -7,6 +7,8 @@ use App\Http\Controllers\BranchOfficeController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SocialLoginController;
+use App\Http\Controllers\EmailTemplateController;
 
 
 
@@ -20,4 +22,11 @@ Route::middleware('auth')->group(function(){
     Route::resource('/banners', BannerController::class);
     Route::resource('/branchoffices', BranchOfficeController::class);
     Route::resource('/cms-pages', CmsPageController::class);
+    Route::resource('/email-templates', EmailTemplateController::class);
+});
+
+
+// mail preview route
+Route::get('/mailable', function () {
+    return new App\Mail\EmailTemplate;
 });

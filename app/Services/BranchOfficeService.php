@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Enums\Status;
-use App\Models\BranchOffice;
 use App\Services\DTO\ServiceResponse;
+use App\Models\BranchOffice;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\BranchOffice\UpdateBranchOfficeRequest;
 
@@ -22,11 +22,12 @@ class BranchOfficeService
 
         $branchOffices = DataTables::of($query)
             ->addColumn('status', function ($row) {
-                return $row->status == Status::Active ? 'Active' : 'Inactive';
+                return $row->status == Status::ACTIVE ? 'Active' : 'Inactive';
             })
             ->addColumn('actions', function ($row) {
                 $editUrl = route('branchoffices.edit', $row->id);
-                return view('Pages.BranchOffice.Partials.actions', ['edit' => $editUrl,  'row' => $row]);
+                $target = BranchOffice::BRANCH_DELETE_ID;
+                return view('Partials.actions', ['edit' => $editUrl,  'row' => $row, 'target' => $target]);
             })
             ->rawColumns(['actions'])
             ->make(true);
@@ -43,7 +44,7 @@ class BranchOfficeService
             'email' => $request['email'],
             'mobile' => $request['mobile'],
             'location' => $request['location'],
-            'status' => Status::Active
+            'status' => Status::ACTIVE
         ]);
         if ($branchOffice->wasRecentlyCreated) {
             return ServiceResponse::success("Branch Office created successfully");

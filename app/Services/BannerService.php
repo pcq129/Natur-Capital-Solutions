@@ -41,7 +41,7 @@ class BannerService
                     'priority' => $newBannerData['priority'],
                     'buttons' => json_encode($buttons),
                     'links'  => json_encode($links),
-                    'status' => Status::Active,
+                    'status' => Status::ACTIVE,
                 ]);
                 return ServiceResponse::success('Banner added successfully');
             } else {
@@ -61,7 +61,7 @@ class BannerService
             $banner = Banner::findOrFail($id);
             // dd($bannerData);
             if (!$banner) {
-                return new ServiceResponse(ServiceResponseType::Error, 'Banner not found');
+                return new ServiceResponse(ServiceResponseType::ERROR, 'Banner not found');
             }
 
             // Only update image if is changed
@@ -85,14 +85,14 @@ class BannerService
                 'overlay_heading' => $bannerData['overlay_heading'],
                 'overlay_text' => $bannerData['overlay_text'],
                 'priority' => $bannerData['priority'],
-                'status' => $bannerData['status'] ? Status::Active : Status::Inactive,
+                'status' => $bannerData['status'] ? Status::ACTIVE : Status::INACTIVE,
                 'buttons' => $buttons,
                 'links' => $links,
             ]);
 
             if ($banner->isDirty()) {
                 $banner->save();
-                return new ServiceResponse(ServiceResponseType::Success, 'Banner updated successfully');
+                return new ServiceResponse(ServiceResponseType::SUCCESS, 'Banner updated successfully');
             } else {
                 return ServiceResponse::info('No changes detected');
             }
@@ -128,7 +128,7 @@ class BannerService
         {
             try {
                 if ($request->ajax()) {
-                    $query = Banner::query()->orderBy('id','desc');
+                    $query = Banner::query();
 
                     if ($request->filled('status')) {
                         $query->where('status', (int) $request->status);
@@ -136,14 +136,15 @@ class BannerService
 
                     $bannerData = DataTables::of($query)
                         ->addColumn('status', function ($row) {
-                            return $row->status == Status::Active ? 'Active' : 'Inactive';
+                            return $row->status == Status::ACTIVE ? 'Active' : 'Inactive';
                         })
                         ->addColumn('image', function ($row) {
                             return '<img src="' . $row->image . '" height="50px">';
                         })
                         ->addColumn('actions', function ($row) {
                             $editUrl = route('banners.edit', $row->id);
-                            return view('Pages.Banner.Partials.actions', ['edit' => $editUrl,  'row' => $row]);
+                            $target = Banner::DELETE_MODAL_ID;
+                            return view('Partials.actions', ['edit' => $editUrl,  'row' => $row, 'target' => $target]);
                         })
                         ->rawColumns(['image', 'actions'])
                         ->make(true);
@@ -151,7 +152,7 @@ class BannerService
                     return ServiceResponse::success('Banners fetched successfully', $bannerData);
                 } else {
                     // non ajax request are handled by controller directly and return banner index view.
-                    // thus no logic to be included here.
+                    // thus no logic to be included here. Checks just for safety purposes.
                     return ServiceResponse::error('Non ajax request');
                 }
             } catch (\Exception $e) {

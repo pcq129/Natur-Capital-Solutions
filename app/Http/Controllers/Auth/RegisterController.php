@@ -69,7 +69,7 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         return User::create([
-            'role' => 'admin',
+            'role' => Role::ADMIN,
             'company' => 'Natur Capital Solutions',
             'name' => $data['name'],
             'email' => $data['email'],

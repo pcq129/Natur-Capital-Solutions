@@ -4,6 +4,6 @@ namespace App\Enums;
 
 enum ContentType: string
 {
-    case Product = 'product';
-    case Service = 'service';
+    case PRODUCT = 'product';
+    case SERVICE = 'service';
 }

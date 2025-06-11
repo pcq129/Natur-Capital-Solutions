@@ -11,7 +11,7 @@ trait BaseBranchOfficeValidationRules
     public function baseBranchOfficeValidationRules(): array
     {
         return [
-            'name' => ['required','string','max:80',Rule::unique('App\Models\BranchOffice','name')->ignore($this->id)],
+            'name' => ['required','string','max:80',Rule::unique('App\Models\BranchOffice','name')->ignore($this->route('branchoffice'))],
             'address' => 'required|string|max:255',
             'email' => 'required|email|max:80',
             'mobile' => 'numeric|max_digits:20',

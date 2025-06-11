@@ -13,6 +13,7 @@ class CmsPage extends Model
 {
     use HasTrixRichText, SoftDeletes;
 
+    public const DELETE_MODAL_ID = 'deleteCmsPage';
 
     protected $fillable = [
         'name',
