@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::dropIfExists('email_templates');
         Schema::create('email_templates', function (Blueprint $table) {
             $table->id();
-            $table->string('template_name', 80)->unique();
-            $table->string('subject', 40);
-            $table->longText('content');
+            $table->string('name', 80);
+            $table->string('subject', 240);
+            // $table->longText('content');
             $table->string('language', 20);
             $table->unsignedBigInteger('send_to')->references('id')->on('roles')->onDelete('cascade');
             $table->tinyInteger('status');

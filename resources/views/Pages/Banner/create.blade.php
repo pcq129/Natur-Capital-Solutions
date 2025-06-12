@@ -83,7 +83,7 @@
 
             <div class="row mb-3">
                 <div class="col-12 form-group">
-                    <label for="bannerButtonOneText" class="form-label">Buttons*</label>
+                    <label for="bannerButtonOneText" class="form-label">Buttons*</label><span>&nbsp;(Atleast one button is required)</span>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <input name="banner_button_one_text" value="{{ old('banner_button_one_text') }}" type="text"

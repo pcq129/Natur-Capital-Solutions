@@ -22,7 +22,7 @@ trait BaseBannerValidationRules
                 'banner_link' => 'required|string',
 
                 // to define order of banners
-                'priority' => ['integer','required',Rule::unique('App\Models\Banner','priority')->ignore($this->id)],
+                'priority' => ['integer','required',Rule::unique('App\Models\Banner','priority')->ignore($this->id)->whereNull('deleted_at')],
 
                 // background image for banner
                 'image' => 'image|mimes:jpeg,png,jpg,svg,gif|max:2048|dimensions:min_width=800,min_height=600,max_width=1920,max_height=1080',

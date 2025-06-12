@@ -74,7 +74,7 @@ class BannerController extends Controller
             }
         } catch (\Exception $e) {
             Log::error('Fetching single banner failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            toastr()->error('Error fetching Banner data');
+            $this->toasterService->exceptionToast('Error editing Banner data');
             return redirect()->back();
         }
     }
@@ -87,10 +87,10 @@ class BannerController extends Controller
         try {
             $action = $this->bannerService->updateBanner($request, $id);
             $this->toasterService->toast($action);
-            return redirect()->back();
+            return redirect()->route('banners.index');
         } catch (\Exception $e) {
             Log::error('Banner edit failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            $this->toasterService->error('Error while editing banner');
+            $this->toasterService->exceptionToast('Error while editing banner');
             return redirect()->back();
         }
     }
@@ -106,7 +106,7 @@ class BannerController extends Controller
             return redirect()->back();
         } catch (\Exception $e) {
             Log::error('Banner delete failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            $this->toasterService->error('Error while deleting  banner');
+            $this->toasterService->exceptionToast('Error while deleting  banner');
             return redirect()->back();
         }
     }

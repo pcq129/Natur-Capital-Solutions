@@ -20,7 +20,7 @@ return new class extends Migration
         Schema::create('cms_pages', function (Blueprint $table) {
             $table->id();
             $table->string('name', 50);
-            $table->longText('content')->nullable();
+            // $table->longText('content')->nullable();
             $table->enum('language', array_column(Language::cases(), 'value'));
             $table->tinyInteger('status');
             $table->timestamps();

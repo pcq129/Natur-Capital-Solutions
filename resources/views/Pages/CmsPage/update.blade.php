@@ -44,7 +44,9 @@
                     @enderror
                 </div>
 
-                @include('Partials.status-dropdown', ['subject' => $data])
+                <div class="col">
+                    @include('Partials.status-dropdown', ['status' => $data->status])
+                </div>
             </div>
 
             <div class="row m-2 mb-3">

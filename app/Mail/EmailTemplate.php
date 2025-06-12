@@ -12,45 +12,36 @@ class EmailTemplate extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $data;
+    // public string $htmlContent;
+    // public string $customSubject;
+    public string $data;
 
-
-    /**
-     * Create a new message instance.
-     */
-    public function __construct($data = null,)
+    public function __construct(mixed $data)
     {
+        // avoid using common names as they are reserved by built in variables (causes unexpected errors)
+
+        // $this->htmlContent = $data->content ?? '[content]';
+        // $this->customSubject = $data->subject ?? '[subject]';
         $this->data = $data;
     }
 
-    /**
-     * Get the message envelope.
-     */
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject : $this->data->subject ?? '[Test Subject]',
+            subject: 'Hello world'
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
     public function content(): Content
     {
         return new Content(
             markdown: 'mail.email-template',
             with: [
-                'data' => $this->data
+                'data' => $this->data,
             ]
         );
     }
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
     public function attachments(): array
     {
         return [];

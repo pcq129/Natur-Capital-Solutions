@@ -6,18 +6,24 @@ use Illuminate\Database\Eloquent\Model;
 use App\Enums\Language;
 use App\Enums\Status;
 use App\Enums\Role;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Te7aHoudini\LaravelTrix\Traits\HasTrixRichText;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EmailTemplate extends Model
 {
+    use SoftDeletes, HasTrixRichText;
+
     public const DELETE_MODAL_ID = 'deleteModal';
 
     protected $fillable = [
-        'template_name',
+        'name',
         'subject',
         'content',
         'language',
         'send_to',
-        'status'
+        'status',
+        'emailtemplate-trixFields'
     ];
 
     public function casts() : array
@@ -30,5 +36,15 @@ class EmailTemplate extends Model
             'send_to' => Role::class,
             'status' => Status::class
         ];
+    }
+
+    /**
+     * Get the user that owns the EmailTemplate
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class, 'send_to', 'id');
     }
 }

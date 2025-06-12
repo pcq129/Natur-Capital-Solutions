@@ -38,7 +38,7 @@
                     style="width:100%">
                     <thead class="thead-dark">
                         <tr>
-                            <th>Id</th>
+                            {{-- <th>Id</th> --}}
                             <th>Office Name</th>
                             <th>Address</th>
                             <th>Email</th>
@@ -111,11 +111,12 @@
                         d.status = $('#statusFilter').val();
                     }
                 },
-                columns: [{
-                        data: 'id',
-                        name: 'id',
-                        className: 'text-center'
-                    },
+                columns: [
+                    // {
+                    //     data: 'id',
+                    //     name: 'id',
+                    //     className: 'text-center'
+                    // },
                     {
                         data: 'name',
                         name: 'name',

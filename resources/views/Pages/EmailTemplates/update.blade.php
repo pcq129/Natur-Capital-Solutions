@@ -15,7 +15,6 @@
 
 @section('content')
     <div class="EmailTemplateContent p-2 w-75 card col">
-
         <form data-validate method="POST" action="{{ route('email-templates.update', $data->id) }}" id="emailTemplateForm">
             @csrf
             @method('PUT')
@@ -23,7 +22,7 @@
             <div class="m-2 row form-group">
                 <div class="col">
 
-                    <label for="name" class="form-label">Email Template Name</label>
+                    <label for="name" class="form-label">Email Template Name*</label>
                     <input name="name" type="text" value="{{ $data->name ?? old('name') }}" id="name"
                         class="form-control" required>
                     @error('name')
@@ -31,30 +30,43 @@
                     @enderror
 
                 </div>
-
                 <div class="col">
-                    <label for="language" class="form-label">Language</label>
-                    <select id="status" name="language" class="custom-select" value="{{ $data->language }}" required>
-                        <option selected value="{{ Language::ENGLISH }}">English
-                        </option>
-                        <option value="{{ Language::FRENCH }}">French</option>
-                    </select>
-                    @error('language')
+
+                    <label for="subject" class="form-label">Subject*</label>
+                    <input name="subject" type="text" value="{{ $data->subject ?? old('subject') }}" id="subject"
+                        class="form-control" required>
+                    @error('subject')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
+
+                </div>
+            </div>
+            <div class="m-2 row form-group">
+                <div class="col">
+                    @include('Partials.language-dropdown', ['language' => $data->language])
                 </div>
 
-                @include('Partials.status-dropdown', ['subject' => $data])
+                <div class="col">
+                    @include('Partials.status-dropdown', ['status' => $data->status])
+                </div>
+
+                <div class="col">
+                    @include('Partials.role-dropdown', ['role' => $data->send_to])
+                </div>
             </div>
 
             <div class="row m-2 mb-3">
                 <div class="col">
-                    <label for="language" class="form-label">Content</label>
-                    {!! $data->trix('emailTemplateContent',['hideButtonIcons' => ['attach']]) !!}
+                    <label for="language" class="form-label">Content*</label>
+                    {!! $data->trix('EmailTemplateContent', ['hideButtonIcons' => ['attach']]) !!}
                 </div>
-                @error('emailtemplate-trixFields')
-                    <div class="text-danger">{{ $message }}</div>
-                @enderror
+            </div>
+            <div class="row m-2 mb-3">
+                <div class="col">
+                    @error('emailtemplate-trixFields.EmailTemplateContent')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
             </div>
 
             <div class="row m-2 mb-3">

@@ -10,14 +10,15 @@
     {{-- <x-mail::button :url="'adsafsgd'">
 View Order
 </x-mail::button> --}}
+    {{-- {!! $htmlContent !!} --}}
+    {!! $data !!}
 @endsection
 
-
-
-@section('greeting')
-    Hello&nbsp;<strong>{{ $user->name ?? '[USER_NAME]' }}</strong>
-@endsection
 
 @section('subject')
     {{ $subject ?? '[SUBJECT]' }}
+@endsection
+
+@section('greeting')
+    Hello&nbsp;<strong>{{ $user->name ?? '[USER_NAME]' }}</strong>
 @endsection

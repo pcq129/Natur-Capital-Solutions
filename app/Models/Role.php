@@ -16,4 +16,14 @@ class Role extends Model
     {
         return $this->hasMany(User::class, 'id', 'role');
     }
+
+    /**
+     * Get all of the comments for the Role
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class, 'foreign_key', 'local_key');
+    }
 }

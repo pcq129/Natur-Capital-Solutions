@@ -2,16 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\EmailTemplate;
 use Illuminate\Http\Request;
 use App\Services\ToasterService;
 use App\Exceptions\Handler;
+use App\Models\EmailTemplate;
 use App\Services\EmailTemplateService;
+use App\Http\Requests\EmailTemplate\CreateEmailTemplateRequest;
+use App\Http\Requests\EmailTemplate\UpdateEmailTemplateRequest;
+
+
+// testing deps
+use App\Mail\EmailTemplate as Template;
+use Illuminate\Support\Facades\Mail;
 
 class EmailTemplateController extends Controller
 {
 
-    public function __construct(private ToasterService $toasterService, private EmailTemplateService $emailTemplateService){}
+    public function __construct(private ToasterService $toasterService, private EmailTemplateService $emailTemplateService) {}
 
     /**
      * Display a listing of the resource.
@@ -19,9 +26,8 @@ class EmailTemplateController extends Controller
     public function index(Request $request)
     {
         try {
-            $action = null;
             if ($request->ajax()) {
-                $action = $this->emailTemplateService->fetchEmailTemplates($request);
+                $action = $this->emailTemplateService->fetchTemplates($request);
                 return ($action->data);
             } else {
                 return view('Pages.EmailTemplates.index');
@@ -32,7 +38,6 @@ class EmailTemplateController extends Controller
             Handler::logError($e, $message);
             return redirect()->back();
         }
-
     }
 
     /**
@@ -46,9 +51,12 @@ class EmailTemplateController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateEmailTemplateRequest $request)
     {
-        //
+        $newTemplate = $request->validated();
+        $action = $this->emailTemplateService->createTemplate($newTemplate);
+        $this->toasterService->toast($action);
+        return redirect()->route('email-templates.index');
     }
 
     /**
@@ -71,9 +79,12 @@ class EmailTemplateController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, EmailTemplate $emailTemplate)
+    public function update(UpdateEmailTemplateRequest $request, EmailTemplate $emailTemplate)
     {
-        //
+        $newEmailTemplate = $request->validated();
+        $action = $this->emailTemplateService->updateTemplate($newEmailTemplate, $emailTemplate);
+        $this->toasterService->toast($action);
+        return redirect()->route('email-templates.index');
     }
 
     /**
@@ -81,6 +92,22 @@ class EmailTemplateController extends Controller
      */
     public function destroy(EmailTemplate $emailTemplate)
     {
-        //
+        $action = $this->emailTemplateService->deleteTemplate($emailTemplate);
+        $this->toasterService->toast($action);
+        return redirect()->back();
+    }
+
+
+    // below is the reference method for future usage.
+
+    // the email content will be fetched dynamically from the database and
+    // rendered. You will need to modify this method a bit to actually send the mail
+    // refer laravel mail docs (v11).
+
+    // for now just rendering it.
+    public function sendmail(){
+        // data should contain
+        $data = EmailTemplate::first()->trixRender('EmailTemplateContent');
+        return (new Template($data))->render();
     }
 }

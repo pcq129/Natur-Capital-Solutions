@@ -7,7 +7,7 @@
         <div style="display: flex; align-items: center; width: 100%; flex-direction: column; gap: 0px;">
             {{-- header --}}
             <div style=" background-color: #343a4a; width:100%; padding: 20px; border-radius: 15px 15px 0px 0px;">
-                <img src="{{ $message->embed('storage\logo.svg') }}" alt="image"
+                <img src="{{ $message->embed(public_path('storage/logo.svg')) }}" alt="image"
                     style="height: 50px; border-radius:5px; width: 50px; margin-right: auto; margin-left: auto">
                 <h4 style="margin-bottom: 2px; color: white;">Natur Capital Solutions</h4>
             </div>

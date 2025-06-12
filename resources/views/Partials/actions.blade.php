@@ -6,7 +6,7 @@
 <button type="button" class="btn btn-danger" data-toggle="modal"
     data-target="#{{ $target }}"
     data-id="{{ $row->id }}"
-    data-name="{{ $row->template_name }}">
+    data-name="{{ $row->name }}">
     <i class="bi bi-trash3-fill text-light"></i>
 </button>
 

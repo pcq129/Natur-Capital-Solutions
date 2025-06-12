@@ -10,7 +10,7 @@ trait BaseCmsPageValidationRules
     public function BaseCmsPageValidationRules(): array
     {
         return [
-            "name" => 'required|string|max:50',
+            "name" => ['required','string','max:50', Rule::unique('App\Models\CmsPage','name')->ignore($this->route('cms_page'))->whereNull('deleted_at')],
             "language" => ['required', new Enum(Language::class)],
             "cmspage-trixFields" => 'required|array|min:1',
             "cmspage-trixFields.cmsText" => 'required|min:1'

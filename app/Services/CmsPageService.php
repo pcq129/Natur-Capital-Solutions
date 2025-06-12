@@ -60,7 +60,7 @@ class CmsPageService
             CmsPage::create([
                 'name' => $cmsPage['name'],
                 'language' => $cmsPage['language'],
-                'content' => $cmsPage['cmspage-trixFields']['cmsText'],
+                // 'content' => $cmsPage['cmspage-trixFields']['cmsText'],
                 'cmspage-trixFields' =>  $cmsPage['cmspage-trixFields'],
                 'status' => Status::ACTIVE
             ]);
@@ -72,7 +72,7 @@ class CmsPageService
         }
     }
 
-    public function updateCmsPage(UpdateCmsPageRequest $request, $id)
+    public function updateCmsPage(UpdateCmsPageRequest $request, $id): ServiceResponse
     {
         try {
             $cmsPage = CmsPage::findOrFail($id);
@@ -80,7 +80,7 @@ class CmsPageService
             $cmsPage->fill([
                 'name' => $newCmsPageData['name'],
                 'language' => $newCmsPageData['language'],
-                'content' => $newCmsPageData['cmspage-trixFields']['cmsText'],
+                // 'content' => $newCmsPageData['cmspage-trixFields']['cmsText'],
                 'cmspage-trixFields' =>  $newCmsPageData['cmspage-trixFields'],
                 'status' => $newCmsPageData['status'] ? Status::ACTIVE : Status::INACTIVE
             ]);
@@ -98,7 +98,7 @@ class CmsPageService
         }
     }
 
-    public function fetchCmsPage($id)
+    public function fetchCmsPage($id): ServiceResponse
     {
         try {
             $cmsPage = CmsPage::find($id);
@@ -110,7 +110,7 @@ class CmsPageService
         }
     }
 
-    public function deleteCmsPage($id)
+    public function deleteCmsPage($id): ServiceResponse
     {
         try {
             $cmsPage = CmsPage::findOrFail($id);

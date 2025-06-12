@@ -36,12 +36,12 @@
     <div class="card">
         <div class="card-body p-4">
             <div class="table-responsive">
-                <table class="table table-bordered display table-striped table-hover" id="emailTemplatesTable" style="width:100%">
+                <table class="table table-bordered display table-striped table-hover" id="emailTemplatesTable"
+                    style="width:100%">
                     <thead>
                         <tr>
                             <th class="text-center">Template Name</th>
                             <th class="text-center">Subject</th>
-                            <th class="text-center">Content</th>
                             <th class="text-center">Send To</th>
                             <th class="text-center">Language</th>
                             <th class="text-center">Status</th>
@@ -54,8 +54,8 @@
     </div>
 
     {{-- Delete confirmation dialog --}}
-    <div class="modal fade" id="{{ EmailTemplate::DELETE_MODAL_ID }}" tabindex="-1" aria-labelledby="deleteEmailTemplateModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="{{ EmailTemplate::DELETE_MODAL_ID }}" tabindex="-1"
+        aria-labelledby="deleteEmailTemplateModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <form method="POST" id="deleteEmailTemplateForm">
                 @csrf
@@ -110,18 +110,13 @@
                         d.status = $('#statusFilter').val();
                     }
                 },
-                columns: [
-                    {
-                        data: 'template_name',
-                        name: 'template_name',
+                columns: [{
+                        data: 'name',
+                        name: 'name',
                         className: 'text-center'
                     }, {
                         data: 'subject',
                         name: 'subject',
-                        className: 'text-center'
-                    }, {
-                        data: 'content',
-                        name: 'content',
                         className: 'text-center'
                     }, {
                         data: 'send_to',
@@ -145,7 +140,10 @@
                         className: 'text-center',
                         orderable: false,
                         searchable: false,
-                    }
+                    },
+                ],
+                order: [
+                    [0, 'desc']
                 ]
             })
 
@@ -156,13 +154,14 @@
                 console.log(emailTemplateName);
 
                 const form = $('#deleteEmailTemplateForm');
-                const action = '{{ route('email-templates.destroy', ':id') }}'.replace(':id', emailTemplateId);
+                const action = '{{ route('email-templates.destroy', ':id') }}'.replace(':id',
+                    emailTemplateId);
                 form.attr('action', action);
 
                 $('#emailTemplateName').text(emailTemplateName);
             });
 
-            $('#statusFilter').on('change', function(){
+            $('#statusFilter').on('change', function() {
                 table.ajax.reload();
             })
         })

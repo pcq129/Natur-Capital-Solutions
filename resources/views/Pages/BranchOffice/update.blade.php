@@ -56,7 +56,7 @@
 
                 <div class="form-row">
                     <div class="form-group col">
-                        <label for="branchMobile" class="col col-form-label">Contact Number*</label>
+                        <label for="branchMobile" class="col">Contact Number*</label>
                         <div class="col">
                             <input type="number" name="mobile" class="form-control" id="branchMobile"
                                 value="{{ $data->mobile ?? old('mobile') }}" required>
@@ -66,19 +66,9 @@
                         </div>
                     </div>
                     <div class="form-group col">
-                        <label for="branchStatus" class="col col-form-label">Status*</label>
-                        <div class="col">
-                            <select id="status" name="status" class="custom-select" required>
-                                <option value="{{ Status::INACTIVE }}"
-                                    {{ $data->status == Status::INACTIVE ? 'selected' : '' }}>Inactive
-                                </option>
-                                <option value="{{ Status::ACTIVE }}"
-                                    {{ $data->status == Status::ACTIVE ? 'selected' : '' }}>Active</option>
-                            </select>
-                            @error('status')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
+
+                        @include('Partials.status-dropdown', ['status' => $data->status])
+
                     </div>
                 </div>
 

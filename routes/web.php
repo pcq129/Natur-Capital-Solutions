@@ -26,7 +26,8 @@ Route::middleware('auth')->group(function(){
 });
 
 
-// mail preview route
+// EXPERIMENTING ROUTES
 Route::get('/mailable', function () {
-    return new App\Mail\EmailTemplate;
+    return new App\Mail\EmailTemplate('main', 'subject');
 });
+Route::get('/test-mail', [EmailTemplateController::class,'sendmail']);

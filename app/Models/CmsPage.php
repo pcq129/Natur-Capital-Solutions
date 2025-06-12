@@ -17,7 +17,7 @@ class CmsPage extends Model
 
     protected $fillable = [
         'name',
-        'content',
+        // 'content',
         'cmspage-trixFields',
         'language',
         'status'
@@ -30,7 +30,7 @@ class CmsPage extends Model
         return  [
             'id' => 'integer',
             'name' => 'string',
-            'content' => CleanHtml::class,
+            // 'content' => CleanHtml::class,
             'language' => Language::class,
             'status' => Status::class
         ];

@@ -11,7 +11,6 @@
     </div>
 @stop
 @section('content')
-
     <div class="row">
         <form data-validate class="card ms-4 col-8 p-3" action="{{ route('banners.update', $banner->id) }}" method="POST"
             enctype="multipart/form-data">
@@ -74,17 +73,6 @@
                 </div>
 
                 <div class="col-4">
-                    <label for="status">Status*</label><br>
-                    <select id="status" name="status" class="custom-select w-50" required>
-                        <option value="{{ Status::INACTIVE }}"
-                            {{ $banner->status == Status::INACTIVE ? 'selected' : '' }}>Inactive
-                        </option>
-                        <option value="{{ Status::ACTIVE }}" {{ $banner->status == Status::ACTIVE ? 'selected' : '' }}>
-                            Active</option>
-                    </select>
-                </div>
-
-                <div class="col-4">
                     <label class="form-label">Priority/Order*</label>
                     <br>
                     <input name="priority" value="{{ old('priority') ?? $banner->priority }}" type="number"
@@ -93,6 +81,20 @@
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
+
+                <div class="col-4">
+                    {{-- <label for="status">Status*</label><br>
+                    <select id="status" name="status" class="custom-select w-50" required>
+                        <option value="{{ Status::INACTIVE }}"
+                            {{ $banner->status == Status::INACTIVE ? 'selected' : '' }}>Inactive
+                        </option>
+                        <option value="{{ Status::ACTIVE }}" {{ $banner->status == Status::ACTIVE ? 'selected' : '' }}>
+                            Active</option>
+                    </select> --}}
+                    @include('Partials.status-dropdown', ['status'=>$banner->status])
+                </div>
+
+
             </div>
 
             {{-- not adding status field, considering newly added banner to be active by default --}}

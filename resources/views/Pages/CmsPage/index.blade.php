@@ -39,7 +39,7 @@
                 <table class="table table-bordered display table-striped table-hover" id="cmsPageTable" style="width:100%">
                     <thead>
                         <tr>
-                            <th class="text-center">Id</th>
+                            {{-- <th class="text-center">Id</th> --}}
                             <th class="text-center">Name</th>
                             <th class="text-center">Language</th>
                             <th class="text-center">Status</th>
@@ -108,11 +108,12 @@
                         d.status = $('#statusFilter').val();
                     }
                 },
-                columns: [{
-                        data: 'id',
-                        name: 'id',
-                        className: 'text-center'
-                    },
+                columns: [
+                    // {
+                    //     data: 'id',
+                    //     name: 'id',
+                    //     className: 'text-center'
+                    // },
                     {
                         data: 'name',
                         name: 'name',
