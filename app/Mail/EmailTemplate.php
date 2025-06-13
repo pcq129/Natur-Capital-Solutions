@@ -7,6 +7,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Blade;
 
 class EmailTemplate extends Mailable
 {
@@ -16,23 +17,23 @@ class EmailTemplate extends Mailable
     // public string $customSubject;
     public string $data;
     public string $htmlContent;
-    public string $user;
+    public $dynamicData;
+    public $emailSubject;
 
-    public function __construct(mixed $data, $htmlContent, $user)
+    public function __construct($htmlContent, mixed $data, array $dynamicData)
     {
         // avoid using common names as they are reserved by built in variables (causes unexpected errors)
 
-        // $this->htmlContent = $data->content ?? '[content]';
-        // $this->customSubject = $data->subject ?? '[subject]';
-        $this->emailSubject = $data->suject;
-        $this->htmlContent = $htmlContent;
-        $this->user = $user;
+        $this->emailSubject = $data->subject;
+        $this->htmlContent = $this->renderHtml($htmlContent, $dynamicData);
+        $this->dynamicData = $dynamicData;
+        
     }
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Hello world'
+            subject: $this->emailSubject
         );
     }
 
@@ -43,14 +44,19 @@ class EmailTemplate extends Mailable
             with: [
                 'htmlContent' => $this->htmlContent,
                 'emailSubject' => $this->emailSubject,
-                'user' => $this->user,
+                'data' => $this->dynamicData
             ],
-
         );
     }
 
     public function attachments(): array
     {
         return [];
+    }
+
+    private function renderHtml($base, array $data)
+    {
+        $html = Blade::render($base, $data);
+        return $html;
     }
 }

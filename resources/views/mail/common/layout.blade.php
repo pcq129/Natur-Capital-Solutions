@@ -23,9 +23,9 @@
                         display: flex;
                         flex-direction: column;
                         ">
-                <H2 class="subject">
+                <H1 class="subject">
                     @yield('subject')
-                </H2>
+                </H1>
                 <div class="greeting" style="width:70%; padding-bottom: 8px; display: flex; justify-content: start;">
                     @yield('greeting')
                 </div>

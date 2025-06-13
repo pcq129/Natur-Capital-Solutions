@@ -8,8 +8,12 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Enums\Role;
+use App\Mail\EmailTemplate as Template;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
+use App\Models\EmailTemplate;
+use App\Constants\AppConstants as CONSTANTS;
+use App\Services\EmailTemplateService as MAIL;
 
 
 
@@ -40,7 +44,7 @@ class RegisterController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(private MAIL $MAIL)
     {
         $this->middleware('guest');
     }
@@ -68,12 +72,23 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $email = EmailTemplate::where('name', 'User Registered')->first();
         $newUser = User::create([
             'role' => Role::ADMIN,
-            'company' => 'Natur Capital Solutions',
+            'company' => CONSTANTS::COMPANY_NAME,
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+
+        $emailContent = $email->trixRender('EmailTemplateContent');
+        $dynamicData = [
+            'user' => $newUser->name,
+            'email' => $newUser->email,
+            'role' => 'Admin',
+        ];
+        $this->MAIL::sendMail($emailContent, $newUser->email, $dynamicData);
+        toastr()->success(CONSTANTS::REGISTRATION_SUCCESSFUL);
+        return $newUser;
     }
 }
