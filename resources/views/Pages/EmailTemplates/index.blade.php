@@ -40,6 +40,7 @@
                     style="width:100%">
                     <thead>
                         <tr>
+                            <th class="text-center">Id</th>
                             <th class="text-center">Template Name</th>
                             <th class="text-center">Subject</th>
                             <th class="text-center">Send To</th>
@@ -110,7 +111,12 @@
                         d.status = $('#statusFilter').val();
                     }
                 },
-                columns: [{
+                columns: [
+                    {
+                        data: 'id',
+                        name: 'id',
+                        className: 'text-center'
+                    },{
                         data: 'name',
                         name: 'name',
                         className: 'text-center'

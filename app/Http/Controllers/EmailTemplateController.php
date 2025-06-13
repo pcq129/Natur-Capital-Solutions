@@ -13,6 +13,7 @@ use App\Http\Requests\EmailTemplate\UpdateEmailTemplateRequest;
 
 // testing deps
 use App\Mail\EmailTemplate as Template;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class EmailTemplateController extends Controller
@@ -82,6 +83,7 @@ class EmailTemplateController extends Controller
     public function update(UpdateEmailTemplateRequest $request, EmailTemplate $emailTemplate)
     {
         $newEmailTemplate = $request->validated();
+        // dd($newEmailTemplate);
         $action = $this->emailTemplateService->updateTemplate($newEmailTemplate, $emailTemplate);
         $this->toasterService->toast($action);
         return redirect()->route('email-templates.index');
@@ -107,7 +109,9 @@ class EmailTemplateController extends Controller
     // for now just rendering it.
     public function sendmail(){
         // data should contain
-        $data = EmailTemplate::first()->trixRender('EmailTemplateContent');
-        return (new Template($data))->render();
+        $emailText = EmailTemplate::find(21)->trixRender('EmailTemplateContent');
+        $data = EmailTemplate::find(21);
+        $user = 'Test User';
+        return (new Template($data, $emailText, $user))->render();
     }
 }

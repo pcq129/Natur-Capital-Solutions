@@ -68,7 +68,7 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        $newUser = User::create([
             'role' => Role::ADMIN,
             'company' => 'Natur Capital Solutions',
             'name' => $data['name'],

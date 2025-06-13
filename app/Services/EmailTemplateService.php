@@ -73,9 +73,11 @@ class EmailTemplateService
             "status" => $request['status'],
             "emailtemplate-trixFields" => $request['emailtemplate-trixFields'],
         ]);
+        // dd($emailTemplate);
 
         if($emailTemplate->isDirty()){
             $emailTemplate->save();
+            // dd($emailTemplate);
             return ServiceResponse::success('Template updated successfully');
         }else{
             return ServiceResponse::info('No changes detected');

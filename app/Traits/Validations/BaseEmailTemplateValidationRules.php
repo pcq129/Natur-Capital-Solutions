@@ -13,7 +13,7 @@ trait BaseEmailTemplateValidationRules
     public function BaseEmailTemplateValidationRules(){
         return [
             'name'=> ['required','string','max:40', Rule::unique('App\Models\EmailTemplate','name')->ignore($this->route('email_template'))->whereNull('deleted_at')],
-            'subject' => ['required', 'string', 'max:240'],
+            'subject' => ['required', 'string', 'max:140'],
             'language' => ['required', new Enum(Language::class)],
             'emailtemplate-trixFields.EmailTemplateContent' => ['string','required','min:20'],
             'role' => ['required', new Enum(Role::class)],
