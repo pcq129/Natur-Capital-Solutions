@@ -1,17 +1,18 @@
 <div
-    style="min-height: 100vh; height: fit-content; width: 100vw; display: flex; justify-content: center; align-items:center">
+    style="min-height: 100vh; height: fit-content; width: 100%; display: flex; justify-content: center; align-items:center">
 
     {{-- card --}}
     <div
-        style = "background-color: #dadada; border-radius:15px; margin: 5px; height : fit-content; min-height: 80vh; width: 40vw; display: flex; justify-content: center">
+        style="background-color: #dadada; border-radius:15px; margin: 5px; height: fit-content; min-height: 80vh; width: 40vw; display: flex; justify-content: center">
         <div style="display: flex; align-items: center; width: 100%; flex-direction: column; gap: 0px;">
             {{-- header --}}
             <div style=" background-color: #343a4a; width:100%; padding: 20px; border-radius: 15px 15px 0px 0px;">
-                <img src="{{ $message->embed(public_path('storage/logo.svg')) }}" alt="image"
+                <img src="{{ $message->embed(public_path('storage/logo.svg')) }}" alt="Natur Capital Solutions Logo"
                     style="height: 50px; border-radius:5px; width: 50px; margin-right: auto; margin-left: auto">
                 <h4 style="margin-bottom: 2px; color: white;">Natur Capital Solutions</h4>
             </div>
             {{-- end header --}}
+
             {{-- content --}}
             <div
                 style="
@@ -21,25 +22,29 @@
                         color: #343a4a;
                         width: 100%;
                         display: flex;
-                        flex-direction: column;
-                        ">
-                <H1 class="subject">
+                        flex-direction: column;">
+                <h1 class="subject" style="font-size: 24px; margin-bottom: 10px;">
                     @yield('subject')
-                </H1>
-                <div class="greeting" style="width:70%; padding-bottom: 8px; display: flex; justify-content: start;">
+                </h1>
+
+                <div class="greeting" style="width:70%; padding-bottom: 8px; display: flex; justify-content: start; font-size: 16px;">
                     @yield('greeting')
                 </div>
-                <div class="content" style="width: 100%;">
+
+                <div class="content" style="width: 100%; font-size: 15px; line-height: 1.6;">
                     <p>
-                    @yield('message')
+                        @yield('message')
                     </p>
                 </div>
-                <div class="thanks" style="margin-top:auto;">
-                    Thank you,
-                    Natur Capital Solutions
+
+                <div class="thanks" style="margin-top:auto; font-size: 15px;">
+                    Best regards, <br>
+                    <strong>The Natur Capital Solutions Team</strong><br>
+                    <span style="font-size: 13px; color: gray;">Empowering Your Financial Future</span>
                 </div>
             </div>
             {{-- end content --}}
+
             {{-- footer --}}
             <div
                 style="
@@ -53,13 +58,14 @@
                     padding-bottom: 25px;
                     background-color: #343a4a;
                     padding-top: 25px;
-                    border-radius: 0px 0px 15px 15px;
-                    ">
-                <a style="color: white" href="/link/to/privacy/policy"><strong>Privacy Policy</strong></a>
-                <a style="color: white" href="/link"><strong>About Us</strong></a>
-                <a style="color: white" href="/link"><strong>Unsubscribe</strong></a>
+                    border-radius: 0px 0px 15px 15px;">
+                <a style="color: white; font-size: 13px;" href="/link/to/privacy/policy"><strong>Privacy Policy</strong></a>
+                <a style="color: white; font-size: 13px;" href="/link"><strong>About Us</strong></a>
+                <a style="color: white; font-size: 13px;" href="/link"><strong>Unsubscribe</strong></a>
             </div>
             {{-- end footer --}}
         </div>
         {{-- end card --}}
     </div>
+</div>
+
