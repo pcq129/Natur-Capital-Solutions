@@ -2,15 +2,13 @@
 
 namespace App\Services;
 
-use App\Mail\EmailTemplate as Email;
 use App\Models\EmailTemplate;
 use App\Enums\Status;
-use App\Http\Requests\EmailTemplate\CreateEmailTemplateRequest;
 use App\Services\DTO\ServiceResponse;
 use Yajra\DataTables\Facades\DataTables;
 use App\Constants\EmailTemplateConstants as CONSTANTS;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\EmailTemplate as Template;
+use App\Constants\AppConstants;
+use App\Enums\Role;
 
 
 
@@ -21,21 +19,45 @@ class EmailTemplateService
     {
         try {
             $query = EmailTemplate::query();
+
             if ($request->filled('status')) {
                 $query->where('status', (int) $request->status);
             }
+
             $templates = DataTables::of($query)
                 ->addColumn('status', function ($row) {
                     return $row->status == Status::ACTIVE->value ? 'Active' : 'Inactive';
                 })
+                ->addColumn('send_to', function ($row) {
+                    return $row->send_to == Role::ADMIN ? 'Admin' : 'User';
+                })
                 ->addColumn('actions', function ($row) {
                     $editUrl = route('email-templates.edit', $row->id);
-                    $target = EmailTemplate::DELETE_MODAL_ID;
-                    return view('Partials.actions', ['edit' => $editUrl,  'row' => $row, 'target' => $target]);
+                    $action = AppConstants::VIEW_ICON;
+
+                    $showViewButton = false;
+                    $trixField = 'EmailTemplateContent';
+
+                    if (method_exists($row, 'trix')) {
+                        try {
+                            $trixContent = $row->trixRender($trixField);
+                            $showViewButton = !empty($trixContent);
+                        } catch (\Throwable $e) {
+                            $showViewButton = false;
+                        }
+                    }
+                    return view('Partials.template', [
+                        'edit' => $editUrl,
+                        'row' => $row,
+                        'action' => $action,
+                        'showView' => $showViewButton,
+                    ]);
                 })
+
                 ->rawColumns(['actions'])
                 ->make(true);
-            return ServiceResponse::success(CONSTANTS::FETCH_SUCCESS,  $templates);
+
+            return ServiceResponse::success(CONSTANTS::FETCH_SUCCESS, $templates);
         } catch (\Exception $e) {
             $MESSAGE = CONSTANTS::FETCH_FAIL;
             $this->toasterService->exceptionToast($MESSAGE);
@@ -111,7 +133,7 @@ class EmailTemplateService
 
     // METHOD TO SEND EMAIL
 
-    public function sendMail($emailContent, $email, $dynamicData){
-        Mail::to($email)->send(new Template($emailContent, $email, $dynamicData));
-    }
+    // public function sendMail($emailContent, $email, $dynamicData){
+    //     Mail::to($email)->send(new Template($emailContent, $email, $dynamicData));
+    // }
 }

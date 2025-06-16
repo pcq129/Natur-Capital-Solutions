@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Throwable;
 
+
 class Handler
 {
     public static function logError(Throwable $e, string $message){

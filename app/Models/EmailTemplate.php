@@ -14,7 +14,8 @@ class EmailTemplate extends Model
 {
     use SoftDeletes, HasTrixRichText;
 
-    public const DELETE_MODAL_ID = 'deleteModal';
+    // public const DELETE_MODAL_ID = 'deleteModal';
+    // removed deleting functionality.
 
     protected $fillable = [
         'name',

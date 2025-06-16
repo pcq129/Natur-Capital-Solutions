@@ -15,19 +15,25 @@ class EmailTemplate extends Mailable
 
     // public string $htmlContent;
     // public string $customSubject;
-    public string $data;
+    // public string $data;
     public string $htmlContent;
-    public $dynamicData;
+    public $data;
     public $emailSubject;
 
-    public function __construct($htmlContent, mixed $data, array $dynamicData)
+
+    /**
+     * @param  trixRichText,
+     * @param  template stored in database
+     * @param  ExtraVariables required for efficient data display.
+     * @return void
+     */
+    public function __construct($htmlContent, mixed $template, array $dynamicData)
     {
         // avoid using common names as they are reserved by built in variables (causes unexpected errors)
-
-        $this->emailSubject = $data->subject;
+        $this->emailSubject = $template->subject;
         $this->htmlContent = $this->renderHtml($htmlContent, $dynamicData);
-        $this->dynamicData = $dynamicData;
-        
+        $this->data = $dynamicData;
+
     }
 
     public function envelope(): Envelope
@@ -44,7 +50,7 @@ class EmailTemplate extends Mailable
             with: [
                 'htmlContent' => $this->htmlContent,
                 'emailSubject' => $this->emailSubject,
-                'data' => $this->dynamicData
+                'data' => $this->data
             ],
         );
     }

@@ -45,7 +45,7 @@
                             <th class="text-center">Subject</th>
                             <th class="text-center">Send To</th>
                             <th class="text-center">Language</th>
-                            <th class="text-center">Status</th>
+                            {{-- <th class="text-center">Status</th> --}}
                             <th class="text-center">Actions</th>
                         </tr>
                     </thead>
@@ -55,7 +55,7 @@
     </div>
 
     {{-- Delete confirmation dialog --}}
-    <div class="modal fade" id="{{ EmailTemplate::DELETE_MODAL_ID }}" tabindex="-1"
+    {{-- <div class="modal fade" id="{{ EmailTemplate::DELETE_MODAL_ID }}" tabindex="-1"
         aria-labelledby="deleteEmailTemplateModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <form method="POST" id="deleteEmailTemplateForm">
@@ -78,7 +78,7 @@
                 </div>
             </form>
         </div>
-    </div>
+    </div> --}}
 @stop
 
 
@@ -111,12 +111,11 @@
                         d.status = $('#statusFilter').val();
                     }
                 },
-                columns: [
-                    {
+                columns: [{
                         data: 'id',
                         name: 'id',
                         className: 'text-center'
-                    },{
+                    }, {
                         data: 'name',
                         name: 'name',
                         className: 'text-center'
@@ -134,12 +133,12 @@
                         name: 'language',
                         className: 'text-center'
                     },
-                    {
-                        data: 'status',
-                        name: 'status',
-                        className: 'text-center',
-                        searchable: false,
-                    },
+                    // {
+                    //     data: 'status',
+                    //     name: 'status',
+                    //     className: 'text-center',
+                    //     searchable: false,
+                    // },
                     {
                         data: 'actions',
                         name: 'actions',
@@ -153,19 +152,17 @@
                 ]
             })
 
-            $("#{{ EmailTemplate::DELETE_MODAL_ID }}").on('show.bs.modal', function(event) {
-                const button = $(event.relatedTarget);
+            $(document).on('click', '.actionsButtonTwo', function(event) {
+                // console.log('actionUrl');
+                const button = $(event.currentTarget);
                 const emailTemplateId = button.data('id');
-                const emailTemplateName = button.data('name');
-                console.log(emailTemplateName);
-
-                const form = $('#deleteEmailTemplateForm');
-                const action = '{{ route('email-templates.destroy', ':id') }}'.replace(':id',
+                const actionUrl = '{{ route('email-templates.show', ':id') }}'.replace(':id',
                     emailTemplateId);
-                form.attr('action', action);
 
-                $('#emailTemplateName').text(emailTemplateName);
+
+                window.location.href = actionUrl;
             });
+
 
             $('#statusFilter').on('change', function() {
                 table.ajax.reload();

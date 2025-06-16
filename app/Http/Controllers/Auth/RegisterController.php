@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
 use App\Models\EmailTemplate;
 use App\Constants\AppConstants as CONSTANTS;
-use App\Services\EmailTemplateService as MAIL;
+use App\Services\EmailService as MAIL;
 
 
 
@@ -72,23 +72,38 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        $email = EmailTemplate::where('name', 'User Registered')->first();
-        $newUser = User::create([
-            'role' => Role::ADMIN,
-            'company' => CONSTANTS::COMPANY_NAME,
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
 
-        $emailContent = $email->trixRender('EmailTemplateContent');
-        $dynamicData = [
-            'user' => $newUser->name,
-            'email' => $newUser->email,
-            'role' => 'Admin',
-        ];
-        $this->MAIL::sendMail($emailContent, $newUser->email, $dynamicData);
-        toastr()->success(CONSTANTS::REGISTRATION_SUCCESSFUL);
-        return $newUser;
+
+        $email = EmailTemplate::where('name', 'User Registered')->first();
+        $newUser = new User();
+        $newUser->role = Role::ADMIN;
+        $newUser->company = CONSTANTS::COMPANY_NAME;
+        $newUser->name = $data['name'];
+        $newUser->email = $data['email'];
+        $newUser->password = Hash::make($data['password']);
+        if($email){
+            $emailContent = $email->trixRender('EmailTemplateContent');
+            $dynamicData = [
+                'user' => $newUser->name,
+                'email' => $newUser->email,
+                'role' => 'Admin',
+            ];
+            $status = $this->sendMail($emailContent, $email, $dynamicData);
+            if($status){
+                $newUser->save();
+                return $newUser;
+            }else{
+                return null;
+            }
+        }else{
+            toastr()->error(CONSTANTS::EMAIL_NOT_FOUND);
+        }
+
+
+    }
+
+    private function sendMail($emailContent, $newUserEmail, $dynamicData)
+    {
+       return $this->MAIL->sendMail($emailContent, $newUserEmail, $dynamicData);
     }
 }

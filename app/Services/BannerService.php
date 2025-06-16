@@ -7,6 +7,7 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Models\Banner;
 use App\Services\FileService;
 use App\Constants\AppConstants;
+use App\Constants\BannerConstants as CONSTANTS;
 use App\Enums\Status;
 use App\Services\DTO\ServiceResponse;
 use App\Enums\ServiceResponseType;
@@ -26,7 +27,7 @@ class BannerService
     {
         try {
             // formatting and preparing data for db storage
-            $saveImage = $this->imageUploadService->uploadImage($newBannerData['image'], AppConstants::BANNER_STORAGE_FOLDER);
+            $saveImage = $this->imageUploadService->uploadImage($newBannerData['image'], BannerConstants::BANNER_STORAGE_FOLDER);
             $imageLocation = $saveImage->data;
             if ($imageLocation) {
                 $buttons = $this->formatButtons($newBannerData);
@@ -43,12 +44,12 @@ class BannerService
                     'links'  => json_encode($links),
                     'status' => Status::ACTIVE,
                 ]);
-                return ServiceResponse::success('Banner added successfully');
+                return ServiceResponse::success(CONSTANTS::STORE_SUCCESS);
             } else {
-                return ServiceResopnse::error('Error while storing image');
+                return ServiceResopnse::error(CONSTANTS::STORE_FAIL);
             }
         } catch (\Throwable $e) {
-            $message = 'Error while creating Banner';
+            $message = CONSTANTS::STORE_SUCCESS;
             Handler->logError($e, $message);
             return ServiceResponse::error($message);
         }
@@ -59,20 +60,13 @@ class BannerService
         try {
             $bannerData = $request->validated();
             $banner = Banner::findOrFail($id);
-            // dd($bannerData);
-            if (!$banner) {
-                return new ServiceResponse(ServiceResponseType::ERROR, 'Banner not found');
-            }
-
-            // Only update image if is changed
             if ($request->hasFile('image')) {
                 $oldImage = $banner->image;
-                $saveImage = $this->imageUploadService->uploadImage($request->image, AppConstants::BANNER_STORAGE_FOLDER);
+                $saveImage = $this->imageUploadService->uploadImage($request->image, CONSTANTS::BANNER_STORAGE_FOLDER);
                 $imageLocation = $saveImage->data;
                 $banner->fill([
                     'image' => $imageLocation,
                 ]);
-                // Attempt to delete old image
                 $this->imageUploadService->deleteImage($oldImage);
             }
 
@@ -92,12 +86,12 @@ class BannerService
 
             if ($banner->isDirty()) {
                 $banner->save();
-                return new ServiceResponse(ServiceResponseType::SUCCESS, 'Banner updated successfully');
+                return new ServiceResponse(ServiceResponseType::SUCCESS, CONSTANTS::UPDATE_SUCCESS);
             } else {
-                return ServiceResponse::info('No changes detected');
+                return ServiceResponse::info(CONSTANTS::NO_CHANGE);
             }
         } catch (\Exception $e) {
-            $message = 'Error while updating Banner';
+            $message = CONSTANTS::UPDATE_FAIL;
             Handler->logError($e, $message);
             return ServiceResponse::error($message);
         }
@@ -110,15 +104,15 @@ class BannerService
             $banner = Banner::findOrFail($id);
 
             if (!$banner) {
-                return ServiceResponse::Error('Banner not found');
+                return ServiceResponse::Error(CONSTANTS::NOT_FOUND);
             }
 
             // Additionaly, delete image
             $this->imageUploadService->deleteImage($banner->image);
             $banner->delete();
-            return ServiceResponse::Success('Banner deleted successfully');
+            return ServiceResponse::Success(CONSTANTS::DELETE_SUCCESS);
         } catch (\Exception $e) {
-            $message = 'Error while deleting Banner';
+            $message = CONSTANTS::DELETE_FAIL;
             Handler::logError($e, $message);
             return ServiceResponse::error($message);
         }
@@ -149,14 +143,14 @@ class BannerService
                         ->rawColumns(['image', 'actions'])
                         ->make(true);
 
-                    return ServiceResponse::success('Banners fetched successfully', $bannerData);
+                    return ServiceResponse::success(CONSTANTS::FETCH_SUCCESS, $bannerData);
                 } else {
                     // non ajax request are handled by controller directly and return banner index view.
                     // thus no logic to be included here. Checks just for safety purposes.
-                    return ServiceResponse::error('Non ajax request');
+                    return ServiceResponse::error(AppConstants::NON_AJAX_REQUEST);
                 }
             } catch (\Exception $e) {
-                $message = 'Error while fetching Banners';
+                $message = CONSTANTS::FETCH_FAIL;
                 Handler::logError($e, $message);
                 return ServiceResponse::error($message);
             }
@@ -168,12 +162,12 @@ class BannerService
             $bannerData = Banner::findOrFail($id);
 
             if ($bannerData) {
-                return ServiceResponse::success('Banner fetched successfully', $bannerData);
+                return ServiceResponse::success(CONSTANTS::FETCH_SUCCESS, $bannerData);
             } else {
-                return ServiceResponse::error('Banner not found');
+                return ServiceResponse::error(CONSTANTS::NOT_FOUND);
             }
         } catch (\Throwable $e) {
-            $message = 'Error while fetching Banner details';
+            $message = CONSTANTS::FETCH_FAIL;
             Handler::logError($e, $message);
             return ServiceResponse::error($message);
         }

@@ -4,21 +4,22 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\ToasterService;
-use App\Exceptions\Handler;
 use App\Models\EmailTemplate;
 use App\Services\EmailTemplateService;
 use App\Http\Requests\EmailTemplate\CreateEmailTemplateRequest;
 use App\Http\Requests\EmailTemplate\UpdateEmailTemplateRequest;
 use App\Constants\EmailTemplateConstants as CONSTANTS;
+use App\Exceptions\Handler;
 
 
 // testing deps
 use App\Mail\EmailTemplate as Template;
-use Illuminate\Support\Facades\Auth;
-use PhpParser\Node\Stmt\TryCatch;
+use App\Traits\ExceptionHandler;
 
 class EmailTemplateController extends Controller
 {
+
+    use ExceptionHandler;
 
     public function __construct(private ToasterService $toasterService, private EmailTemplateService $emailTemplateService) {}
 
@@ -73,7 +74,19 @@ class EmailTemplateController extends Controller
      */
     public function show(EmailTemplate $emailTemplate)
     {
-        //
+        try {
+            $htmlContent = $emailTemplate->trixRender('EmailTemplateContent');
+            $dynamicData = [];
+            $email = new Template($htmlContent, $emailTemplate, $dynamicData);
+            $emailHtml = $email->render();
+            return view('Pages.EmailTemplates.show', compact('emailHtml'));
+        } catch (\Exception $e) {
+            $message = CONSTANTS::FETCH_FAIL;
+            $this->toasterService->exceptionToast($message);
+            Handler::logError($e, $message);
+            return redirect()->back();
+
+        }
     }
 
     /**
@@ -100,6 +113,7 @@ class EmailTemplateController extends Controller
             $this->toasterService->exceptionToast($message);
             Handler::logError($e, $message);
             return redirect()->back();
+
         }
     }
 

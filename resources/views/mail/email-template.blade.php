@@ -6,7 +6,9 @@
 @endsection --}}
 
 @section('greeting')
-    Hello&nbsp;<strong>{{ $data['user'] ?? '[USER_NAME]' }}</strong>,
+    {{-- @if (isset($data['user'])) --}}
+        Hello&nbsp;<strong>{{ $data['user'] ?? '[USER_NAME]' }}</strong>
+    {{-- @endif --}}
 @endsection
 
 @section('message')
