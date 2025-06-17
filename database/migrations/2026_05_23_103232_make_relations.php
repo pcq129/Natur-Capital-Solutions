@@ -57,7 +57,8 @@ return new class extends Migration
         });
 
         Schema::table('email_templates', function (Blueprint $table) {
-            $table->foreign('access_to')->references('id')->on('roles')->onDelete('cascade');
+            // $table->foreign('access_to')->references('id')->on('roles')->onDelete('cascade');
+            // role authorization removed as instructed.
         });
 
         Schema::table('user_addresses', function (Blueprint $table) {

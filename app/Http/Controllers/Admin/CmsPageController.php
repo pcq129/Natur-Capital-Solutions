@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\CmsPage\CreateCmsPageRequest;
 use App\Models\CmsPage;
@@ -9,6 +9,7 @@ use App\Services\CmsPageService;
 use App\Services\ToasterService;
 use App\Exceptions\Handler;
 use App\Http\Requests\CmsPage\UpdateCmsPageRequest;
+use App\Http\Controllers\Controller;
 
 class CmsPageController extends Controller
 {

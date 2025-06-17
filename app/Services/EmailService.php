@@ -41,11 +41,11 @@ class EmailService
 
     private function authorizeReceiver($template): bool
     {
-        just simple authorization for now, implement complex logic here when required
-        if($template->send_to == Role::ADMIN){
+        // just simple authorization for now, implement complex logic here when required
+        // if($template->send_to == Role::ADMIN){
+        //     return true;
+        // }else{
             return true;
-        }else{
-            return true;
-        }
+        // }
     }
 }

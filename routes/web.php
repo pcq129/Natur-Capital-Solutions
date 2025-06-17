@@ -1,15 +1,16 @@
 <?php
 
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\BannerController;
-use App\Http\Controllers\CmsPageController;
-use App\Http\Controllers\BranchOfficeController;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\CmsPageController;
+use App\Http\Controllers\Admin\BranchOfficeController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\SubCategoryController;
+use App\Http\Controllers\Admin\HomeController;
+use App\Http\Controllers\Admin\SocialLoginController;
+use App\Http\Controllers\Admin\EmailTemplateController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SocialLoginController;
-use App\Http\Controllers\EmailTemplateController;
-
 
 
 Route::post('/register', [RegisterController::class, 'register']);
@@ -23,6 +24,8 @@ Route::middleware('auth')->group(function(){
     Route::resource('/branchoffices', BranchOfficeController::class);
     Route::resource('/cms-pages', CmsPageController::class);
     Route::resource('/email-templates', EmailTemplateController::class);
+    Route::resource('/categories', CategoryController::class);
+    Route::resource('/sub-categories', SubCategoryController::class);
 });
 
 
@@ -30,4 +33,3 @@ Route::middleware('auth')->group(function(){
 // Route::get('/mailable', function () {
 //     return new App\Mail\EmailTemplate('main', 'subject');
 // });
-Route::get('/test-mail', [EmailTemplateController::class,'sendmail']);

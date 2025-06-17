@@ -53,9 +53,9 @@
                 {{-- header --}}
                 <div class="email-header"
                     style="background-color: #343a4a; width:100%; padding: 20px; border-radius: 15px 15px 0px 0px; text-align: center;">
-                    <img src="{{ $message->embed(public_path('storage/logo.svg')) }}" alt="Natur Capital Solutions Logo"
+                    <img src="{{ $message->embed(public_path('storage/logo.svg')) }}" alt="Natur Global Solutions Logo"
                         style="height: 50px; border-radius:5px; width: 50px; display: block; margin: 0 auto 10px auto;">
-                    <h4 style="margin: 0; color: white;">Natur Capital Solutions</h4>
+                    <h4 style="margin: 0; color: white;">Natur Global Solutions</h4>
                 </div>
 
                 {{-- content --}}
@@ -70,13 +70,13 @@
                         @yield('greeting')
                     </div>
 
-                    <div class="content" style="width: 100%; font-size: 15px; line-height: 1.6;">
+                    <div class="content" style="width: 100%; font-size: 15px; min-height: 450px; line-height: 1.6;">
                         <p>@yield('message')</p>
                     </div>
 
                     <div class="thanks" style="margin-top: auto; font-size: 15px;">
                         Best regards, <br>
-                        <strong>The Natur Capital Solutions Team</strong><br>
+                        <strong>The Natur Global Solutions Team</strong><br>
                         <span style="font-size: 13px; color: gray;">Empowering Your Financial Future</span>
                     </div>
                 </div>

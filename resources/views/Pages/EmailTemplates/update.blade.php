@@ -50,9 +50,9 @@
                     @include('Partials.status-dropdown', ['status' => $data->status])
                 </div>
 
-                <div class="col">
+                {{-- <div class="col">
                     @include('Partials.role-dropdown', ['role' => $data->send_to])
-                </div>
+                </div> --}}
             </div>
 
             <div class="row m-2 mb-3">

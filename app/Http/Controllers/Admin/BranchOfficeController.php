@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Services\BranchOfficeService;
@@ -8,6 +8,7 @@ use App\Http\Requests\BranchOffice\CreateBranchOfficeRequest;
 use App\Http\Requests\BranchOffice\UpdateBranchOfficeRequest;
 use App\Services\ToasterService;
 use App\Exceptions\Handler;
+use App\Http\Controllers\Controller;
 
 class BranchOfficeController extends Controller
 {

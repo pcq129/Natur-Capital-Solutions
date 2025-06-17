@@ -43,7 +43,7 @@
                             <th class="text-center">Id</th>
                             <th class="text-center">Template Name</th>
                             <th class="text-center">Subject</th>
-                            <th class="text-center">Send To</th>
+                            {{-- <th class="text-center">Send To</th> --}}
                             <th class="text-center">Language</th>
                             {{-- <th class="text-center">Status</th> --}}
                             <th class="text-center">Actions</th>
@@ -123,11 +123,12 @@
                         data: 'subject',
                         name: 'subject',
                         className: 'text-center'
-                    }, {
-                        data: 'send_to',
-                        name: 'send_to',
-                        className: 'text-center'
                     },
+                    // {
+                    //     data: 'send_to',
+                    //     name: 'send_to',
+                    //     className: 'text-center'
+                    // },
                     {
                         data: 'language',
                         name: 'language',
@@ -171,5 +172,3 @@
     </script>
 @endpush
 
-@push('css')
-@endpush

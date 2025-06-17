@@ -4,6 +4,7 @@ namespace App\Traits\Validations;
 
 use App\Enums\Language;
 use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\Rule;
 
 trait BaseCmsPageValidationRules
 {

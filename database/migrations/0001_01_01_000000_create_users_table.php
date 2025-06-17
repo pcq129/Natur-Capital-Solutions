@@ -31,7 +31,7 @@ return new class extends Migration
             $table->string('provider', 60)->nullable();
             $table->text('provider_token')->nullable();
             $table->date('token_expiration')->nullable();
-            $table->enum('role',array_column(Role::cases(), 'value') )->default(ROLE::User);
+            $table->enum('role',array_column(Role::cases(), 'value') )->default(ROLE::USER);
             $table->enum('status',array_column(Status::cases(), 'value') )->default(Status::ACTIVE);
             $table->softDeletes();
         });

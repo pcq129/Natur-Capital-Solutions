@@ -49,10 +49,10 @@
                     @include('Partials.language-dropdown', ['language' => ''])
                 </div>
 
-                <div class="col">
+                {{-- <div class="col">
                     @include('Partials.role-dropdown', ['role' => ''])
                     <span class="text-secondary">Role of user allowed to receive the email</span>
-                </div>
+                </div> --}}
             </div>
 
             <div class="row m-2 mb-3">

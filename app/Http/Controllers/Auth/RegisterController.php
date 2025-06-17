@@ -73,6 +73,7 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
 
+        // dd($data);
 
         $email = EmailTemplate::where('name', 'User Registered')->first();
         $newUser = new User();

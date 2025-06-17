@@ -8,7 +8,7 @@ use App\Services\DTO\ServiceResponse;
 use Yajra\DataTables\Facades\DataTables;
 use App\Constants\EmailTemplateConstants as CONSTANTS;
 use App\Constants\AppConstants;
-use App\Enums\Role;
+// use App\Enums\Role;
 
 
 
@@ -28,9 +28,9 @@ class EmailTemplateService
                 ->addColumn('status', function ($row) {
                     return $row->status == Status::ACTIVE->value ? 'Active' : 'Inactive';
                 })
-                ->addColumn('send_to', function ($row) {
-                    return $row->send_to == Role::ADMIN ? 'Admin' : 'User';
-                })
+                // ->addColumn('send_to', function ($row) {
+                //     return $row->send_to == Role::ADMIN ? 'Admin' : 'User';
+                // })
                 ->addColumn('actions', function ($row) {
                     $editUrl = route('email-templates.edit', $row->id);
                     $action = AppConstants::VIEW_ICON;
@@ -93,7 +93,7 @@ class EmailTemplateService
                 'subject' => $newTemplateData['subject'],
                 'language' => $newTemplateData['language'],
                 'emailtemplate-trixFields' => $newTemplateData['emailtemplate-trixFields'],
-                'send_to' => $newTemplateData['role'],
+                // 'send_to' => $newTemplateData['role'],
                 'status' => Status::ACTIVE
             ]);
             return ServiceResponse::success(CONSTANTS::STORE_SUCCESS);
@@ -112,7 +112,7 @@ class EmailTemplateService
                 "name" => $request['name'],
                 "subject" => $request['subject'],
                 "language" => $request['language'],
-                "send_to" => $request['role'],
+                // "send_to" => $request['role'],
                 "status" => $request['status'],
                 "emailtemplate-trixFields" => $request['emailtemplate-trixFields'],
             ]);

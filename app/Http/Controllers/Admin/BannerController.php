@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\Banner\CreateBannerRequest;
@@ -8,6 +8,8 @@ use App\Http\Requests\Banner\UpdateBannerRequest;
 use App\Services\BannerService;
 use Illuminate\Support\Facades\Log;
 use App\Services\ToasterService;
+use App\Http\Controllers\Controller;
+
 
 class BannerController extends Controller
 {

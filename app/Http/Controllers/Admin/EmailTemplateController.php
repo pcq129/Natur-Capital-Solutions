@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Services\ToasterService;
@@ -10,7 +10,7 @@ use App\Http\Requests\EmailTemplate\CreateEmailTemplateRequest;
 use App\Http\Requests\EmailTemplate\UpdateEmailTemplateRequest;
 use App\Constants\EmailTemplateConstants as CONSTANTS;
 use App\Exceptions\Handler;
-
+use App\Http\Controllers\Controller;
 
 // testing deps
 use App\Mail\EmailTemplate as Template;

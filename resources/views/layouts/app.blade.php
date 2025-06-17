@@ -21,3 +21,28 @@
         });
     </script>
 @endpush
+
+
+{{-- boilerplate for new view --}}
+
+{{-- @extends('layouts.app')
+
+@php
+    // use App\Models\EmailTemplate;
+    // use App\Enums\Status;
+
+    //* or any other dependencies
+@endphp
+
+@section('content_header')
+@stop
+
+
+@section('content')
+@stop
+
+@push('css')
+@endpush
+
+@push('js')
+@endpush --}}

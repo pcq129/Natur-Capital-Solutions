@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'Natur Capital Solutions',
+    'title' => 'Natur Global Solutions',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -63,7 +63,7 @@ return [
     |
     */
 
-    'logo' => '<b>Natur Cap. Solutions</b>',
+    'logo' => '<b>Natur Solutions</b>',
     'logo_img' => 'storage/logo.svg',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
@@ -316,17 +316,17 @@ return [
         //     'text' => 'Search',
         // ],
         [
-            'icon'=> 'nav-icon fas fa-th',
+            'icon' => 'nav-icon fas fa-th',
             'text' => 'Dashboard',
             'url' => '/',
         ],
         [
-            'icon'=> 'nav-icon fas fa-image',
+            'icon' => 'nav-icon fas fa-image',
             'text' => 'Banners',
             'url' => 'banners',
         ],
         [
-            'icon'=> 'nav-icon fas fa-columns',
+            'icon' => 'nav-icon fas fa-columns',
             'text' => 'Branch & Offices',
             'url' => '/branchoffices',
         ],
@@ -336,7 +336,7 @@ return [
         //     'url' => '/categories',
         // ],
         [
-            'icon'=> 'nav-icon fas fa-copy',
+            'icon' => 'nav-icon fas fa-copy',
             'text' => 'CMS-pages',
             'url' => '/cms-pages',
         ],
@@ -346,7 +346,7 @@ return [
         //     'url' => '/contact-details',
         // ],
         [
-            'icon'=> 'nav-icon fas fa-paper-plane',
+            'icon' => 'nav-icon fas fa-paper-plane',
             'text' => 'Email-Templates',
             'url' => '/email-templates',
         ],
@@ -360,10 +360,29 @@ return [
         //     'text' => 'Orders',
         //     'url' => '/orders',
         // ],
+        // [
+        //     'icon' => 'nav-icon fas fa-cubes',
+        //     'text' => 'Products',
+        //     'url' => '/products',
+        // ],
         [
-            'icon'=> 'nav-icon fas fa-cubes',
             'text' => 'Products',
-            'url' => '/products',
+            'icon' => 'nav-icon fas fa-cubes',
+            'submenu' => [
+                [
+                    'text' => 'Categories',
+                    'url' => '/categories',
+                    'icon' => 'nav-icon fas fa-angle-right',
+                ],[
+                    'text' => 'Sub-Categories',
+                    'url' => '/sub-categories',
+                    'icon' => 'nav-icon fas fa-angle-right',
+                ],[
+                    'text' => 'Products',
+                    'icon' => 'nav-icon fas fa-cube',
+                    'url' => '/products',
+                ],
+            ],
         ],
         // [
         //     'icon'=> 'nav-icon fas fa-cube',
@@ -376,11 +395,11 @@ return [
         //     'url' => '/services',
         // ],
 
-        // // [
-        // //     'icon'=> 'nav-icon fas fa-tree',
-        // //     'text' => 'sub-categories',
-        // //     'url' => '/sub-categories',
-        // // ],
+        // [
+        //     'icon'=> 'nav-icon fas fa-tree',
+        //     'text' => 'sub-categories',
+        //     'url' => '/sub-categories',
+        // ],
         // [
         //     'icon'=> 'nav-icon fas fa-plus-square',
         //     'text' => 'Warranties',

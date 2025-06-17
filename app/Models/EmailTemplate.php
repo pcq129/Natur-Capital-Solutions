@@ -22,7 +22,7 @@ class EmailTemplate extends Model
         'subject',
         'content',
         'language',
-        'send_to',
+        // 'send_to',
         'status',
         'emailtemplate-trixFields'
     ];
@@ -34,7 +34,7 @@ class EmailTemplate extends Model
             'subject' => 'string',
             'content' => 'string',
             'language' => Language::class,
-            'send_to' => Role::class,
+            // 'send_to' => Role::class,
             'status' => Status::class
         ];
     }

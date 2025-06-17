@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('subject', 140);
             // $table->longText('content');
             $table->string('language', 20);
-            $table->unsignedBigInteger('send_to')->references('id')->on('roles')->onDelete('cascade');
+            // $table->unsignedBigInteger('send_to')->references('id')->on('roles')->onDelete('cascade');
             $table->tinyInteger('status');
             $table->timestamps();
             $table->softDeletes();
