@@ -53,6 +53,9 @@
                             <input type="text" name="name" class="form-control" id="categoryName"
                                 aria-describedby="categoryHelp">
                             <small id="categoryHelp" class="form-text text-muted">Name of the category to be added.</small>
+                            @error('name')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -85,12 +88,30 @@
                             <input type="text" name="name" class="form-control" id="updateModalCategoryName"
                                 aria-describedby="categoryHelp">
                             <small id="categoryHelp" class="form-text text-muted">Name of the category to be added.</small>
+                            @error('name')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <label for="updateModalCategoryStatus">Status</label><br>
-                        <select name="status" id="updateModalCategoryStatus">
-                            <option value="1">Active</option>
-                            <option value="0">Inactive</option>
-                        </select>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="status" id="statusActive"
+                                    value="{{ Status::ACTIVE->value }}">
+                                <label class="form-check-label" for="statusActive">
+                                    Active
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="status" id="statusInactive"
+                                    value="{{ Status::INACTIVE->value }}">
+                                <label class="form-check-label" for="statusInactive">
+                                    Inactive
+                                </label>
+                            </div>
+                            @error('status')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
 
                     <div class="modal-footer">
@@ -103,8 +124,8 @@
     </form>
 
     {{-- Delete confirmation dialog --}}
-    <div class="modal fade" id="{{ CONSTANTS::DELETE_CATEGORY_MODAL }}" tabindex="-1" aria-labelledby="deleteCategoryModal"
-        aria-hidden="true">
+    <div class="modal fade" id="{{ CONSTANTS::DELETE_CATEGORY_MODAL }}" tabindex="-1"
+        aria-labelledby="deleteCategoryModal" aria-hidden="true">
         <div class="modal-dialog">
             <form method="POST" id="deleteCategoryForm">
                 @csrf
@@ -207,7 +228,9 @@
             //     // categoryStatusInput = categoryStatusInput;
             // });
 
+
             $("#{{ CONSTANTS::UPDATE_CATEGORY_MODAL }}").on('show.bs.modal', function(event) {
+                event.preventDefault();
                 const button = $(event.relatedTarget);
                 const categoryId = button.data('id');
                 const categoryName = button.data('name');
@@ -215,14 +238,20 @@
                 console.log(categoryStatus);
                 const form = $('#updateCategoryForm');
                 const action = '{{ route('categories.update', ':id') }}'.replace(':id', categoryId);
-                form.attr('action', action);
 
                 // Set category name
                 $('#updateModalCategoryName').val(categoryName);
 
                 // Set category status
-                $('#updateModalCategoryStatus').val(categoryStatus);
+                // $('#updateModalCategoryStatus').val(categoryStatus);
+                $(`input[name="status"][value="${categoryStatus}"]`).prop('checked', true);
+                form.find('.text-danger').remove();
+
+
             });
+
+            // testing
+
 
         })
     </script>
