@@ -17,4 +17,6 @@ class SubCategoryConstants
     public const NOT_FOUND = 'Sub-Category not found';
     public const DELETE_SUB_CATEGORY_MODAL = 'deleteSub-CategoryModal';
     public const UPDATE_SUB_CATEGORY_MODAL = 'updateSub-CategoryModal';
+    public const STATUS_ERROR = 'error';
+    public const UPDATE_ALREADY_EXISTS = 'Sub-Category with the same name already exists';
 }

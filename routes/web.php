@@ -25,6 +25,11 @@ Route::middleware('auth')->group(function(){
     Route::resource('/cms-pages', CmsPageController::class);
     Route::resource('/email-templates', EmailTemplateController::class);
     Route::resource('/categories', CategoryController::class);
+    Route::put('/categories/{category}/validate', [CategoryController::class, 'validateCategoryUpdate'])->name('categories.validate');
+    Route::put('/sub-categories/{sub_category}/validate', [SubCategoryController::class, 'validateSubCategoryUpdate'])->name('sub-categories.validate');
+    Route::post('/categories/validate', [CategoryController::class, 'validateCategoryStore'])->name('categories.validateStore');
+    Route::post('/sub-categories/validate', [SubCategoryController::class, 'validateSubCategoryStore'])->name('sub-categories.validateStore');
+
     Route::resource('/sub-categories', SubCategoryController::class);
 });
 

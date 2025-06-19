@@ -32,7 +32,8 @@ return new class extends Migration
             $table->unsignedBigInteger('sub_category_id');
             $table->integer('minimum_quantity', false, true);
             $table->boolean('is_featured')->comment('for displaying products in featured/popular section');
-            $table->enum('status', array_column(Status::cases(), 'value'))->comment("-1 = deleted, 0 = inactive, 1 = active");
+            // $table->enum('status', array_column(Status::cases(), 'value'))->comment("-1 = deleted, 0 = inactive, 1 = active");
+            $table->tinyInteger('status', 5);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -42,7 +43,8 @@ return new class extends Migration
             $table->string('name', 80);
             $table->unsignedBigInteger('product_id');
             $table->tinyInteger('is_featured')->comment('0 = not featured, 1 = featured');
-            $table->enum('status', array_column(Status::cases(), 'value'))->comment("-1 = deleted, 0 = inactive, 1 = active");
+            $table->tinyInteger('status', 5);
+            // $table->enum('status', array_column(Status::cases(), 'value'))->comment("-1 = deleted, 0 = inactive, 1 = active");
             $table->timestamps();
             $table->softDeletes();
         });
@@ -53,7 +55,8 @@ return new class extends Migration
             $table->string('office', 255);
             $table->string('email', 80);
             $table->string('mobile', );
-            $table->enum('status', array_column(Status::cases(), 'value'))->comment("-1 = deleted, 0 = inactive, 1 = active");
+            $table->tinyInteger('status', 5);
+            // $table->enum('status', array_column(Status::cases(), 'value'))->comment("-1 = deleted, 0 = inactive, 1 = active");
             $table->string('location');
             $table->timestamps();
             $table->softDeletes();
@@ -103,7 +106,8 @@ return new class extends Migration
             $table->longText('content');
             $table->string('language', 20);
             $table->unsignedBigInteger('access_to');
-            $table->enum('status', array_column(Status::cases(), 'value'));
+            $table->tinyInteger('status', 5);
+            // $table->enum('status', array_column(Status::cases(), 'value'));
             $table->timestamps();
             $table->softDeletes();
         });
@@ -150,7 +154,8 @@ return new class extends Migration
             $table->tinyInteger('is_renewable')->comment('1 = renewable/extendible, 0 = non-renewable(fix tenure) ');
             $table->tinyInteger('is_renewed')->comment('1 = entry is a renewed warranty, 0 = entry is regular warranty');
             $table->unsignedBigInteger('previous_warranty');
-            $table->enum('status', array_column(Status::cases(), 'value'));
+            $table->tinyInteger('status', 5);
+            // $table->enum('status', array_column(Status::cases(), 'value'));
             $table->softDeletes();
         });
 
@@ -185,7 +190,8 @@ return new class extends Migration
             $table->text('buttons');
             $table->text('links');
             $table->integer('priority');
-            $table->enum('status', array_column(Status::cases(), 'value'));
+            $table->tinyInteger('status', 5);
+            // $table->enum('status', array_column(Status::cases(), 'value'));
             $table->timestamps();
             $table->softDeletes();
         });
@@ -194,7 +200,8 @@ return new class extends Migration
             $table->id();
             $table->string('purpose', 80);
             $table->string('contact', 60);
-            $table->enum('status', array_column(Status::cases(), 'value'));
+            $table->tinyInteger('status', 5);
+            // $table->enum('status', array_column(Status::cases(), 'value'));
             $table->timestamps();
             $table->softDeletes();
         });
@@ -222,7 +229,8 @@ return new class extends Migration
             $table->enum('content_type', array_column(ContentType::cases(), 'value'));
             $table->enum('language', array_column(LANGUAGE::cases(), 'value'));
             $table->longText('data');
-            $table->enum('status', array_column(Status::cases(), 'value'));
+            $table->tinyInteger('status', 5);
+            // $table->enum('status', array_column(Status::cases(), 'value'));
             $table->timestamps();
             $table->softDeletes();
         });
@@ -236,7 +244,8 @@ return new class extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string('name', 80);
-            $table->enum('status', array_column(Status::cases(), 'value'));
+            $table->tinyInteger('status', 5);
+            // $table->enum('status', array_column(Status::cases(), 'value'));
             $table->timestamps();
             $table->softDeletes();
         });
@@ -245,7 +254,8 @@ return new class extends Migration
             $table->id();
             $table->string('name', 80);
             $table->unsignedBigInteger('category_id');
-            $table->enum('status', array_column(Status::cases(), 'value'));
+            $table->tinyInteger('status', 5);
+            // $table->enum('status', array_column(Status::cases(), 'value'));
             $table->timestamps();
             $table->softDeletes();
         });

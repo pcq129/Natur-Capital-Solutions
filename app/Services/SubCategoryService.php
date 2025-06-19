@@ -9,60 +9,100 @@ use App\Enums\Status;
 use App\Models\SubCategory;
 use App\Constants\SubCategoryConstants as CONSTANTS;
 use Yajra\DataTables\Facades\DataTables;
-
+use App\Exceptions\Handler;
 
 class SubCategoryService
 {
-    public function createSubCategory($request){
-        SubCategory::create([
-            'name' => $request['name'],
-            'status' => Status::ACTIVE
-        ]);
-        return ServiceResponse::success(CONSTANTS::STORE_SUCCESS);
-    }
+    public function createSubCategory($request)
+    {
 
-    public function updateSubCategory(SubCategory $subCategory, $request){
-        $subCategory->fill([
-            'name' => $request['name'],
-            'status' => $request['status']
-        ]);
-        if($subCategory->isDirty()){
-            $subCategory->save();
-            return ServiceResponse::success(CONSTANTS::UPDATE_SUCCESS);
-        }else{
-            return ServiceResponse::error(CONSTANTS::NO_CHANGE);
+        try {
+            SubCategory::create([
+                'name' => $request['name'],
+                'status' => Status::ACTIVE,
+                'category_id' => $request['category_id']
+            ]);
+            return ServiceResponse::success(CONSTANTS::STORE_SUCCESS);
+        } catch (\Throwable $th) {
+            $message = CONSTANTS::STORE_FAIL;
+            Handler::logError($th, $message);
+            return ServiceResponse::error($message);
         }
     }
 
-    public function fetchSubCategories($request){
-        $query = SubCategory::query();
-
-        if($request->filled('status')){
-            $query->where('status', (int) $request->status);
+    public function updateSubCategory( $subCategory, $request)
+    {
+        try {
+            $subCategory->fill([
+                'name' => $request['name'],
+                'status' => $request['status'],
+                'category_id' => $request['category_id']
+            ]);
+            if ($subCategory->isDirty()) {
+                $subCategory->save();
+                return ServiceResponse::success(CONSTANTS::UPDATE_SUCCESS);
+            } else {
+                return ServiceResponse::error(CONSTANTS::NO_CHANGE);
+            }
+        } catch (\Throwable $th) {
+            $message = CONSTANTS::UPDATE_FAIL;
+            Handler::logError($th, $message);
+            return ServiceResponse::error($message);
         }
-
-        $categories = DataTables::of($query)
-            ->addColumn('status', function ($row) {
-                return $row->status == Status::ACTIVE->value ? 'Active' : 'Inactive';
-            })
-            ->addColumn('actions', function ($row) {
-                $editUrl = route('categories.edit', $row->id);
-                $targetDelete = CONSTANTS::DELETE_CATEGORY_MODAL;
-                $targetEdit = CONSTANTS::UPDATE_CATEGORY_MODAL;
-                return view('Partials.Category.actions', ['edit' => $editUrl,  'row' => $row, 'targetDelete' => $targetDelete, 'targetEdit'=>$targetEdit]);
-            })
-            ->rawColumns(['actions'])
-            ->make(true);
-
-        return ServiceResponse::success("Categories fetched successfully",  $categories);
     }
 
-    public function deleteSubCategory(SubCategory $subCategory){
-        $is_deleted = $subCategory->delete();
-        if($is_deleted){
-            return ServiceResponse::success("Sub-Category deleted successfully");
-        }else{
-            return ServiceResponse::error("Error while deleting Sub-Category");
+    public function fetchSubCategories($request)
+    {
+        try {
+            $query = SubCategory::with('category:id,name');
+
+            if ($request->filled('status')) {
+                $query->where('status', (int) $request->status);
+            }
+
+            $categories = DataTables::of($query)
+                ->addColumn('status', function ($row) {
+                    if ($row->status->value == Status::ACTIVE->value) {
+                        return 'Active';
+                    } else if ($row->status->value == Status::INACTIVE->value) {
+                        return 'Inactive';
+                    } else {
+                        return CONSTANTS::STATUS_ERROR;
+                    }
+                })
+                ->addColumn('category', function ($row) {
+                    return $row->category->name ?? '-';
+                })
+                ->addColumn('actions', function ($row) {
+                    $editUrl = route('categories.edit', $row->id);
+                    $targetDelete = CONSTANTS::DELETE_SUB_CATEGORY_MODAL;
+                    $targetEdit = CONSTANTS::UPDATE_SUB_CATEGORY_MODAL;
+                    return view('Partials.Category.actions', ['edit' => $editUrl,  'row' => $row, 'targetDelete' => $targetDelete, 'targetEdit' => $targetEdit]);
+                })
+                ->rawColumns(['actions'])
+                ->make(true);
+
+            return ServiceResponse::success(CONSTANTS::FETCH_SUCCESS,  $categories);
+        } catch (\Throwable $th) {
+            $message = CONSTANTS::FETCH_FAIL;
+            Handler::logError($th, $message);
+            return ServiceResponse::error($message);
+        }
+    }
+
+    public function deleteSubCategory(SubCategory $subCategory)
+    {
+        try {
+            $is_deleted = $subCategory->delete();
+            if ($is_deleted) {
+                return ServiceResponse::success(CONSTANTS::DELETE_SUCCESS);
+            } else {
+                return ServiceResponse::error(CONSTANTS::DELETE_FAIL);
+            }
+        } catch (\Throwable $th) {
+            $message = CONSTANTS::DELETE_FAIL;
+            Handler::logError($th, $message);
+            return ServiceResponse::error($message);
         }
     }
 }

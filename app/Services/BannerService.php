@@ -50,7 +50,7 @@ class BannerService
             }
         } catch (\Throwable $e) {
             $message = CONSTANTS::STORE_SUCCESS;
-            Handler->logError($e, $message);
+            Handler::logError($e, $message);
             return ServiceResponse::error($message);
         }
     }
@@ -92,7 +92,7 @@ class BannerService
             }
         } catch (\Exception $e) {
             $message = CONSTANTS::UPDATE_FAIL;
-            Handler->logError($e, $message);
+            Handler::logError($e, $message);
             return ServiceResponse::error($message);
         }
     }

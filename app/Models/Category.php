@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Enums\Status;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
+    use SoftDeletes;
 
-    
     /**
      * Get all of the products for the Category
      *
@@ -30,7 +32,8 @@ class Category extends Model
     }
 
     protected $fillable = [
-        'name'
+        'name',
+        'status'
     ];
 
     protected function casts(): array
@@ -38,6 +41,7 @@ class Category extends Model
         return [
             'id'=>'integer',
             'name'=>'string',
+            'status' => Status::class
         ];
     }
 }

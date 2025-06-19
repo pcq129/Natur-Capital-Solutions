@@ -3,7 +3,8 @@
 data-target="#{{ $targetEdit ?? '' }}"
 data-id="{{ $row->id }}"
 data-status="{{ $row->status }}"
-data-name="{{ $row->name }}">
+data-name="{{ $row->name }}"
+data-category_id="{{ $row->category_id }}">
     <i class="bi bi-pen-fill text-light"></i>
 </button>
 <button type="button" class="btn btn-danger actionsButtonTwo" data-toggle="modal"
