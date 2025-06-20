@@ -49,8 +49,8 @@
                             <th>Banner Link</th>
                             <th>Heading</th>
                             <th>Priority</th>
-                            <th>Status</th>
                             <th>Image</th>
+                            <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -96,8 +96,6 @@
 @endpush
 
 @push('js')
-    <!-- Required Scripts -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
@@ -147,15 +145,15 @@
                         className: 'text-center'
                     },
                     {
-                        data: 'status',
-                        name: 'status',
-                        className: 'text-center'
-                    },
-                    {
                         data: 'image',
                         name: 'image',
                         orderable: false,
                         searchable: false,
+                        className: 'text-center'
+                    },
+                    {
+                        data: 'status',
+                        name: 'status',
                         className: 'text-center'
                     },
                     {
@@ -166,9 +164,9 @@
                         className: 'text-center'
                     }
                 ],
-                order: [
-                    [0,'desc']
-                ]
+                // order: [
+                //     [0,'desc']
+                // ]
 
             });
 

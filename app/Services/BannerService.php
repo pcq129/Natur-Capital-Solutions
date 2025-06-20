@@ -27,7 +27,7 @@ class BannerService
     {
         try {
             // formatting and preparing data for db storage
-            $saveImage = $this->imageUploadService->uploadImage($newBannerData['image'], BannerConstants::BANNER_STORAGE_FOLDER);
+            $saveImage = $this->imageUploadService->uploadImage($newBannerData['image'], CONSTANTS::BANNER_STORAGE_FOLDER);
             $imageLocation = $saveImage->data;
             if ($imageLocation) {
                 $buttons = $this->formatButtons($newBannerData);
@@ -49,7 +49,7 @@ class BannerService
                 return ServiceResopnse::error(CONSTANTS::STORE_FAIL);
             }
         } catch (\Throwable $e) {
-            $message = CONSTANTS::STORE_SUCCESS;
+            $message = CONSTANTS::STORE_FAIL;
             Handler::logError($e, $message);
             return ServiceResponse::error($message);
         }
@@ -122,7 +122,7 @@ class BannerService
         {
             try {
                 if ($request->ajax()) {
-                    $query = Banner::query();
+                    $query = Banner::query()->orderBy('id', 'DESC');
 
                     if ($request->filled('status')) {
                         $query->where('status', (int) $request->status);

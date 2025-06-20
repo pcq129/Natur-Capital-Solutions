@@ -53,7 +53,7 @@ class CategoryService
     {
         try {
 
-            $query = Category::query();
+            $query = Category::query()->orderBy('id', 'DESC');
 
             if ($request->filled('status')) {
                 $query->where('status', (int) $request->status);

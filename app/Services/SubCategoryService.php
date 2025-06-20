@@ -30,13 +30,13 @@ class SubCategoryService
         }
     }
 
-    public function updateSubCategory( $subCategory, $request)
+    public function updateSubCategory( $subCategory, $data)
     {
         try {
             $subCategory->fill([
-                'name' => $request['name'],
-                'status' => $request['status'],
-                'category_id' => $request['category_id']
+                'name' => $data['name'],
+                'status' => $data['status'],
+                'category_id' => $data['category_id']
             ]);
             if ($subCategory->isDirty()) {
                 $subCategory->save();
@@ -54,7 +54,7 @@ class SubCategoryService
     public function fetchSubCategories($request)
     {
         try {
-            $query = SubCategory::with('category:id,name');
+            $query = SubCategory::with('category:id,name')->orderBy('id', 'DESC');
 
             if ($request->filled('status')) {
                 $query->where('status', (int) $request->status);

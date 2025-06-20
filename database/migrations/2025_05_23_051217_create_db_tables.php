@@ -25,25 +25,25 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
-            $table->id();
-            $table->string('name', 80);
-            $table->unsignedBigInteger('category_id');
-            $table->unsignedBigInteger('sub_category_id');
-            $table->integer('minimum_quantity', false, true);
-            $table->boolean('is_featured')->comment('for displaying products in featured/popular section');
-            // $table->enum('status', array_column(Status::cases(), 'value'))->comment("-1 = deleted, 0 = inactive, 1 = active");
-            $table->tinyInteger('status', 5);
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        // Schema::create('products', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->string('name', 80);
+        //     $table->unsignedBigInteger('category_id');
+        //     $table->unsignedBigInteger('sub_category_id');
+        //     $table->integer('minimum_quantity', false, true);
+        //     $table->boolean('is_featured')->comment('for displaying products in featured/popular section');
+        //     // $table->enum('status', array_column(Status::cases(), 'value'))->comment("-1 = deleted, 0 = inactive, 1 = active");
+        //     $table->tinyInteger('status');
+        //     $table->timestamps();
+        //     $table->softDeletes();
+        // });
 
         Schema::create('services', function (Blueprint $table) {
             $table->id();
             $table->string('name', 80);
             $table->unsignedBigInteger('product_id');
             $table->tinyInteger('is_featured')->comment('0 = not featured, 1 = featured');
-            $table->tinyInteger('status', 5);
+            $table->tinyInteger('status');
             // $table->enum('status', array_column(Status::cases(), 'value'))->comment("-1 = deleted, 0 = inactive, 1 = active");
             $table->timestamps();
             $table->softDeletes();
@@ -55,7 +55,7 @@ return new class extends Migration
             $table->string('office', 255);
             $table->string('email', 80);
             $table->string('mobile', );
-            $table->tinyInteger('status', 5);
+            $table->tinyInteger('status');
             // $table->enum('status', array_column(Status::cases(), 'value'))->comment("-1 = deleted, 0 = inactive, 1 = active");
             $table->string('location');
             $table->timestamps();
@@ -106,7 +106,7 @@ return new class extends Migration
             $table->longText('content');
             $table->string('language', 20);
             $table->unsignedBigInteger('access_to');
-            $table->tinyInteger('status', 5);
+            $table->tinyInteger('status');
             // $table->enum('status', array_column(Status::cases(), 'value'));
             $table->timestamps();
             $table->softDeletes();
@@ -154,7 +154,7 @@ return new class extends Migration
             $table->tinyInteger('is_renewable')->comment('1 = renewable/extendible, 0 = non-renewable(fix tenure) ');
             $table->tinyInteger('is_renewed')->comment('1 = entry is a renewed warranty, 0 = entry is regular warranty');
             $table->unsignedBigInteger('previous_warranty');
-            $table->tinyInteger('status', 5);
+            $table->tinyInteger('status');
             // $table->enum('status', array_column(Status::cases(), 'value'));
             $table->softDeletes();
         });
@@ -190,7 +190,7 @@ return new class extends Migration
             $table->text('buttons');
             $table->text('links');
             $table->integer('priority');
-            $table->tinyInteger('status', 5);
+            $table->tinyInteger('status');
             // $table->enum('status', array_column(Status::cases(), 'value'));
             $table->timestamps();
             $table->softDeletes();
@@ -200,7 +200,7 @@ return new class extends Migration
             $table->id();
             $table->string('purpose', 80);
             $table->string('contact', 60);
-            $table->tinyInteger('status', 5);
+            $table->tinyInteger('status');
             // $table->enum('status', array_column(Status::cases(), 'value'));
             $table->timestamps();
             $table->softDeletes();
@@ -208,29 +208,10 @@ return new class extends Migration
 
         Schema::create('resources', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('subject_id');
-            $table->unsignedBigInteger('subject_type');
-            $table->enum('content_type', array_column(ContentType::cases(), 'value'));
+            $table->morphs('resourcable');
+            $table->enum('content_type', array_column(ContentType::cases(), 'value'))->nullable();
             $table->tinyInteger('priority');
             $table->text('path');
-            $table->timestamps();
-            $table->softDeletes();
-        });
-
-        Schema::create('documents', function (Blueprint $table) {
-            $table->id();
-
-            // this will create two columns (subject_id and subject_type)
-            // supply classname to subject_type (service or product)
-            // and respective id to identify the related entity.
-            $table->morphs('subject');
-
-            $table->tinyInteger('priority');
-            $table->enum('content_type', array_column(ContentType::cases(), 'value'));
-            $table->enum('language', array_column(LANGUAGE::cases(), 'value'));
-            $table->longText('data');
-            $table->tinyInteger('status', 5);
-            // $table->enum('status', array_column(Status::cases(), 'value'));
             $table->timestamps();
             $table->softDeletes();
         });
@@ -244,7 +225,7 @@ return new class extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string('name', 80);
-            $table->tinyInteger('status', 5);
+            $table->tinyInteger('status');
             // $table->enum('status', array_column(Status::cases(), 'value'));
             $table->timestamps();
             $table->softDeletes();
@@ -254,7 +235,7 @@ return new class extends Migration
             $table->id();
             $table->string('name', 80);
             $table->unsignedBigInteger('category_id');
-            $table->tinyInteger('status', 5);
+            $table->tinyInteger('status');
             // $table->enum('status', array_column(Status::cases(), 'value'));
             $table->timestamps();
             $table->softDeletes();

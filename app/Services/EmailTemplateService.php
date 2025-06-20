@@ -19,7 +19,7 @@ class EmailTemplateService
     public function fetchTemplates($request): ServiceResponse
     {
         try {
-            $query = EmailTemplate::query();
+            $query = EmailTemplate::query()->orderBy('id', 'DESC');
 
             if ($request->filled('status')) {
                 $query->where('status', (int) $request->status);

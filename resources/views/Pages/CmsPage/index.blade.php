@@ -9,10 +9,10 @@
 @section('content_header')
     <div class="row mb-1 justify-content-between">
         <div class="col-sm-6">
-            <h1>CMS Pages</h1>
+            <h1>Products</h1>
         </div>
         <div>
-            <a class="btn btn-success bi bi-plus" href="{{ route('cms-pages.create') }}"></a>
+            <a class="btn btn-success bi bi-plus" href="{{ route('products.create') }}"></a>
         </div>
     </div>
 @stop
@@ -87,8 +87,6 @@
 
 
 @push('js')
-    @trixassets
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
@@ -155,7 +153,7 @@
                 $('#cmsPageName').text(cmsPageName);
             });
 
-            $('#statusFilter').on('change', function(){
+            $('#statusFilter').on('change', function() {
                 table.ajax.reload();
             })
         })

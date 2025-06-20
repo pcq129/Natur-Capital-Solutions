@@ -12,23 +12,34 @@ use App\Http\Requests\Product\SubCategory\createSubCategoryRequest;
 use App\Http\Requests\Product\SubCategory\updateSubCategoryRequest;
 use App\Models\Category;
 use App\Exceptions\Handler;
+use App\Enums\Status;
 use App\Constants\SubCategoryConstants as CONSTANTS;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 
 class SubCategoryController extends Controller
 {
     public function __construct(private SubCategoryService $subCategoryService, private ToasterService $toasterService) {}
 
+    protected $validationMessage = [
+        'name.regex' => CONSTANTS::ERROR_NAME_REGEX,
+        'name.string' => CONSTANTS::ERROR_NAME_STRING,
+        'name.unique' => CONSTANTS::ERROR_NAME_UNIQUE,
+        'category_id.required' => CONSTANTS::ERROR_CATEGORY_ID_REQUIRED,
+        'category_id.numeric' => CONSTANTS::ERROR_CATEGORY_ID_NUMERIC,
+        'name.min' => CONSTANTS::ERROR_NAME_MIN,
+        'name.max' => CONSTANTS::ERROR_NAME_MAX,
+        'status.required' => CONSTANTS::ERROR_STATUS_REQUIRED,
+        'status.enum' => CONSTANTS::ERROR_STATUS_ENUM,
+    ];
 
     public function validateSubCategoryUpdate(Request $request, SubCategory $subCategory)
     {
         $validator = Validator::make($request->all(), [
-            'name' => ['required','string','max:80', Rule::unique('App\Models\SubCategory','name')->ignore($subCategory)->whereNull('deleted_at')],
+            'name' => ['required','string','max:80','min:2','regex:/^[a-zA-Z\s]+$/u', Rule::unique('App\Models\SubCategory','name')->ignore($subCategory)->whereNull('deleted_at')],
             'category_id' => 'required|numeric'
-        ], [
-            'name.unique' => 'Sub-Category with same name already exists',
-        ]);
+        ], $this->validationMessage);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
@@ -39,13 +50,10 @@ class SubCategoryController extends Controller
 
     public function validateSubCategoryStore(Request $request){
         $validator = Validator::make($request->all(), [
-            'name' => [
-                'name' => ['required','string','max:80', Rule::unique('App\Models\SubCategory','name')->whereNull('deleted_at')],
+                'name' => ['required','string','max:80','min:2','regex:/^[a-zA-Z\s]+$/u', Rule::unique('App\Models\SubCategory','name')->whereNull('deleted_at')],
                 'category_id' => ['required','numeric']
-            ], [
-            'name.unique' => 'Sub-Category with same name already exists',
-            ]
-        ]);
+            ], $this->validationMessage
+        );
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
@@ -62,10 +70,14 @@ class SubCategoryController extends Controller
     {
         try {
             $categories = Category::all('id','name');
+
             if ($request->ajax()) {
                 $action = $this->subCategoryService->fetchSubCategories($request);
                 return $action->data;
             } else {
+                if($categories->count()==0){
+                    toastr()->error('Cannot add Sub-Categories without Categories.');
+                }
                 return view('Pages.Product.SubCategory.index', ['categories' => $categories]);
             }
         } catch (\Throwable $th) {
@@ -84,9 +96,9 @@ class SubCategoryController extends Controller
     {
         try {
             $validator = Validator::make($request->all(),[
-                'name' => ['required','string','max:80', Rule::unique('App\Models\SubCategory','name')->whereNull('deleted_at')],
+                'name' => ['required','string','max:80','min:2','regex:/^[a-zA-Z\s]+$/u', Rule::unique('App\Models\SubCategory','name')->whereNull('deleted_at')],
                 'category_id' => 'required|numeric'
-            ]);
+            ],$this->validationMessage);
 
             if ($validator->fails()) {
                 $message = $validator->errors()->first();
@@ -114,11 +126,10 @@ class SubCategoryController extends Controller
     {
         try {
             $validator = Validator::make($request->all(),[
-                'name' => ['required','string','max:80', Rule::unique('App\Models\SubCategory','name')->ignore($subCategory)->whereNull('deleted_at')],
-                'category_id' => 'required|numeric'
-            ],[
-                'name.unique' => CONSTANTS::UPDATE_ALREADY_EXISTS
-            ]);
+                'name' => ['required','string','max:80','min:2','regex:/^[a-zA-Z\s]+$/u', Rule::unique('App\Models\SubCategory','name')->ignore($subCategory)->whereNull('deleted_at')],
+                'category_id' => 'required|numeric',
+                'status' => ['required', new Enum(Status::class)]
+            ],$this->validationMessage);
 
             if ($validator->fails()) {
                 $message = $validator->errors()->first();
@@ -128,7 +139,7 @@ class SubCategoryController extends Controller
 
             $data = $validator->validated();
 
-            $action = $this->subCategoryService->updateSubCategory($subCategory, $request);
+            $action = $this->subCategoryService->updateSubCategory($subCategory, $data);
             $this->toasterService->toast($action);
             return redirect()->route('sub-categories.index');
         } catch (\Throwable $th) {

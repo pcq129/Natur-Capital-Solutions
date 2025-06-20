@@ -39,9 +39,16 @@ class Category extends Model
     protected function casts(): array
     {
         return [
-            'id'=>'integer',
-            'name'=>'string',
+            'id' => 'integer',
+            'name' => 'string',
             'status' => Status::class
         ];
+    }
+
+    protected static function booted()
+    {
+        static::deleting(function ($category) {
+            $category->sub_categories()->delete();
+        });
     }
 }

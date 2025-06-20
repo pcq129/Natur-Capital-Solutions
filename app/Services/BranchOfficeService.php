@@ -14,7 +14,7 @@ class BranchOfficeService
     public function fetchBranchOffices($request): ServiceResponse
     {
 
-        $query = BranchOffice::query();
+        $query = BranchOffice::query()->orderBy('id', 'DESC');
 
         if($request->filled('status')){
             $query->where('status', (int) $request->status);

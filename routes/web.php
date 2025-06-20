@@ -11,26 +11,31 @@ use App\Http\Controllers\Admin\SocialLoginController;
 use App\Http\Controllers\Admin\EmailTemplateController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\ProductController;
 
 
 Route::post('/register', [RegisterController::class, 'register']);
-Route::get('auth/{provider}/redirect', [SocialLoginController::class , 'redirect'])->name('auth.socialite.redirect');
-Route::get('auth/{provider}/callback', [SocialLoginController::class , 'callback'])->name('auth.socialite.callback');
+Route::get('auth/{provider}/redirect', [SocialLoginController::class, 'redirect'])->name('auth.socialite.redirect');
+Route::get('auth/{provider}/callback', [SocialLoginController::class, 'callback'])->name('auth.socialite.callback');
 Auth::routes();
 
-Route::middleware('auth')->group(function(){
+Route::middleware('auth')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::resource('/banners', BannerController::class);
     Route::resource('/branchoffices', BranchOfficeController::class);
     Route::resource('/cms-pages', CmsPageController::class);
     Route::resource('/email-templates', EmailTemplateController::class);
     Route::resource('/categories', CategoryController::class);
-    Route::put('/categories/{category}/validate', [CategoryController::class, 'validateCategoryUpdate'])->name('categories.validate');
+    Route::resource('/products', ProductController::class);
+    Route::resource('/sub-categories', SubCategoryController::class);
+
+
+
+    // Data validation url
     Route::put('/sub-categories/{sub_category}/validate', [SubCategoryController::class, 'validateSubCategoryUpdate'])->name('sub-categories.validate');
+    Route::put('/categories/{category}/validate', [CategoryController::class, 'validateCategoryUpdate'])->name('categories.validate');
     Route::post('/categories/validate', [CategoryController::class, 'validateCategoryStore'])->name('categories.validateStore');
     Route::post('/sub-categories/validate', [SubCategoryController::class, 'validateSubCategoryStore'])->name('sub-categories.validateStore');
-
-    Route::resource('/sub-categories', SubCategoryController::class);
 });
 
 

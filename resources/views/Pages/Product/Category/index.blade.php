@@ -35,7 +35,7 @@
     </div>
 
     {{-- Add Category Modal --}}
-    <form action="{{ route('categories.store') }}" id="createCategoryForm" method="POST">
+    <form data-validate action="{{ route('categories.store') }}" id="createCategoryForm" method="POST">
         @csrf
         @method('POST')
         <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog"
@@ -51,8 +51,7 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="categoryName">Name</label>
-                            <input type="text" name="name" class="form-control" id="categoryName">
-                            <small class="form-text text-muted">Name of the category to be added.</small>
+                            <input type="text" name="name" class="form-control" id="categoryName" required placeholder="Name of the category to be added.">
                             @error('name')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -68,7 +67,7 @@
     </form>
 
     {{-- Update Category Modal --}}
-    <form method="POST" id="updateCategoryForm">
+    <form data-validate method="POST" id="updateCategoryForm">
         @csrf
         @method('PUT')
         <input type="hidden" name="category_id" id="updateCategoryId">
@@ -86,8 +85,7 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="updateModalCategoryName">Name</label>
-                            <input type="text" name="name" class="form-control" id="updateModalCategoryName">
-                            <small class="form-text text-muted">Name of the category.</small>
+                            <input type="text" name="name" class="form-control" id="updateModalCategoryName" placeholder="Name of the category to be added.">
                         </div>
                         <div class="form-group">
                             <label>Status</label>
@@ -149,7 +147,6 @@
 @endpush
 
 @push('js')
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
@@ -194,6 +191,7 @@
                 const categoryStatus = button.data('status');
 
                 $('#updateModalCategoryName').val(categoryName);
+                $('#updateModalCategoryName').prop('required', true);
                 $('#updateCategoryId').val(categoryId);
                 $(`input[name="status"][value="${categoryStatus}"]`).prop('checked', true);
 

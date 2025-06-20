@@ -16,6 +16,18 @@ use App\Constants\CategoryConstants as CONSTANTS;
 
 class CategoryController extends Controller
 {
+
+    private $validationMessage = [
+        'name.required' => CONSTANTS::ERROR_NAME_REQUIRED,
+        'name.string' => CONSTANTS::ERROR_NAME_STRING,
+        'name.max' => CONSTANTS::ERROR_NAME_MAX,
+        'name.regex' => CONSTANTS::ERROR_NAME_REGEX,
+        'name.unique' => CONSTANTS::ERROR_NAME_UNIQUE,
+        'status.required' => CONSTANTS::ERROR_STATUS_REQUIRED,
+        'status.enum' => CONSTANTS::ERROR_STATUS_ENUM,
+        'name.min' => CONSTANTS::ERROR_NAME_MIN
+    ];
+
     public function validateCategoryUpdate(Request $request, Category $category)
     {
         $validator = Validator::make($request->all(), [
@@ -23,12 +35,11 @@ class CategoryController extends Controller
                 'required',
                 'string',
                 'max:80',
+                'regex:/^[a-zA-Z\s]+$/u',
                 Rule::unique(Category::class, 'name')->ignore($category)->whereNull('deleted_at')
             ],
             'status' => ['required', new Enum(Status::class)],
-        ], [
-            'name.unique' => 'Category with same name already exists',
-        ]);
+        ], $this->validationMessage);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
@@ -37,17 +48,17 @@ class CategoryController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function validateCategoryStore(Request $request){
+    public function validateCategoryStore(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'name' => [
                 'required',
                 'string',
+                'regex:/^[a-zA-Z\s]+$/u',
                 'max:80',
                 Rule::unique(Category::class, 'name')->whereNull('deleted_at')
-            ], [
-            'name.unique' => 'Category with same name already exists',
             ]
-        ]);
+        ], $this->validationMessage);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
@@ -91,7 +102,7 @@ class CategoryController extends Controller
 
         try {
             $validator = Validator::make($request->all(), [
-                'name' => ['required', 'string', 'max:80', Rule::unique('categories', 'name')]
+                'name' => ['required', 'string', 'max:80', 'regex:/^[a-zA-Z\s]+$/u', Rule::unique('categories', 'name')]
             ], [
                 'name.unique' => 'Category already exists',
             ]);
@@ -124,11 +135,9 @@ class CategoryController extends Controller
 
         try {
             $validator = Validator::make($request->all(), [
-                'name' => ['required', 'string', 'max:80',  Rule::unique('App\Models\Category', 'name')->ignore($category)->whereNull('deleted_at')],
+                'name' => ['required', 'string', 'max:80', 'regex:/^[a-zA-Z\s]+$/u',  Rule::unique('App\Models\Category', 'name')->ignore($category)->whereNull('deleted_at')],
                 'status' => ['required', new Enum(Status::class)]
-            ], [
-                'name.unique' => 'Category with same name already exists',
-            ]);
+            ],  $this->validationMessage);
 
             if ($validator->fails()) {
                 $message = $validator->errors()->first();

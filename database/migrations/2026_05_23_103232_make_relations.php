@@ -11,18 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->foreign('category_id')
-                ->references('id')
-                ->on('categories')
-                ->onDelete('cascade');
-            $table->foreign('sub_category_id')->references('id')->on('sub_categories')->onDelete('cascade');
-        });
+        // Schema::table('products', function (Blueprint $table) {
+        //     $table->foreign('category_id')
+        //         ->references('id')
+        //         ->on('categories')
+        //         ->onDelete('cascade');
+        //     $table->foreign('sub_category_id')->references('id')->on('sub_categories')->onDelete('cascade');
+        // });
 
-        Schema::table('cart_items', function (Blueprint $table) {
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-        });
+        // Schema::table('cart_items', function (Blueprint $table) {
+        //     $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+        //     $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+        // });
 
         // TODO
         // this requires morph relationship, not yet confident so will do it on monday
@@ -75,9 +75,9 @@ return new class extends Migration
         });
 
 
-        Schema::table('services', function (Blueprint $table) {
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-        });
+        // Schema::table('services', function (Blueprint $table) {
+        //     $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+        // });
     }
 
     /**

@@ -15,4 +15,10 @@ class ProductConstants
     public const DELETE_FAIL = 'Failed to delete Product';
     public const NO_CHANGE = 'No changes detected';
     public const NOT_FOUND = 'Product not found';
+    public const PRODUCT_DELETE_MODAL_ID = 'productDeleteModalId';
+    public const PRODUCT_DESCRIPTION = 'productDescription';
+    public const PRODUCT_INFORMATION = 'productInformation';
+    public const PRODUCT_CHARACTERISTICS = 'productCharacteristics';
+    public const PRODUCT_WARRANTY_LIST = 'productWarrantyList';
+    public const PRODUCT_SERVICE_LIST = 'productServiceList';
 }
