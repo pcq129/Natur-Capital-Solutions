@@ -1,9 +1,9 @@
 <?php
 
+use App\Enums\FileType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Enums\ResourceType;
 
 return new class extends Migration
 {
@@ -12,13 +12,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::dropIfExists('resources');
-        Schema::create('resources', function (Blueprint $table) {
+        Schema::create('product_files', function (Blueprint $table) {
             $table->id();
-            $table->morphs('resourecable');
-            $table->enum('resource_type', array_column(ResourceType::cases(), 'value'))->nullable();
-            $table->tinyInteger('priority');
-            $table->text('resource');
+            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->string('file_name');
+            $table->string('file_path');
+            $table->enum('file_type',array_column(FileType::cases(), 'value'))->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('resource');
+        Schema::dropIfExists('product_files');
     }
 };

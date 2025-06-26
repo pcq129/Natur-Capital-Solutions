@@ -47,6 +47,9 @@
                 <div class="col">
                     <label for="language" class="form-label">Content*</label>
                     @trix(\App\Models\CmsPage::class, 'cmsText', ['hideButtonIcons' => ['attach']])
+                    @error('cmsPage-trixFields.cmsText')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
             </div>
 

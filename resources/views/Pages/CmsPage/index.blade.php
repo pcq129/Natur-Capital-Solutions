@@ -9,10 +9,10 @@
 @section('content_header')
     <div class="row mb-1 justify-content-between">
         <div class="col-sm-6">
-            <h1>Products</h1>
+            <h1>CMS Pages</h1>
         </div>
         <div>
-            <a class="btn btn-success bi bi-plus" href="{{ route('products.create') }}"></a>
+            <a class="btn btn-success bi bi-plus" href="{{ route('cms-pages.create') }}"></a>
         </div>
     </div>
 @stop

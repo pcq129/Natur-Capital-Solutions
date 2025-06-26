@@ -131,7 +131,7 @@
                     className: 'text-center'
                 }, {
                     name: 'actions',
-                    data: 'a    ctions',
+                    data: 'actions',
                     className: 'text-center'
                 }],
                 order: [

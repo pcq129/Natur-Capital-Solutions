@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('name', 80);
             $table->unsignedBigInteger('category_id');
             $table->unsignedBigInteger('sub_category_id');
+            $table->text('description')->nullable()->comment('Product description');
             $table->integer('minimum_quantity', false, true);
             $table->boolean('is_featured')->comment('for displaying products in featured/popular section');
             // $table->enum('status', array_column(Status::cases(), 'value'))->comment("-1 = deleted, 0 = inactive, 1 = active");

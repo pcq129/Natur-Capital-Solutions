@@ -53,9 +53,49 @@ class ProductService
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(array $request)
     {
-        //
+        // dd($request);
+        $product = Product::create([
+            'name' => $request['name'],
+            'is_featured' => $request['isFeatured'] ?? false,
+            'category_id' => $request['productCategory'],
+            'sub_category_id' => $request['productSubCategory'],
+            'minimum_quantity' => $request['minimumQuantity'],
+            'is_featured' => $request['is_featured'] ?? false,
+            'status' => Status::from($request['status']??true),
+            'description' => $request['product-trixFields'][CONSTANTS::PRODUCT_DESCRIPTION] ?? null,
+        ]);
+
+        $product->sections()->createMany([
+            [
+                'priority' => $request['descriptionPriority'] ?? 0,
+                'name' => 'Description',
+                'content' => $request['product-trixFields'][CONSTANTS::PRODUCT_DESCRIPTION] ?? null,
+            ],
+            [
+                'priority' => $request['informationPriority'] ?? 0,
+                'name' => 'Information',
+                'content' => $request['product-trixFields'][CONSTANTS::PRODUCT_INFORMATION] ?? null,
+            ],
+            [
+                'priority' => $request['characteristicsPriority'] ?? 0,
+                'name' => 'Characteristics',
+                'content' => $request['product-trixFields'][CONSTANTS::PRODUCT_CHARACTERISTICS] ?? null,
+            ],
+            [
+                'priority' => $request['warrantyListPriority'] ?? 0,
+                'name' => 'Warranty List',
+                'content' => $request['product-trixFields'][CONSTANTS::PRODUCT_WARRANTY_LIST] ?? null,
+            ],
+            [
+                'priority' => $request['serviceListPriority'] ?? 0,
+                'name' => 'Service List',
+                'content' => $request['product-trixFields'][CONSTANTS::PRODUCT_SERVICE_LIST] ?? null,
+            ],
+        ]);
+
+        return ServiceResponse::success(CONSTANTS::STORE_SUCCESS, $product->id);
     }
 
 

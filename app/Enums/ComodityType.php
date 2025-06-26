@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum ContentType: string
+enum ComodityType: string
 {
     case PRODUCT = 'product';
     case SERVICE = 'service';

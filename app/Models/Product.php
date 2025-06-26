@@ -35,6 +35,26 @@ class Product extends Model
         return $this->belongsTo(SubCategory::class, 'sub_category_id', 'id');
     }
 
+    /**
+     * Get all of the Sections for the Product
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function Sections(): HasMany
+    {
+        return $this->hasMany(ProductSection::class, 'product_id', 'id');
+    }
+
+    /**
+     * Get all of the ProductFiles for the Product
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function ProductFiles(): HasMany
+    {
+        return $this->hasMany(ProductFile::class, 'foreign_key', 'local_key');
+    }
+
     protected $fillable = [
         'name',
         'category_id',

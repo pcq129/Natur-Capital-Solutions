@@ -5,6 +5,18 @@ namespace App\Constants;
 
 class ProductConstants
 {
+    // path constants (changing them will affect the code)
+    public const PRODUCT_IMAGE_PATH = 'product/images';
+    public const PRODUCT_FILE_PATH = 'product/files';
+    public const PRODUCT_DESCRIPTION = 'Description';
+    public const PRODUCT_INFORMATION = 'Information';
+    public const PRODUCT_CHARACTERISTICS = 'Characteristics';
+    public const PRODUCT_WARRANTY_LIST = 'WarrantyList';
+    public const PRODUCT_SERVICE_LIST = 'ServiceList';
+
+
+
+    // variable constants (changing them won't affect the code)
     public const STORE_SUCCESS = 'New Product added successfully';
     public const STORE_FAIL = 'Error while creating Product';
     public const FETCH_SUCCESS = 'Products fetched successfully';
@@ -16,9 +28,6 @@ class ProductConstants
     public const NO_CHANGE = 'No changes detected';
     public const NOT_FOUND = 'Product not found';
     public const PRODUCT_DELETE_MODAL_ID = 'productDeleteModalId';
-    public const PRODUCT_DESCRIPTION = 'productDescription';
-    public const PRODUCT_INFORMATION = 'productInformation';
-    public const PRODUCT_CHARACTERISTICS = 'productCharacteristics';
-    public const PRODUCT_WARRANTY_LIST = 'productWarrantyList';
-    public const PRODUCT_SERVICE_LIST = 'productServiceList';
+
+
 }

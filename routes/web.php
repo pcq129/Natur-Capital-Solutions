@@ -28,6 +28,12 @@ Route::middleware('auth')->group(function () {
     Route::resource('/categories', CategoryController::class);
     Route::resource('/products', ProductController::class);
     Route::resource('/sub-categories', SubCategoryController::class);
+    Route::get('/get-subcategories/{categoryId}', [ProductController::class, 'getSubcategories']);
+    Route::get('/product/add-files-page', [ProductController::class, 'addFilesForm'])->name('products.add-files-page');
+    Route::get('/product/add-images-page', [ProductController::class, 'addImagesForm'])->name('products.add-images-page');
+    Route::post('/product/add-images/{product}', [ProductController::class, 'addImages'])->name('products.add-images');
+    Route::post('/product/add-files/{product}', [ProductController::class, 'addFiles'])->name('products.add-files');
+
 
 
 
