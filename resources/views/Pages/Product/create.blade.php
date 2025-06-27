@@ -34,6 +34,9 @@
 
 
 @section('content')
+
+
+
     <div class="card">
         <div class="card-body p-4">
             <form data-validate id="createProductForm" action="{{ route('products.store') }}" method="POST">
@@ -178,6 +181,7 @@
             });
 
             $('#productCategory').on('change', function() {
+                console.log('Category changed:', $(this).val());
                 const categoryId = $(this).val();
                 const subSelect = $('#productSubCategory');
                 subSelect.empty().append('<option value="">Loading...</option>');

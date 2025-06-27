@@ -2,14 +2,6 @@
 @vite('resources/css/app.css')
 
 @push('js')
-    <script type="importmap">
-    {
-        "imports": {
-            "ckeditor5": "https://cdn.ckeditor.com/ckeditor5/45.1.0/ckeditor5.js",
-            "ckeditor5/": "https://cdn.ckeditor.com/ckeditor5/45.1.0/"
-        }
-    }
-</script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const forms = document.querySelectorAll('form[data-validate]');
@@ -31,7 +23,6 @@
 @endpush
 
 @push('css')
-    <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/45.1.0/ckeditor5.css" />
 @endpush
 
 

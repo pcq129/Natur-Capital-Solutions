@@ -33,44 +33,44 @@ class ProductController extends Controller
         }
     }
 
-    public function addFiles(Request $request, $product ){
-        dd($request);
-        $product = Product::findOrFail($request->product);
-        dd($product, $request->file('productImage'));
-    }
+    // public function addFiles(Request $request, $product ){
+    //     dd($request);
+    //     $product = Product::findOrFail($request->product);
+    //     dd($product, $request->file('productImage'));
+    // }
 
-    public function addImages(Request $request, $product)
-    {
+    // public function addImages(Request $request, $product)
+    // {
 
-        $productImage = $this->fileService->uploadImage(
-            $request->file('productImage'),
-            ProductConstants::PRODUCT_IMAGE_PATH
-        );
+    //     $productImage = $this->fileService->saveFile(
+    //         $request->file('productImage'),
+    //         ProductConstants::PRODUCT_IMAGE_PATH
+    //     );
 
-        ProductFile::create([
-            'product_id' => $product,
-            'file_name' =>  $request->file('productImage')->getClientOriginalExtension(),
-            'file_path' => $productImage->data,
-            'file_type' => FileType::MAIN_IMAGE->value,
-        ]);
+    //     ProductFile::create([
+    //         'product_id' => $product,
+    //         'file_name' =>  $request->file('productImage')->getClientOriginalExtension(),
+    //         'file_path' => $productImage->data,
+    //         'file_type' => FileType::MAIN_IMAGE->value,
+    //     ]);
 
-        foreach ($request->file('productDetailImages') as $image) {
-            $productDetailImage = $this->fileService->uploadImage(
-                $image,
-                ProductConstants::PRODUCT_IMAGE_PATH
-            );
+    //     foreach ($request->file('productDetailImages') as $image) {
+    //         $productDetailImage = $this->fileService->saveFile(
+    //             $image,
+    //             ProductConstants::PRODUCT_IMAGE_PATH
+    //         );
 
-            ProductFile::create([
-                'product_id' => $product,
-                'file_name' => $image->getClientOriginalExtension(),
-                'file_path' => $productDetailImage->data,
-                'file_type' => FileType::IMAGE->value,
-            ]);
-        }
-        toastr()->success('Product images added successfully');
-        return view('Pages.Product.add-files', ['productId' => $product]);
+    //         ProductFile::create([
+    //             'product_id' => $product,
+    //             'file_name' => $image->getClientOriginalExtension(),
+    //             'file_path' => $productDetailImage->data,
+    //             'file_type' => FileType::IMAGE->value,
+    //         ]);
+    //     }
+    //     toastr()->success('Product images added successfully');
+    //     return view('Pages.Product.add-files', ['productId' => $product]);
 
-    }
+    // }
 
     /**
      * Show the form for creating a new resource.
@@ -78,7 +78,7 @@ class ProductController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view('Pages.Product.create', ['categories' => $categories]);
+        return view('Pages.Product.create-product', ['categories' => $categories]);
     }
 
     /**
@@ -86,42 +86,109 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->only(
-            "isFeatured" ,
-            "name",
-            "productCategory",
-            "productSubCategory",
-            "minimumQuantity",
-            "product-trixFields",
-            "descriptionPriority",
-            "informationPriority",
-            "characteristicsPriority",
-            "warrantyListPriority",
-            "serviceListPriority",
+        // dd($request->all());
+        $data = $request->validate([
+            'name' => 'required|string|max:255|unique:products,name',
+            'productCategory' => 'required|integer|exists:categories,id',
+            'productSubCategory' => 'required|integer|exists:sub_categories,id',
+            'minimumQuantity' => 'required|integer|min:1',
+            'productImage' => 'required|image|mimes:jpg,jpeg,png|max:8192',
+            'productDetailImages.*' => 'required|image|mimes:jpg,jpeg,png|max:8192',
+            'videoInstruction' => 'nullable|mimes:mp4|max:51200', // 50MB
+            'files.*' => 'required|mimes:pdf|max:8192',
+            'product-trixFields' => 'required|array',
+            'product-trixFields.*' => ['required', function ($attribute, $value, $fail) {
+                if (trim(strip_tags($value)) === '') {
+                    $fail("The $attribute field cannot be empty.");
+                }
+            }],
+            // Validate Trix inputs
+            'descriptionPriority' => 'required|integer|min:1|max:5',
+            'informationPriority' => 'required|integer|min:1|max:5',
+            'characteristicsPriority' => 'required|integer|min:1|max:5',
+            'warrantyListPriority' => 'required|integer|min:1|max:5',
+            'serviceListPriority' => 'required|integer|min:1|max:5',
+        ]);
+
+
+        $action = $this->productService->store($data);
+        $productId = $action->data; //
+        $productImage = $this->fileService->saveFile(
+            $request->file('productImage'),
+            ProductConstants::PRODUCT_IMAGE_PATH
         );
-        $action= $this->productService->store($data);
-        $this->toasterService->toast($action);
-        return redirect()->route('products.add-files-page', ['product' => $action->data]);
+        $productVideo = $this->fileService->saveFile(
+            $request->file('videoInstruction'),
+            ProductConstants::PRODUCT_FILE_PATH
+        );
+
+        ProductFile::create([
+            'product_id' => $productId,
+            'file_name' =>  $request->file('productImage')->getClientOriginalName(),
+            'file_path' => $productImage->data,
+            'file_type' => FileType::MAIN_IMAGE->value,
+        ]);
+
+        ProductFile::create([
+            'product_id' => $productId,
+            'file_name' =>  $request->file('videoInstruction')->getClientOriginalName(),
+            'file_path' => $productVideo->data,
+            'file_type' => FileType::VIDEO->value,
+        ]);
+
+        foreach ($request->file('productDetailImages') as $image) {
+            $productDetailImage = $this->fileService->saveFile(
+                $image,
+                ProductConstants::PRODUCT_IMAGE_PATH
+            );
+
+            ProductFile::create([
+                'product_id' => $productId,
+                'file_name' => $image->getClientOriginalName(),
+                'file_path' => $productDetailImage->data,
+                'file_type' => FileType::IMAGE->value,
+            ]);
+        }
+        foreach ($request->file('files') as $document) {
+            $productDocument = $this->fileService->saveFile(
+                $document,
+                ProductConstants::PRODUCT_FILE_PATH
+            );
+
+            ProductFile::create([
+                'product_id' => $productId,
+                'file_name' => $image->getClientOriginalName(),
+                'file_path' => $productDocument->data,
+                'file_type' => FileType::PDF->value,
+            ]);
+        }
+
+
+        // $this->toasterService->toast($action);
+        return response()->json([
+            'message' => 'Product created successfully',
+            'productId' => $productId,
+        ], 201);
     }
 
     /**
      * Show the form for adding files to a product.
      */
-    public function addImagesForm(Request $request)
-    {
-        $productId = $request->query('product');
-        return view('Pages.Product.add-images', compact('productId'));
-    }
+    // public function addImagesForm(Request $request)
+    // {
+    //     $productId = $request->query('product');
+    //     return view('Pages.Product.add-images', compact('productId'));
+    // }
 
 
-       /**
+    /**
      * Show the form for adding files to a product.
      */
-    public function addFilesForm(Request $request)
-    {
-        $productId = $request->query('product');
-        return view('Pages.Product.add-files', compact('productId'));
-    }
+    // public function addFilesForm(Request $request)
+    // {
+    //     $productId = $request->query('product');
+    //     return view('Pages.Product.add-files', compact('productId'));
+    // }
 
 
     /**
@@ -135,9 +202,12 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Product $product)
+    public function edit($product)
     {
-        //
+        $categories = Category::all();
+        $data = Product::where('id', $product)->with('Sections','ProductFiles')->get();
+        $product = json_decode($data, true);
+        return view('Pages.Product.edit-product', ['product' => $product, 'categories' => $categories]);
     }
 
     /**
@@ -160,7 +230,7 @@ class ProductController extends Controller
     public function getSubcategories($categoryId)
     {
         $subCategories = SubCategory::where('category_id', $categoryId)
-        ->get(['id', 'name', 'category_id']);
+            ->get(['id', 'name', 'category_id']);
 
 
         return response()->json(($subCategories));

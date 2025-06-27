@@ -27,7 +27,7 @@ class BannerService
     {
         try {
             // formatting and preparing data for db storage
-            $saveImage = $this->imageUploadService->uploadImage($newBannerData['image'], CONSTANTS::BANNER_STORAGE_FOLDER);
+            $saveImage = $this->imageUploadService->saveFile($newBannerData['image'], CONSTANTS::BANNER_STORAGE_FOLDER);
             $imageLocation = $saveImage->data;
             if ($imageLocation) {
                 $buttons = $this->formatButtons($newBannerData);
@@ -62,12 +62,12 @@ class BannerService
             $banner = Banner::findOrFail($id);
             if ($request->hasFile('image')) {
                 $oldImage = $banner->image;
-                $saveImage = $this->imageUploadService->uploadImage($request->image, CONSTANTS::BANNER_STORAGE_FOLDER);
+                $saveImage = $this->imageUploadService->saveFile($request->image, CONSTANTS::BANNER_STORAGE_FOLDER);
                 $imageLocation = $saveImage->data;
                 $banner->fill([
                     'image' => $imageLocation,
                 ]);
-                $this->imageUploadService->deleteImage($oldImage);
+                $this->imageUploadService->deleteFile($oldImage);
             }
 
             $buttons = json_encode($this->formatButtons($bannerData));
@@ -108,7 +108,7 @@ class BannerService
             }
 
             // Additionaly, delete image
-            $this->imageUploadService->deleteImage($banner->image);
+            $this->imageUploadService->deleteFile($banner->image);
             $banner->delete();
             return ServiceResponse::Success(CONSTANTS::DELETE_SUCCESS);
         } catch (\Exception $e) {

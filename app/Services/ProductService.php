@@ -38,10 +38,9 @@ class ProductService
                 return $row->category->name ?? '-';
             })
             ->addColumn('actions', function ($row) {
-                $editUrl = route('categories.edit', $row->id);
-                $targetDelete = 'CONSTANTS::DELETE_SUB_CATEGORY_MODAL';
-                $targetEdit = 'CONSTANTS::UPDATE_SUB_CATEGORY_MODAL';
-                return view('Partials.Category.actions', ['edit' => $editUrl,  'row' => $row, 'targetDelete' => $targetDelete, 'targetEdit' => $targetEdit]);
+                $editUrl = route('products.edit', $row->id);
+                $targetDelete = CONSTANTS::PRODUCT_DELETE_MODAL_ID;
+                return view('Partials.actions', ['edit' => $editUrl,  'row' => $row, 'target' => $targetDelete]);
             })
             ->rawColumns(['actions'])
             ->make(true);

@@ -52,7 +52,7 @@ class Product extends Model
      */
     public function ProductFiles(): HasMany
     {
-        return $this->hasMany(ProductFile::class, 'foreign_key', 'local_key');
+        return $this->hasMany(ProductFile::class, 'product_id', 'id');
     }
 
     protected $fillable = [
