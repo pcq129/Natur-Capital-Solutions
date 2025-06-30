@@ -232,9 +232,10 @@
                 if (!productImageForm.checkValidity() || !productTextsForm.checkValidity() || !productFilesForm
                     .checkValidity()) {
                     toastr.error(
-                        'Few fields are missing, please go through all the tabs and fill the required fields.');
+                        'Few fields are missing, please go through all the tabs and fill the required fields.'
+                    );
                     return;
-                }else{
+                } else {
                     toastr.info('Submitting your product, please wait...');
                 }
                 const formData = new FormData(productTextsForm);
@@ -278,7 +279,7 @@
                     return;
                 }
 
-               $("#finalSubmit").prop('disabled', true); // Disable the button to prevent multiple clicks
+                $("#finalSubmit").prop('disabled', true); // Disable the button to prevent multiple clicks
                 finalSubmit();
             });
 
@@ -297,6 +298,7 @@
 
             const videoInput = document.getElementById('videoInstruction');
             const filesInput = document.getElementById('documentsInput');
+            const filesLimit = 6; // Maximum number of files allowed
 
             // Video preview
             videoInput.addEventListener('change', function() {
@@ -327,6 +329,12 @@
             // Document filenames preview
             filesInput.addEventListener('change', function() {
                 // Remove old file list if any
+
+                if (filesInput.files.length > filesLimit) {
+                    toastr.error('You can only upload a maximum of ' + filesLimit + ' files.');
+                    this.value = ''; // Clear the file input
+                    return;
+                }
                 const oldList = document.querySelector('.file-name-list');
                 if (oldList) oldList.remove();
 
@@ -541,6 +549,13 @@
             });
 
             document.getElementById('productDetailImages').addEventListener('change', function() {
+                const imagesLimit = 5; // Maximum number of detail images allowed
+                if (this.files.length > imagesLimit) {
+                    toastr.error('You can only upload one main image.');
+                    this.value = ''; // Clear the file input
+                    return;
+                }
+
                 // Remove any previous previews
                 const oldPreview = document.querySelector('.extraImagesPreview');
                 if (oldPreview) oldPreview.remove();

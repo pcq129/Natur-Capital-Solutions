@@ -14,8 +14,6 @@ class ProductConstants
     public const PRODUCT_WARRANTY_LIST = 'WarrantyList';
     public const PRODUCT_SERVICE_LIST = 'ServiceList';
 
-
-
     // variable constants (changing them won't affect the code)
     public const STORE_SUCCESS = 'New Product added successfully';
     public const STORE_FAIL = 'Error while creating Product';
@@ -28,6 +26,4 @@ class ProductConstants
     public const NO_CHANGE = 'No changes detected';
     public const NOT_FOUND = 'Product not found';
     public const PRODUCT_DELETE_MODAL_ID = 'productDeleteModalId';
-
-
 }

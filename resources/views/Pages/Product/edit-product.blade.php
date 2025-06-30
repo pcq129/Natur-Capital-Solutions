@@ -5,6 +5,7 @@
     use App\Models\Product;
     use App\Enums\Status;
     use App\Constants\ProductConstants as CONSTANTS;
+    use App\Enums\FileType;
     // $categories = [
     //     'category1' => [
     //         'id' => 1,
@@ -29,9 +30,9 @@
 
 @section('content')
 
-@php
-    dd($categories, $product)
-@endphp
+    {{-- @php
+        dd($categories, $product)
+    @endphp --}}
     <div class="card">
         <div class="card-header">
             <ul class="nav nav-tabs" id="productTab" role="tablist">
@@ -50,19 +51,20 @@
 
             {{-- Tab 1: Create Product --}}
             <div class="tab-pane fade show active" id="basic" role="tabpanel">
-                <form data-validate method="POST" id="productTextDataForm" action="{{ route('products.store') }}"
+                <form data-validate method="POST" id="productTextDataForm" action="{{ route('products.update', $product[0]->id) }}"
                     enctype="multipart/form-data">
                     @csrf
 
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="true" id="isFeatured" name="isFeatured">
-                        <label class="form-check-label " for="isFeatured" >
+                        <label class="form-check-label " for="isFeatured">
                             Is Featured
                         </label>
                     </div>
                     <div class="form-group">
                         <label for="productName">Product Name*</label>
-                        <input type="text" class="form-control" id="productName" name="name" required>
+                        <input type="text" value="{{ $product['name'] ?? old('name') }}" class="form-control"
+                            id="productName" name="name" required>
                     </div>
                     <div class="form-group row">
                         <div class="col">
@@ -88,12 +90,12 @@
                         <div class="col">
                             <label for="minimumQuantity">Minimum Quantity</label>
                             <input type="number" class="form-control" id="minimumQuantity" name="minimumQuantity"
-                                value="1" required>
+                                value="{{ $product['minimum_quantity'] ?? 1 }}" required>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Description*</label>
-                        @trix(\App\Models\Product::class, CONSTANTS::PRODUCT_DESCRIPTION, ['hideButtonIcons' => ['attach']])
+                        @trix(\App\Models\Product::class, CONSTANTS::PRODUCT_DESCRIPTION, ['hideButtonIcons' => ['attach'], 'id' => CONSTANTS::PRODUCT_DESCRIPTION])
                         <div class="priority">
                             <select name="descriptionPriority" class="custom-select mt-1" required>
                                 <option selected>Description Priority</option>
@@ -105,7 +107,7 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">More Information*</label>
-                        @trix(\App\Models\Product::class, CONSTANTS::PRODUCT_INFORMATION, ['hideButtonIcons' => ['attach']])
+                        @trix(\App\Models\Product::class, CONSTANTS::PRODUCT_INFORMATION, ['hideButtonIcons' => ['attach'], 'id' => CONSTANTS::PRODUCT_INFORMATION])
                         <div class="priority">
                             <select name="informationPriority" class="custom-select mt-1" required>
                                 <option selected>More Information Priority</option>
@@ -117,7 +119,7 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Characteristics*</label>
-                        @trix(\App\Models\Product::class, CONSTANTS::PRODUCT_CHARACTERISTICS, ['hideButtonIcons' => ['attach']])
+                        @trix(\App\Models\Product::class, CONSTANTS::PRODUCT_CHARACTERISTICS, ['hideButtonIcons' => ['attach'], 'id' => CONSTANTS::PRODUCT_CHARACTERISTICS])
                         <div class="priority">
                             <select name="characteristicsPriority" class="custom-select mt-1" required>
                                 <option selected>Characteristics Priority</option>
@@ -129,9 +131,9 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Warranty List*</label>
-                        @trix(\App\Models\Product::class, CONSTANTS::PRODUCT_WARRANTY_LIST, ['hideButtonIcons' => ['attach']])
+                        @trix(\App\Models\Product::class, CONSTANTS::PRODUCT_WARRANTY_LIST, ['hideButtonIcons' => ['attach'], 'id' => CONSTANTS::PRODUCT_WARRANTY_LIST])
                         <div class="priority">
-                            <select name="warrantyListPriority" class="custom-select mt-1" required>
+                            <select name="warrantylistPriority" class="custom-select mt-1" required>
                                 <option selected>Warranty List Priority</option>
                                 @for ($priority = 1; $priority <= 5; $priority++)
                                     <option value="{{ $priority }}">{{ $priority }}</option>
@@ -141,9 +143,9 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Service List*</label>
-                        @trix(\App\Models\Product::class, CONSTANTS::PRODUCT_SERVICE_LIST, ['hideButtonIcons' => ['attach']])
+                        @trix(\App\Models\Product::class, CONSTANTS::PRODUCT_SERVICE_LIST, ['hideButtonIcons' => ['attach'], 'id' => CONSTANTS::PRODUCT_SERVICE_LIST])
                         <div class="priority">
-                            <select name="serviceListPriority" class="custom-select mt-1" required>
+                            <select name="servicelistPriority" class="custom-select mt-1" required>
                                 <option selected>Service List Priority</option>
                                 @for ($priority = 1; $priority <= 5; $priority++)
                                     <option value="{{ $priority }}">{{ $priority }}</option>
@@ -151,8 +153,8 @@
                             </select>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-primary next-tab" id="productTextDataSubmit" data-next="#images"
-                        disabled>Next</button>
+                    <button type="button" class="btn btn-primary next-tab" id="productTextDataSubmit"
+                        data-next="#images">Next</button>
                     {{-- <button class="btn btn-primary w-100" type="submit">Next</button> --}}
                 </form>
             </div>
@@ -166,8 +168,12 @@
                         <label class="border border-secondary px-3 rounded" for="productImage">Select Product
                             Image</label>
                         <input type="file" class="form-control border border-secondary" id="productImage"
-                            name="productImage" accept=".jpg,.jpeg,.png" required>
+                            name="productImage" accept=".jpg,.jpeg,.png">
                         <small id='warning' class="form-text text-danger" hidden></small>
+                        <div class="image-preivew">
+                            <div id="productPreviewImage" class="image-wrapper m-1 d-inline">
+                            </div>
+                        </div>
                     </div>
 
 
@@ -177,13 +183,16 @@
                         <label class="border border-secondary px-3 rounded" for="productDetailImages">Select Extra
                             Images</label>
                         <input type="file" class="form-control border border-secondary" id="productDetailImages"
-                            name="productDetailImages[]" accept=".jpg,.jpeg,.png" multiple required>
+                            name="productDetailImages[]" accept=".jpg,.jpeg,.png" multiple>
                         <small class="form-text text-muted">You can upload multiple images (max size: 8 MB each).</small>
+                        <div class="image-preivew">
+                            <div id="productDetailPreviewImage" class="image-wrapper m-1 d-inline">
+                            </div>
+                        </div>
                     </div>
                     <button type="button" class="btn btn-secondary prev-tab" id="imagesTabPreviousBtn"
                         data-prev="#basic">Back</button>
-                    <button type="button" id="productImageSubmit" class="btn btn-primary next-tab" data-next="#files"
-                        disabled>Next</button>
+                    <button type="button" id="productImageSubmit" class="btn btn-primary next-tab" data-next="#files">Next</button>
                     {{-- <button type="submit" class="btn btn-primary mt-3">Upload Images</button> --}}
                 </form>
             </div>
@@ -204,7 +213,7 @@
                         <h5><strong>Documents/Downloads</strong></h5>
                         <label class="border border-secondary px-3 rounded" for="documentsInput">Select Files</label>
                         <input type="file" class="form-control border border-secondary" id="documentsInput"
-                            name="files[]" accept=".pdf" multiple required>
+                            name="files[]" accept=".pdf" multiple>
                         <small class="form-text text-muted">You can upload multiple documents (max size: 8 MB
                             each).</small>
                     </div>
@@ -231,14 +240,104 @@
             const productFilesForm = document.getElementById('addProductFiles');
             const productTextsForm = document.getElementById('productTextDataForm');
 
+            // code to set values to respective input fields;
+
+            // trix fields
+            function setValue(text = '') {
+                const trixEditor = document.querySelector("trix-editor")
+                trixEditor.editor.insertHTML(text);
+            }
+
+            const product = {!! json_encode($product) !!}[0];
+            const sections = product.sections;
+            const product_files = product.product_files;
+            const productName = document.getElementById('productName');
+            const productCategory = document.getElementById('productCategory');
+            const productSubCategory = document.getElementById('productSubCategory');
+            const productMinQty = document.getElementById('minimumQuantity');
+            const previewImage = document.getElementById('productPreviewImage');
+            const previewDetailImage = document.getElementById('productDetailPreviewImage');
+            const BASE_URL = "{{ config('app.url') }}";
+            productName.value = product.name;
+            productCategory.value = product.category_id;
+            const categoryChangeEvent = new Event('change', {
+                bubbles: true
+            });
+            // Trigger change to load subcategories
+            productMinQty.value = product.minimum_quantity;
+
+
+            sections.forEach(section => {
+                const input = document.getElementById(section.name);
+                const LCSectionName = section.name.toLowerCase();
+                const priorityName = LCSectionName + 'Priority';
+                const priority = document.querySelector("select[name='" + priorityName + "']");
+                console.log(LCSectionName + 'Priority');
+                if (input) {
+                    input.value = section.content;
+                    priority.value = section.priority;
+
+                    // Also update associated trix-editor if exists
+                    const trixEditor = document.querySelector(`trix-editor[input="${input.id}"]`);
+                    if (trixEditor) {
+                        trixEditor.editor.loadHTML(section.content);
+                    }
+                }
+            });
+
+            product_files.forEach(product_file => {
+
+                if (product_file.file_type == '{{ FileType::MAIN_IMAGE }}') {
+
+                    const img = document.createElement('img');
+                    img.src = BASE_URL + '/' +product_file.file_path;
+                    img.classList.add('img-thumbnail','productImagePreview');
+                    img.style.width = '200px';
+                    previewImage.append(img);
+
+                } else if (product_file.file_type == '{{ FileType::IMAGE }}') {
+                    const img = document.createElement('img');
+                    img.src = BASE_URL + '/' +product_file.file_path;
+                    img.classList.add('img-thumbnail', 'extraImagesPreview');
+                    img.style.width = '200px';
+                    previewDetailImage.append(img);
+                } else if (product_file.file_type == '{{ FileType::VIDEO }}') {
+                    const video = document.createElement('a');
+                    video.href = BASE_URL + '/' + product_file.file_path;
+                    video.textContent = product_file.file_name;
+                    video.target = '_blank';
+                    video.download = product_file.file_name;
+                    document.querySelector('.productVideo').appendChild(video);
+                } else if (product_file.file_type == '{{ FileType::PDF }}') {
+                    const documentFile = document.createElement('a');
+                    documentFile.href = BASE_URL + '/' + product_file.file_path;
+                    documentFile.textContent = product_file.file_name;
+                    documentFile.target = '_blank';
+                    documentFile.download = product_file.file_name;
+                    document.querySelector('.productDocuments').appendChild(documentFile);
+                } else {
+
+                }
+            });
+
+            if (product.is_featured == 1) {
+                document.getElementById('isFeatured').checked = true;
+            } else {
+                document.getElementById('isFeatured').checked = false;
+            }
+
+
+
+
             async function finalSubmit() {
                 console.log('final submit function called');
                 if (!productImageForm.checkValidity() || !productTextsForm.checkValidity() || !productFilesForm
                     .checkValidity()) {
                     toastr.error(
-                        'Few fields are missing, please go through all the tabs and fill the required fields.');
+                        'Few fields are missing, please go through all the tabs and fill the required fields.'
+                    );
                     return;
-                }else{
+                } else {
                     toastr.info('Submitting your product, please wait...');
                 }
                 const formData = new FormData(productTextsForm);
@@ -282,7 +381,7 @@
                     return;
                 }
 
-               $("#finalSubmit").prop('disabled', true); // Disable the button to prevent multiple clicks
+                $("#finalSubmit").prop('disabled', true); // Disable the button to prevent multiple clicks
                 finalSubmit();
             });
 
@@ -304,6 +403,22 @@
 
             // Video preview
             videoInput.addEventListener('change', function() {
+
+                let oversizedFile = false;
+                const maxSizeMB = 50; // Maximum file size in MB
+
+
+                for (const file of videoInput.files) {
+                    if (file.size > maxSizeMB * 1024 * 1024) {
+                        oversizedFile = true;
+                        break;
+                    }
+                }
+
+                if (oversizedFile) {
+                    toastr.error(`File size exceeds ${maxSizeMB} MB. Please upload a smaller file.`);
+                    this.value = ''; // Clear the file input
+                }
                 // Remove old preview if any
                 const oldPreview = document.querySelector('.video-preview');
                 if (oldPreview) oldPreview.remove();
@@ -345,37 +460,33 @@
                     li.textContent = files[i].name;
                     listContainer.appendChild(li);
                 }
-
                 document.querySelector('.productDocuments').appendChild(listContainer);
             });
 
 
-
-
-
             // first tab logic
             const productTextDataSubmit = document.getElementById('productTextDataSubmit');
-            let allFilled = true; // Track if all required trix fields are filled
+            let allFilled = true;
+            //Track if all required trix fields are filled
             let allowNextPage = false;
+            productTextsForm.addEventListener('input',
+                function(e) {
+                    const trixEditors = document.querySelectorAll('trix-editor');
+                    allFilled = true;
+                    trixEditors.forEach(editor => {
+                        const content = editor.editor.getDocument().toString();
+                        if (!content.trim()) {
+                            allFilled = false;
+                        }
+                    });
 
-            productTextsForm.addEventListener('input', function(e) {
-                const trixEditors = document.querySelectorAll('trix-editor');
-                allFilled = true;
-
-                trixEditors.forEach(editor => {
-                    const content = editor.editor.getDocument().toString();
-                    if (!content.trim()) {
-                        allFilled = false;
+                    if (productTextsForm.checkValidity() && allFilled) {
+                        productTextDataSubmit.disabled = false;
+                    } else {
+                        $('#images-tab').addClass('disabled');
+                        productTextDataSubmit.disabled = true;
                     }
-                });
-
-                if (productTextsForm.checkValidity() && allFilled) {
-                    productTextDataSubmit.disabled = false;
-                } else {
-                    $('#images-tab').addClass('disabled');
-                    productTextDataSubmit.disabled = true;
-                }
-            })
+                })
 
             document.getElementById('productTextDataSubmit').addEventListener('click', function(e) {
                 console.log('click success');
@@ -430,12 +541,14 @@
 
                     // Show tab using Bootstrap's tab method
                     $('#productTab a[href="#images"]').tab('show');
+                    $('#basic-tab').addClass('disabled');
                 }
 
             });
 
 
             $('#productCategory').on('change', function() {
+                console.log('category change');
                 const categoryId = $(this).val();
                 const subSelect = $('#productSubCategory');
                 subSelect.empty().append('<option value="0">Loading...</option>');
@@ -452,6 +565,8 @@
                                     `<option value="${sub.id}">${sub.name}</option>`
                                 );
                             });
+                            productSubCategory.value = product.sub_category_id;
+
                         },
                         error: function() {
                             subSelect.empty().append(
@@ -464,7 +579,7 @@
             });
 
 
-
+            productCategory.dispatchEvent(categoryChangeEvent);
             // image tab logic
 
             const productImageFormSubmit = document.getElementById('productImageSubmit');
@@ -503,6 +618,7 @@
             });
 
             document.getElementById('productImage').addEventListener('change', function() {
+                const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
                 // Remove existing preview if any
                 const oldPreview = document.querySelector('.productImagePreview');
                 if (oldPreview) oldPreview.remove();
@@ -510,7 +626,7 @@
                 const file = this.files[0];
                 if (!file) return;
 
-                const maxSizeMB = 8;
+                const maxSizeMB = 3;
                 const maxSizeBytes = maxSizeMB * 1024 * 1024;
 
                 if (file.size > maxSizeBytes) {
@@ -545,6 +661,15 @@
             });
 
             document.getElementById('productDetailImages').addEventListener('change', function() {
+
+                console.log('detail image change');
+                const imagesLimit = 5; // Maximum number of detail images allowed
+                if (this.files.length > imagesLimit) {
+                    toastr.error('You can upload maximum ' + imagesLimit + ' detail images.');
+                    this.value = ''; // Clear the file input
+                    return;
+                }
+
                 // Remove any previous previews
                 const oldPreview = document.querySelector('.extraImagesPreview');
                 if (oldPreview) oldPreview.remove();
@@ -554,13 +679,12 @@
                     'flex-wrap');
                 document.querySelector('.productDetailImages').appendChild(previewContainer);
 
-                const maxSizeMB = 8;
+                const maxSizeMB = 3;
                 const maxSizeBytes = maxSizeMB * 1024 * 1024;
 
                 const files = this.files;
                 for (let i = 0; i < files.length; i++) {
                     const file = files[i];
-
                     if (file.size > maxSizeBytes) {
                         alert(`File "${file.name}" exceeds ${maxSizeMB} MB limit and will be skipped.`);
                         continue;

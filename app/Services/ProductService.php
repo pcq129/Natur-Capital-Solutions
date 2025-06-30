@@ -69,27 +69,27 @@ class ProductService
         $product->sections()->createMany([
             [
                 'priority' => $request['descriptionPriority'] ?? 0,
-                'name' => 'Description',
+                'name' => CONSTANTS::PRODUCT_DESCRIPTION,
                 'content' => $request['product-trixFields'][CONSTANTS::PRODUCT_DESCRIPTION] ?? null,
             ],
             [
                 'priority' => $request['informationPriority'] ?? 0,
-                'name' => 'Information',
+                'name' => CONSTANTS::PRODUCT_INFORMATION,
                 'content' => $request['product-trixFields'][CONSTANTS::PRODUCT_INFORMATION] ?? null,
             ],
             [
                 'priority' => $request['characteristicsPriority'] ?? 0,
-                'name' => 'Characteristics',
+                'name' => CONSTANTS::PRODUCT_CHARACTERISTICS,
                 'content' => $request['product-trixFields'][CONSTANTS::PRODUCT_CHARACTERISTICS] ?? null,
             ],
             [
                 'priority' => $request['warrantyListPriority'] ?? 0,
-                'name' => 'Warranty List',
+                'name' => CONSTANTS::PRODUCT_WARRANTY_LIST,
                 'content' => $request['product-trixFields'][CONSTANTS::PRODUCT_WARRANTY_LIST] ?? null,
             ],
             [
                 'priority' => $request['serviceListPriority'] ?? 0,
-                'name' => 'Service List',
+                'name' => CONSTANTS::PRODUCT_SERVICE_LIST,
                 'content' => $request['product-trixFields'][CONSTANTS::PRODUCT_SERVICE_LIST] ?? null,
             ],
         ]);

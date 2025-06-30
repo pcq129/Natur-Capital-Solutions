@@ -52,7 +52,6 @@
             <div class="row m-2 mb-3">
                 <div class="col">
                     <label for="language" class="form-label">Content*</label>
-                    {{ dd($data) }}
                     {!! $data->trix('cmsText', ['hideButtonIcons' => ['attach']]) !!}
                 </div>
             </div>

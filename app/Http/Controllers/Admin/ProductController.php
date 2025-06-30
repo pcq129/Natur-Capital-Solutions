@@ -206,7 +206,8 @@ class ProductController extends Controller
     {
         $categories = Category::all();
         $data = Product::where('id', $product)->with('Sections','ProductFiles')->get();
-        $product = json_decode($data, true);
+        $product = $data;
+        // dd($product[0]->Sections);
         return view('Pages.Product.edit-product', ['product' => $product, 'categories' => $categories]);
     }
 
