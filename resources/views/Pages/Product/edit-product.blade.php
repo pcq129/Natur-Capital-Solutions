@@ -193,10 +193,9 @@
                     </div>
                     <button type="button" class="btn btn-secondary prev-tab" id="imagesTabPreviousBtn"
                         data-prev="#basic">Back</button>
-                    <button type="button" id="productImageSubmit" class="btn btn-primary next-tab"
-                        data-next="#files">
+                    <button type="button" id="productImageSubmit" class="btn btn-primary next-tab" data-next="#files">
                         <span class="spinner-border spinner-border-sm d-none" id="imageSubmitSpinner" role="status"
-                        aria-hidden="true"></span>Next</button>
+                            aria-hidden="true"></span>Next</button>
                     {{-- <button type="submit" class="btn btn-primary mt-3">Upload Images</button> --}}
                 </form>
             </div>
@@ -226,9 +225,9 @@
                     data-prev="#images">Back</button>
                 <button type="submit" id="finalSubmit" class="btn btn-success">
                     <span class="spinner-border spinner-border-sm d-none" id="finalSubmitSpinner"
-                    aria-hidden="true"></span>
-                   Submit
-                    </button>
+                        aria-hidden="true"></span>
+                    Submit
+                </button>
             </div>
 
         </div>
@@ -579,11 +578,40 @@
                     return;
                 }
                 if (allFilled && !hasDuplicates && productTextsForm.checkValidity()) {
+
+
                     e.preventDefault();
-                    $('#images-tab').removeClass('disabled');
-                    // Show tab using Bootstrap's tab method
-                    $('#productTab a[href="#images"]').tab('show');
-                    $('#basic-tab').addClass('disabled');
+
+
+                    const formData = new FormData(productTextDataForm);
+                    // const textSpinner = document.getElementById('textSpinner');
+                    $.ajax({
+                        url: `/product/validatetext`,
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(data) {
+                            if (data.success == true) {
+
+                                $('#images-tab').removeClass('disabled');
+                                // Show tab using Bootstrap's tab method
+                                $('#productTab a[href="#images"]').tab('show');
+                                $('#basic-tab').addClass('disabled');
+
+                                return;
+                            } else {
+                                for (const property in data.message) {
+                                    toastr.error(data.message[property][0]);
+                                }
+                                // spinner.classList.add('d-none');
+                            }
+
+                        },
+                        error: function(data) {
+                            toastr.error(data.message);
+                        }
+                    });
                 }
 
             });
