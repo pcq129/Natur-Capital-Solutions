@@ -261,7 +261,7 @@
 
                     if (response.ok) {
                         toastr.success('Product created successfully!');
-                        // window.location.href = "/products"; // Redirect if needed
+                        window.location.href = "/products";
                     } else {
                         alert('Submission failed: ' + (result.message || 'Unknown error'));
                     }

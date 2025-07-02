@@ -15,6 +15,9 @@ use App\Models\Category;
 use App\Models\ProductFile;
 use App\Models\SubCategory;
 use App\Services\FileService;
+use Illuminate\Support\Facades\Validator;
+use App\Constants\ProductConstants as CONSTANTS;
+use App\Enums\ServiceResponseType;
 
 class ProductController extends Controller
 {
@@ -205,7 +208,7 @@ class ProductController extends Controller
     public function edit($product)
     {
         $categories = Category::all();
-        $data = Product::where('id', $product)->with('Sections','ProductFiles')->get();
+        $data = Product::where('id', $product)->with('Sections', 'ProductFiles')->get();
         $product = $data;
         // dd($product[0]->Sections);
         return view('Pages.Product.edit-product', ['product' => $product, 'categories' => $categories]);
@@ -216,8 +219,85 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        //
+        // dd($request->all(), $request->files->all());
+
+
+        // dd($request->all());
+
+        // $data = $request->validate([
+        //     'name' => 'required|string|max:255|unique:products,name',
+        //     'productCategory' => 'required|integer|exists:categories,id',
+        //     'productSubCategory' => 'required|integer|exists:sub_categories,id',
+        //     'minimumQuantity' => 'required|integer|min:1',
+        //     'productImage' => 'image|mimes:jpg,jpeg,png|max:8192|mimes:jpg,jpeg,png|max:8192',
+        //     'productDetailImages.*' => 'image|mimes:jpg,jpeg,png|max:8192',
+        //     'videoInstruction' => 'nullable|mimes:mp4|max:51200', // 50MB
+        //     'files.*' => 'mimes:pdf|max:8192',
+        //     'product-trixFields' => 'required|array',
+        //     'product-trixFields.*' => ['required', function ($attribute, $value, $fail) {
+        //         if (trim(strip_tags($value)) === '') {
+        //             $fail("The $attribute field cannot be empty.");
+        //         }
+        //     }],
+        //     'descriptionPriority' => 'required|integer|min:1|max:5',
+        //     'informationPriority' => 'required|integer|min:1|max:5',
+        //     'characteristicsPriority' => 'required|integer|min:1|max:5',
+        //     'warrantyListPriority' => 'required|integer|min:1|max:5',
+        //     'serviceListPriority' => 'required|integer|min:1|max:5',
+        // ]);
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255|unique:products,name,' . $product->id,
+            'productCategory' => 'required|integer|exists:categories,id',
+            'productSubCategory' => 'required|integer|exists:sub_categories,id',
+            'minimumQuantity' => 'required|integer|min:1',
+            'productImage' => 'image|mimes:jpg,jpeg,png|max:8192|mimes:jpg,jpeg,png|mimetypes:image/jpeg,image/png,image/jpg|max:8192',
+            'productDetailImages.*' => 'image|mimes:jpg,jpeg,png|mimetypes:image/jpeg,image/png,image/jpg|max:8192',
+            'videoInstruction' => 'nullable|mimes:mp4|max:51200', // 50MB
+            'files.*' => 'mimes:pdf|mimetypes:application/pdf|max:8192',
+            'product-trixFields' => 'required|array',
+            'product-trixFields.*' => ['required', function ($attribute, $value, $fail) {
+                if (trim(strip_tags($value)) === '') {
+                    $fail("The $attribute field cannot be empty.");
+                }
+            }],
+            'descriptionPriority' => 'required|integer|min:1|max:5',
+            'informationPriority' => 'required|integer|min:1|max:5',
+            'characteristicsPriority' => 'required|integer|min:1|max:5',
+            'warrantylistPriority' => 'required|integer|min:1|max:5',
+            'servicelistPriority' => 'required|integer|min:1|max:5',
+        ], [
+            'files.*.mimetypes' => 'The documents must be a valid PDF file.',
+            'files.*.max' => 'The documents must not exceed 8MB.',
+        ]);
+
+        if ($validator->fails()) {
+            $message = $validator->errors()->first();
+            return response()->json([
+                'message' => $message,
+            ], 422);
+        }
+
+        $data = array_merge($validator->validated(), $request->allFiles());
+
+        $addFiles = $this->productService->update($data, $product);
+        // dd($addFiles);
+        if($addFiles->status !== ServiceResponseType::SUCCESS) {
+            return response()->json([
+                'message' => $addFiles->message,
+            ], 422);
+        }else{
+            return response()->json([
+                'message' => 'Product updated successfully',
+                'productId' => $product->id,
+            ], 201);
+        }
+
+
+        // $this->toasterService->toast($action);
+
     }
+
 
     /**
      * Remove the specified resource from storage.

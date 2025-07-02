@@ -11,10 +11,21 @@ use App\Services\DTO\ServiceResponse;
 use Yajra\DataTables\Facades\DataTables;
 use App\Constants\ProductConstants as CONSTANTS;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Services\FileService;
+use App\Models\ProductFile;
+use App\Enums\FileType;
 
 
 class ProductService
 {
+
+    public function __construct(protected FileService $fileService)
+    {
+        // Constructor to inject dependencies
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -45,7 +56,7 @@ class ProductService
             ->rawColumns(['actions'])
             ->make(true);
 
-        return ServiceResponse::success('success' , $products);
+        return ServiceResponse::success('success', $products);
     }
 
 
@@ -62,7 +73,7 @@ class ProductService
             'sub_category_id' => $request['productSubCategory'],
             'minimum_quantity' => $request['minimumQuantity'],
             'is_featured' => $request['is_featured'] ?? false,
-            'status' => Status::from($request['status']??true),
+            'status' => Status::from($request['status'] ?? true),
             'description' => $request['product-trixFields'][CONSTANTS::PRODUCT_DESCRIPTION] ?? null,
         ]);
 
@@ -98,12 +109,162 @@ class ProductService
     }
 
 
+
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
+    public function update(array $data, Product $product)
     {
-        //
+        try {
+            // DB::transaction(function () use ($product, $data) {
+
+                $product->sections()->delete();
+
+                $product->sections()->createMany([
+                    [
+                        'priority' => $data['descriptionPriority'] ?? 0,
+                        'name' => CONSTANTS::PRODUCT_DESCRIPTION,
+                        'content' => $data['product-trixFields'][CONSTANTS::PRODUCT_DESCRIPTION] ?? null,
+                    ],
+                    [
+                        'priority' => $data['informationPriority'] ?? 0,
+                        'name' => CONSTANTS::PRODUCT_INFORMATION,
+                        'content' => $data['product-trixFields'][CONSTANTS::PRODUCT_INFORMATION] ?? null,
+                    ],
+                    [
+                        'priority' => $data['characteristicsPriority'] ?? 0,
+                        'name' => CONSTANTS::PRODUCT_CHARACTERISTICS,
+                        'content' => $data['product-trixFields'][CONSTANTS::PRODUCT_CHARACTERISTICS] ?? null,
+                    ],
+                    [
+                        'priority' => $data['warrantylistPriority'] ?? 0,
+                        'name' => CONSTANTS::PRODUCT_WARRANTY_LIST,
+                        'content' => $data['product-trixFields'][CONSTANTS::PRODUCT_WARRANTY_LIST] ?? null,
+                    ],
+                    [
+                        'priority' => $data['servicelistPriority'] ?? 0,
+                        'name' => CONSTANTS::PRODUCT_SERVICE_LIST,
+                        'content' => $data['product-trixFields'][CONSTANTS::PRODUCT_SERVICE_LIST] ?? null,
+                    ],
+                ]);
+                $productId = $product->id;
+
+
+
+                if (isset($data['productImage'])) {
+
+                    $productImage = $this->fileService->saveFile(
+                        $data['productImage'],
+                        CONSTANTS::PRODUCT_IMAGE_PATH
+                    );
+
+                    $oldfiles = ProductFile::where('product_id', $productId)
+                        ->where('file_type', FileType::MAIN_IMAGE->value)
+                        ->get();
+
+
+                    ProductFile::create([
+                        'product_id' => $productId,
+                        'file_name' =>  $data['productImage']->getClientOriginalName(),
+                        'file_path' => $productImage->data,
+                        'file_type' => FileType::MAIN_IMAGE->value,
+                    ]);
+
+                    foreach ($oldfiles as $singleFile) {
+                        $action = $this->fileService->deleteFile($singleFile->file_path);
+                        if($action->status == ServiceResponseType::SUCCESS){
+                            $singleFile->delete();
+                            logger()->info('Old product image deleted successfully, file path: ' . $singleFile->file_path);
+                        }else{
+                            logger()->error('Failed to delete old product image, file path: ' . $singleFile->file_path);
+                            dd('Failed to delete old product image, file path: ' . $singleFile->file_path);
+                            return;
+                        }
+
+                    }
+                }
+
+                if (isset($data['videoInstruction'])) {
+
+                    $productVideo = $this->fileService->saveFile(
+                        $data['videoInstruction'],
+                        CONSTANTS::PRODUCT_FILE_PATH
+                    );
+
+                    $oldFiles = ProductFile::where('product_id', $productId)
+                        ->where('file_type', FileType::VIDEO->value)
+                        ->get();
+
+                    ProductFile::create([
+                        'product_id' => $productId,
+                        'file_name' =>  $data['videoInstruction']->getClientOriginalName(),
+                        'file_path' => $productVideo->data,
+                        'file_type' => FileType::VIDEO->value,
+                    ]);
+                    foreach ($oldFiles as $singleFile) {
+                        $this->fileService->deleteFile($singleFile->file_path);
+                        $singleFile->delete();
+                        logger()->info('Old product image deleted successfully, file path: ' . $singleFile->file_path);
+                    }
+                }
+
+                if (isset($data['productDetailImages'])) {
+                    $oldFiles = ProductFile::where('product_id', $productId)
+                        ->where('file_type', FileType::IMAGE->value)
+                        ->get();
+
+                    foreach ($data['productDetailImages'] as $image) {
+                        $productDetailImage = $this->fileService->saveFile(
+                            $image,
+                            CONSTANTS::PRODUCT_IMAGE_PATH
+                        );
+
+                        ProductFile::create([
+                            'product_id' => $productId,
+                            'file_name' => $image->getClientOriginalName(),
+                            'file_path' => $productDetailImage->data,
+                            'file_type' => FileType::IMAGE->value,
+                        ]);
+                    }
+
+                    foreach ($oldFiles as $singleFile) {
+                        $this->fileService->deleteFile($singleFile->file_path);
+                        $singleFile->delete();
+                        logger()->info('Old product image deleted successfully, file path: ' . $singleFile->file_path);
+                    }
+                }
+                if (isset($data['files'])) {
+                    $oldDocuments = ProductFile::where('product_id', $productId)
+                        ->where('file_type', FileType::PDF->value)
+                        ->get();
+
+                    foreach ($data['files'] as $document) {
+                        $productDocument = $this->fileService->saveFile(
+                            $document,
+                            CONSTANTS::PRODUCT_FILE_PATH
+                        );
+
+                        ProductFile::create([
+                            'product_id' => $productId,
+                            'file_name' => $document->getClientOriginalName(),
+                            'file_path' => $productDocument->data,
+                            'file_type' => FileType::PDF->value,
+                        ]);
+                    }
+                    foreach ($oldDocuments as $document) {
+                        $this->fileService->deleteFile($document->file_path);
+                        $document->delete();
+                    }
+                }
+                return ServiceResponse::success(CONSTANTS::UPDATE_SUCCESS, $product->id);
+            // });
+            // return ServiceResponse::success(CONSTANTS::UPDATE_SUCCESS, $product->id);
+
+        } catch (\Throwable $th) {
+            $message = "Uncaught exception while updating product";
+            Handler::logError($th, $message);
+            return ServiceResponse::error($message);
+        }
     }
 
     /**

@@ -51,9 +51,10 @@
 
             {{-- Tab 1: Create Product --}}
             <div class="tab-pane fade show active" id="basic" role="tabpanel">
-                <form data-validate method="POST" id="productTextDataForm" action="{{ route('products.update', $product[0]->id) }}"
-                    enctype="multipart/form-data">
+                <form data-validate method="POST" id="productTextDataForm"
+                    action="{{ route('products.update', $product[0]->id) }}" enctype="multipart/form-data">
                     @csrf
+                    @method('PUT')
 
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="true" id="isFeatured" name="isFeatured">
@@ -192,7 +193,8 @@
                     </div>
                     <button type="button" class="btn btn-secondary prev-tab" id="imagesTabPreviousBtn"
                         data-prev="#basic">Back</button>
-                    <button type="button" id="productImageSubmit" class="btn btn-primary next-tab" data-next="#files">Next</button>
+                    <button type="button" id="productImageSubmit" class="btn btn-primary next-tab"
+                        data-next="#files">Next</button>
                     {{-- <button type="submit" class="btn btn-primary mt-3">Upload Images</button> --}}
                 </form>
             </div>
@@ -258,11 +260,16 @@
             const previewImage = document.getElementById('productPreviewImage');
             const previewDetailImage = document.getElementById('productDetailPreviewImage');
             const BASE_URL = "{{ config('app.url') }}";
-            productName.value = product.name;
-            productCategory.value = product.category_id;
+            const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+            const allowedVideoTypes = ['video/mp4'];
+            const allowedDocumentTypes = ['application/pdf'];
             const categoryChangeEvent = new Event('change', {
                 bubbles: true
             });
+
+
+            productName.value = product.name;
+            productCategory.value = product.category_id;
             // Trigger change to load subcategories
             productMinQty.value = product.minimum_quantity;
 
@@ -272,7 +279,7 @@
                 const LCSectionName = section.name.toLowerCase();
                 const priorityName = LCSectionName + 'Priority';
                 const priority = document.querySelector("select[name='" + priorityName + "']");
-                console.log(LCSectionName + 'Priority');
+                console.log(priorityName);
                 if (input) {
                     input.value = section.content;
                     priority.value = section.priority;
@@ -288,32 +295,31 @@
             product_files.forEach(product_file => {
 
                 if (product_file.file_type == '{{ FileType::MAIN_IMAGE }}') {
-
                     const img = document.createElement('img');
-                    img.src = BASE_URL + '/' +product_file.file_path;
-                    img.classList.add('img-thumbnail','productImagePreview');
+                    img.src = BASE_URL + '/storage' + product_file.file_path;
+                    img.classList.add('img-thumbnail', 'productImagePreview');
                     img.style.width = '200px';
                     previewImage.append(img);
-
                 } else if (product_file.file_type == '{{ FileType::IMAGE }}') {
                     const img = document.createElement('img');
-                    img.src = BASE_URL + '/' +product_file.file_path;
+                    img.src = BASE_URL + '/storage' + product_file.file_path;
                     img.classList.add('img-thumbnail', 'extraImagesPreview');
                     img.style.width = '200px';
                     previewDetailImage.append(img);
                 } else if (product_file.file_type == '{{ FileType::VIDEO }}') {
                     const video = document.createElement('a');
-                    video.href = BASE_URL + '/' + product_file.file_path;
+                    video.href = BASE_URL + '/storage' + product_file.file_path;
                     video.textContent = product_file.file_name;
                     video.target = '_blank';
                     video.download = product_file.file_name;
                     document.querySelector('.productVideo').appendChild(video);
                 } else if (product_file.file_type == '{{ FileType::PDF }}') {
                     const documentFile = document.createElement('a');
-                    documentFile.href = BASE_URL + '/' + product_file.file_path;
+                    documentFile.href = BASE_URL + '/storage' + product_file.file_path;
                     documentFile.textContent = product_file.file_name;
                     documentFile.target = '_blank';
                     documentFile.download = product_file.file_name;
+                    documentFile.style.display = 'block';
                     document.querySelector('.productDocuments').appendChild(documentFile);
                 } else {
 
@@ -362,8 +368,8 @@
                     const result = await response.json();
 
                     if (response.ok) {
-                        toastr.success('Product created successfully!');
-                        // window.location.href = "/products"; // Redirect if needed
+                        toastr.success('Product updated successfully!');
+                        window.location.href = "/products";
                     } else {
                         alert('Submission failed: ' + (result.message || 'Unknown error'));
                     }
@@ -413,6 +419,12 @@
                         oversizedFile = true;
                         break;
                     }
+
+                    if(!allowedVideoTypes.includes(file.type)) {
+                        toastr.error(`"${file.name}" is not a valid video. Allowed type: MP4.`);
+                        this.value = ''; // Clear the file input
+                        return;
+                    }
                 }
 
                 if (oversizedFile) {
@@ -450,15 +462,34 @@
                 if (oldList) oldList.remove();
 
                 const files = this.files;
-                if (!files.length) return;
-
+                if (!files.length) {
+                    toastr.error('No files selected.');
+                    return;
+                }
+                if(files.length > 5) {
+                    toastr.error('You can upload a maximum of 5 files.');
+                    this.value = ''; // Clear the file input
+                    return;
+                }
+                let isValid = true;
                 const listContainer = document.createElement('ul');
                 listContainer.classList.add('file-name-list', 'mt-2');
 
                 for (let i = 0; i < files.length; i++) {
+
+                    if (!allowedDocumentTypes.includes(files[i].type)) {
+                        isValid=false
+                    }
+
                     const li = document.createElement('li');
                     li.textContent = files[i].name;
                     listContainer.appendChild(li);
+                }
+
+                if (!isValid) {
+                    toastr.error('Invalid file type. Only PDF files are allowed.');
+                    this.value = ''; // Clear the file input
+                    return;
                 }
                 document.querySelector('.productDocuments').appendChild(listContainer);
             });
@@ -618,7 +649,6 @@
             });
 
             document.getElementById('productImage').addEventListener('change', function() {
-                const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
                 // Remove existing preview if any
                 const oldPreview = document.querySelector('.productImagePreview');
                 if (oldPreview) oldPreview.remove();
@@ -633,6 +663,12 @@
                     $('#warning').removeAttr('hidden');
                     $('#warning').text(`File size exceeds ${maxSizeMB} MB. Please upload a smaller file.`);
                     this.value = ''; // Clear the file input
+                    return;
+                }
+
+                if (!allowedImageTypes.includes(file.type)) {
+                    toastr.error(`"${file.name}" is not a valid image. Allowed types: JPG, JPEG, PNG.`);
+                    this.value = '';
                     return;
                 }
 
@@ -688,6 +724,11 @@
                     if (file.size > maxSizeBytes) {
                         alert(`File "${file.name}" exceeds ${maxSizeMB} MB limit and will be skipped.`);
                         continue;
+                    }
+                    if (!allowedImageTypes.includes(file.type)) {
+                        toastr.error(`"${file.name}" is not a valid image. Allowed types: JPG, JPEG, PNG.`);
+                        this.value = '';
+                        return;
                     }
 
                     const reader = new FileReader();
