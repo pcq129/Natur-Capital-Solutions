@@ -163,7 +163,7 @@
             {{-- Tab 2: Add Images --}}
             <div class="tab-pane fade" id="images" role="tabpanel">
                 <form data-validate id="addProductImagesForm" method="POST" enctype="multipart/form-data">
-
+                    @csrf
                     <div class="form-group productMainImage h-50">
                         <h5><strong>List-Page/Main Image</strong></h5>
                         <label class="border border-secondary px-3 rounded" for="productImage">Select Product
@@ -194,7 +194,9 @@
                     <button type="button" class="btn btn-secondary prev-tab" id="imagesTabPreviousBtn"
                         data-prev="#basic">Back</button>
                     <button type="button" id="productImageSubmit" class="btn btn-primary next-tab"
-                        data-next="#files">Next</button>
+                        data-next="#files">
+                        <span class="spinner-border spinner-border-sm d-none" id="imageSubmitSpinner" role="status"
+                        aria-hidden="true"></span>Next</button>
                     {{-- <button type="submit" class="btn btn-primary mt-3">Upload Images</button> --}}
                 </form>
             </div>
@@ -222,7 +224,11 @@
                 </form>
                 <button type="button" class="btn btn-secondary prev-tab" id="filesTabPreviousBtn"
                     data-prev="#images">Back</button>
-                <button type="submit" id="finalSubmit" class="btn btn-success">Submit</button>
+                <button type="submit" id="finalSubmit" class="btn btn-success">
+                    <span class="spinner-border spinner-border-sm d-none" id="finalSubmitSpinner"
+                    aria-hidden="true"></span>
+                   Submit
+                    </button>
             </div>
 
         </div>
@@ -336,6 +342,7 @@
 
 
             async function finalSubmit() {
+                const spinner = document.getElementById('finalSubmitSpinner');
                 console.log('final submit function called');
                 if (!productImageForm.checkValidity() || !productTextsForm.checkValidity() || !productFilesForm
                     .checkValidity()) {
@@ -357,6 +364,7 @@
                 }
 
                 try {
+                    spinner.classList.remove('d-none');
                     const response = await fetch(productTextsForm.action, {
                         method: 'POST',
                         headers: {
@@ -366,16 +374,20 @@
                     });
 
                     const result = await response.json();
-
                     if (response.ok) {
                         toastr.success('Product updated successfully!');
                         window.location.href = "/products";
                     } else {
-                        alert('Submission failed: ' + (result.message || 'Unknown error'));
+                        for (const property in result.message) {
+                            toastr.error(result.message[property][0]);
+                        }
+                        $("#finalSubmit").prop('disabled', false);
+                        spinner.classList.add('d-none');
                     }
                 } catch (error) {
                     console.error(error);
-                    alert('An error occurred during submission.');
+                    toastr.error(error.message);
+                    // alert('An error occurred during submission.');
                 }
             }
 
@@ -420,7 +432,7 @@
                         break;
                     }
 
-                    if(!allowedVideoTypes.includes(file.type)) {
+                    if (!allowedVideoTypes.includes(file.type)) {
                         toastr.error(`"${file.name}" is not a valid video. Allowed type: MP4.`);
                         this.value = ''; // Clear the file input
                         return;
@@ -466,7 +478,7 @@
                     toastr.error('No files selected.');
                     return;
                 }
-                if(files.length > 5) {
+                if (files.length > 5) {
                     toastr.error('You can upload a maximum of 5 files.');
                     this.value = ''; // Clear the file input
                     return;
@@ -478,7 +490,7 @@
                 for (let i = 0; i < files.length; i++) {
 
                     if (!allowedDocumentTypes.includes(files[i].type)) {
-                        isValid=false
+                        isValid = false
                     }
 
                     const li = document.createElement('li');
@@ -569,7 +581,6 @@
                 if (allFilled && !hasDuplicates && productTextsForm.checkValidity()) {
                     e.preventDefault();
                     $('#images-tab').removeClass('disabled');
-
                     // Show tab using Bootstrap's tab method
                     $('#productTab a[href="#images"]').tab('show');
                     $('#basic-tab').addClass('disabled');
@@ -618,7 +629,10 @@
             productImageFormSubmit.addEventListener('click', function(e) {
                 console.log('image submit click');
                 const next = this.dataset.next;
+                const spinner = document.getElementById('imageSubmitSpinner');
+                console.log(spinner);
 
+                spinner.classList.remove('d-none');
                 // validations
                 if (!productImageForm.checkValidity()) {
                     e.preventDefault();
@@ -630,11 +644,36 @@
                 // feedbacks/toasts
                 if (productImageForm.checkValidity()) {
                     e.preventDefault();
-                    $('#files-tab').removeClass('disabled');
-                    $('#images-tab').addClass('disabled');
+                    const formData = new FormData(productImageForm);
 
-                    // Show tab using Bootstrap's tab method
-                    $('#productTab a[href="#files"]').tab('show');
+                    $.ajax({
+                        url: `/product/validate`,
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(data) {
+                            if (data.success == true) {
+                                $('#images-tab').addClass('disabled');
+                                spinner.classList.add('d-none');
+                                productImageFormSubmit.innerHtml = "";
+                                $('#files-tab').removeClass('disabled');
+
+                                // Show tab using Bootstrap's tab method
+                                $('#productTab a[href="#files"]').tab('show')
+                                return;
+                            } else {
+                                for (const property in data.message) {
+                                    toastr.error(data.message[property][0]);
+                                }
+                                spinner.classList.add('d-none');
+                            }
+
+                        },
+                        error: function(data) {
+                            toastr.error(data.message);
+                        }
+                    });
                 }
             });
 

@@ -59,9 +59,9 @@
 
     <!-- Delete Confirmation Modal -->
     <div class="modal fade" id="{{ CONSTANTS::PRODUCT_DELETE_MODAL_ID }}" tabindex="-1"
-        aria-labelledby="deleteBranchModalLabel" aria-hidden="true">
+        aria-labelledby="deleteProductModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form method="POST" id="deleteBranchForm">
+            <form method="POST" id="deleteProductForm">
                 @csrf
                 @method('DELETE')
                 <div class="modal-content">
@@ -72,7 +72,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        Are you sure you want to delete <strong id="branchName"></strong>?
+                        Are you sure you want to delete <strong id="productName"></strong>?
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -138,6 +138,18 @@
                     [0, 'desc']
                 ]
             })
+
+           $("#{{ CONSTANTS::PRODUCT_DELETE_MODAL_ID }}").on('show.bs.modal', function(event) {
+                const button = $(event.relatedTarget);
+                const productId = button.data('id');
+                const productName = button.data('name');
+
+                const form = $('#deleteProductForm');
+                const action = '{{ route('products.destroy', ':id') }}'.replace(':id', productId);
+                form.attr('action', action);
+
+                $('#productName').text(productName);
+            });
         })
     </script>
 @endpush

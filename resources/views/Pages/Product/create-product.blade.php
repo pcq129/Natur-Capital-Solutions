@@ -156,7 +156,7 @@
             {{-- Tab 2: Add Images --}}
             <div class="tab-pane fade" id="images" role="tabpanel">
                 <form data-validate id="addProductImagesForm" method="POST" enctype="multipart/form-data">
-
+                    @csrf
                     <div class="form-group productMainImage h-50">
                         <h5><strong>List-Page/Main Image</strong></h5>
                         <label class="border border-secondary px-3 rounded" for="productImage">Select Product
@@ -179,7 +179,11 @@
                     <button type="button" class="btn btn-secondary prev-tab" id="imagesTabPreviousBtn"
                         data-prev="#basic">Back</button>
                     <button type="button" id="productImageSubmit" class="btn btn-primary next-tab" data-next="#files"
-                        disabled>Next</button>
+                        disabled>
+                        <span class="spinner-border spinner-border-sm d-none" id="imageSubmitSpinner" role="status"
+                            aria-hidden="true"></span>
+
+                        Next</button>
                     {{-- <button type="submit" class="btn btn-primary mt-3">Upload Images</button> --}}
                 </form>
             </div>
@@ -207,7 +211,11 @@
                 </form>
                 <button type="button" class="btn btn-secondary prev-tab" id="filesTabPreviousBtn"
                     data-prev="#images">Back</button>
-                <button type="submit" id="finalSubmit" class="btn btn-success">Submit</button>
+                <button type="submit" id="finalSubmit" class="btn btn-success">
+                    <span class="spinner-border spinner-border-sm d-none" id="finalSubmitSpinner" role="status"
+                            aria-hidden="true"></span>
+                    Submit
+                </button>
             </div>
 
         </div>
@@ -258,16 +266,21 @@
                     });
 
                     const result = await response.json();
-
                     if (response.ok) {
                         toastr.success('Product created successfully!');
                         window.location.href = "/products";
                     } else {
-                        alert('Submission failed: ' + (result.message || 'Unknown error'));
+                        for (const property in result.message) {
+                            toastr.error(result.message[property][0]);
+                        }
+                $('#finalSubmitSpinner').addClass('d-none');
+
+                        $("#finalSubmit").prop('disabled', false);
                     }
                 } catch (error) {
                     console.error(error);
-                    alert('An error occurred during submission.');
+                    toastr.error(error.message);
+                    // alert('An error occurred during submission.');
                 }
             }
 
@@ -278,7 +291,7 @@
                     toastr.error('Please select a video and at least one document before proceeding.');
                     return;
                 }
-
+                $('#finalSubmitSpinner').removeClass('d-none');
                 $("#finalSubmit").prop('disabled', true); // Disable the button to prevent multiple clicks
                 finalSubmit();
             });
@@ -430,10 +443,39 @@
                 }
                 if (allFilled && !hasDuplicates && productTextsForm.checkValidity()) {
                     e.preventDefault();
-                    $('#images-tab').removeClass('disabled');
 
-                    // Show tab using Bootstrap's tab method
-                    $('#productTab a[href="#images"]').tab('show');
+
+                    const formData = new FormData(productTextDataForm);
+                    // const textSpinner = document.getElementById('textSpinner');
+                    $.ajax({
+                        url: `/product/validatetext`,
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(data) {
+                            if (data.success == true) {
+
+                                $('#images-tab').removeClass('disabled');
+                                $('#basic-tab').addClass('disabled');
+                                // Show tab using Bootstrap's tab method
+                                $('#productTab a[href="#images"]').tab('show');
+
+                                return;
+                            } else {
+                                for (const property in data.message) {
+                                    toastr.error(data.message[property][0]);
+                                }
+                                // spinner.classList.add('d-none');
+                            }
+
+                        },
+                        error: function(data) {
+                            toastr.error(data.message);
+                        }
+                    });
+
+
                 }
 
             });
@@ -476,7 +518,10 @@
             productImageFormSubmit.addEventListener('click', function(e) {
                 console.log('image submit click');
                 const next = this.dataset.next;
+                const spinner = document.getElementById('imageSubmitSpinner');
+                console.log(spinner);
 
+                spinner.classList.remove('d-none'); // Show spinner
                 // validations
                 if (!productImageForm.checkValidity()) {
                     e.preventDefault();
@@ -488,11 +533,40 @@
                 // feedbacks/toasts
                 if (productImageForm.checkValidity()) {
                     e.preventDefault();
-                    $('#files-tab').removeClass('disabled');
-                    $('#images-tab').addClass('disabled');
+                    const formData = new FormData(productImageForm);
 
-                    // Show tab using Bootstrap's tab method
-                    $('#productTab a[href="#files"]').tab('show');
+                    $.ajax({
+                        url: `/product/validate`,
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(data) {
+                            if (data.success == true) {
+                                $('#images-tab').addClass('disabled');
+                                spinner.classList.add('d-none');
+                                productImageFormSubmit.innerHtml = "";
+                                $('#files-tab').removeClass('disabled');
+
+                                // Show tab using Bootstrap's tab method
+                                $('#productTab a[href="#files"]').tab('show')
+                                return;
+                            } else {
+                                for (const property in data.message) {
+                                    toastr.error(data.message[property][0]);
+                                }
+                                spinner.classList.add('d-none');
+                            }
+
+                        },
+                        error: function(data) {
+                            toastr.error(data.message);
+                        }
+                    });
+
+
+
+                    ;
                 }
             });
 

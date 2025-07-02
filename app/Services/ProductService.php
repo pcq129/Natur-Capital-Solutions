@@ -258,8 +258,6 @@ class ProductService
                 }
                 return ServiceResponse::success(CONSTANTS::UPDATE_SUCCESS, $product->id);
             // });
-            // return ServiceResponse::success(CONSTANTS::UPDATE_SUCCESS, $product->id);
-
         } catch (\Throwable $th) {
             $message = "Uncaught exception while updating product";
             Handler::logError($th, $message);
@@ -272,6 +270,24 @@ class ProductService
      */
     public function destroy(Product $product)
     {
-        //
+        $productFiles = $product->ProductFiles()->get();
+        $productSections = $product->Sections()->get();
+
+
+        foreach($productFiles as $file){
+            $fileLocation = $file->file_path;
+            $deleteStatus = $this->fileService->deleteFile($fileLocation);
+
+            if($deleteStatus->status){
+                $file->delete();
+            }
+        }
+        foreach($productSections as $section){
+            $section->delete();
+        }
+        $product->delete();
+
+        return ServiceResponse::success('Product deleted successfully');
+
     }
 }

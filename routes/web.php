@@ -33,6 +33,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/product/add-images-page', [ProductController::class, 'addImagesForm'])->name('products.add-images-page');
     Route::post('/product/add-images/{product}', [ProductController::class, 'addImages'])->name('products.add-images');
     Route::post('/product/add-files/{product}', [ProductController::class, 'addFiles'])->name('products.add-files');
+    Route::post('/product/validate', [ProductController::class, 'validateImages'])->name('product.validate');
+    Route::post('/product/validatetext', [ProductController::class, 'validateText'])->name('product.validate');
 
 
 
