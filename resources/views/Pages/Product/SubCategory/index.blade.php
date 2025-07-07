@@ -148,7 +148,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        Are you sure you want to delete <strong id="modalSubCategoryName"></strong>?
+                      <span id="subCategoryDeleteModalContent"></span>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -244,16 +244,75 @@
 
 
                 // Handle Delete Modal Show
-                $("#{{ CONSTANTS::DELETE_SUB_CATEGORY_MODAL }}").on('show.bs.modal', function(event) {
-                    const button = $(event.relatedTarget);
-                    const subCategoryId = button.data('id');
-                    const subCategoryName = button.data('name');
-                    const form = $('#deleteSubCategoryForm');
-                    const action = '{{ route('sub-categories.destroy', ':id') }}'.replace(':id',
-                        subCategoryId);
-                    form.attr('action', action);
-                    $('#modalSubCategoryName').text(subCategoryName);
+                // $("#{{ CONSTANTS::DELETE_SUB_CATEGORY_MODAL }}").on('show.bs.modal', function(event) {
+                //     const button = $(event.relatedTarget);
+                //     const subCategoryId = button.data('id');
+                //     const subCategoryName = button.data('name');
+                //     const form = $('#deleteSubCategoryForm');
+                //     const action = '{{ route('sub-categories.destroy', ':id') }}'.replace(':id',
+                //         subCategoryId);
+                //     form.attr('action', action);
+                //     $('#modalSubCategoryName').text(subCategoryName);
+                // });
+
+
+                $(document).on('click', '.open-delete-modal-btn', function(event) {
+                event.preventDefault();
+
+                const button = $(this);
+                const subCategoryId = button.data('id');
+                // const categoryName = button.data('name');
+                const form = $('#deleteCategoryForm');
+                const modal = $('#{{ CONSTANTS::DELETE_SUB_CATEGORY_MODAL }}');
+                const action = '{{ route('sub-categories.destroy', ':id') }}'.replace(':id', subCategoryId);
+
+                const validationUrl = '{{ route('sub-category.validatedelete', ':id') }}'.replace(':id',
+                    subCategoryId);
+
+                const spinner = button.find('#deleteCategorySpinner');
+                const deleteIcon = button.find('#deleteCategoryIcon');
+
+                // Show spinner, hide icon
+                deleteIcon.addClass('d-none');
+                spinner.removeClass('d-none');
+
+                // Do AJAX check first
+                $.ajax({
+                    url: validationUrl,
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                        'Accept': 'application/json'
+                    },
+                    success: function(response) {
+                        console.log(response.status );
+                            form.attr('action', action);
+                            // $('#modalCategoryName').text(categoryName);
+                            $('#subCategoryDeleteModalContent').text(response.message);
+                            modal.modal('show');
+                            // Now show modal
+
+                    },
+                    error: function(xhr) {
+
+
+
+                    },
+                    complete: function() {
+                        // Restore UI
+                        deleteIcon.removeClass('d-none');
+                        spinner.addClass('d-none');
+                    }
                 });
+
+
+
+
+                form.attr('action', validationUrl);
+                $('#modalSubCategoryName').text(subCategoryName);
+                $('#subCategoryDeleteModalContent').text('Are you sure to delete')
+            });
+
 
 
 

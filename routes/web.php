@@ -35,6 +35,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/product/add-files/{product}', [ProductController::class, 'addFiles'])->name('products.add-files');
     Route::post('/product/validate', [ProductController::class, 'validateImages'])->name('product.validate');
     Route::post('/product/validatetext', [ProductController::class, 'validateText'])->name('product.validate');
+    Route::get('/category/validate-delete/{category}', [CategoryController::class, 'destroy'])->name('category.validatedelete');
+    Route::get('/sub-category/validate-delete/{subCategory}', [SubCategoryController::class, 'destroy'])->name('sub-category.validatedelete');
 
 
 

@@ -49,6 +49,7 @@ class Category extends Model
     {
         static::deleting(function ($category) {
             $category->sub_categories()->delete();
+            $category->products()->delete();
         });
     }
 }

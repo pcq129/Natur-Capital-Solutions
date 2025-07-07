@@ -153,9 +153,25 @@ class SubCategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(SubCategory $subCategory)
+    public function destroy(Request $request, SubCategory $subCategory)
     {
         try {
+            if($request->ajax()){
+                $products = $subCategory->products()->get();
+
+                if($products->count()){
+                    return response()->json([
+                        'message' => $subCategory->name.' have products assigned. Deleting it will delete all related products',
+                        'status' => false
+                    ], 200);
+
+                }else{
+                    return response()->json([
+                        'message' => 'Are you sure to delete '.$subCategory->name,
+                        'status' => true
+                    ], 200);
+                }
+            }
             $action = $this->subCategoryService->deleteSubCategory($subCategory);
             $this->toasterService->toast($action);
             return redirect()->route('sub-categories.index');

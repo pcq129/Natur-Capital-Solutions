@@ -54,7 +54,7 @@
                 <form data-validate method="POST" id="productTextDataForm"
                     action="{{ route('products.update', $product[0]->id) }}" enctype="multipart/form-data">
                     @csrf
-                    @method('PUT')
+                    {{-- @method('PUT') --}}
 
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="true" id="isFeatured" name="isFeatured">
@@ -165,7 +165,7 @@
                 <form data-validate id="addProductImagesForm" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group productMainImage h-50">
-                        <h5><strong>List-Page/Main Image</strong></h5>
+                        <h5><strong>Product Main Image</strong></h5>
                         <label class="border border-secondary px-3 rounded" for="productImage">Select Product
                             Image</label>
                         <input type="file" class="form-control border border-secondary" id="productImage"
@@ -203,7 +203,7 @@
             {{-- Tab 3: Add Files --}}
             <div class="tab-pane fade" id="files" role="tabpanel">
                 <form data-validate id="addProductFiles" method="POST" enctype="multipart/form-data">
-
+                    @method('PUT')
                     <div class="form-group productVideo h-50">
                         <h5><strong>Video Instruction</strong></h5>
                         <label class="border border-secondary px-3 rounded" for="videoInstruction">Select Video</label>
@@ -342,6 +342,8 @@
 
             async function finalSubmit() {
                 const spinner = document.getElementById('finalSubmitSpinner');
+                const productTextsForm = document.getElementById('productTextDataForm');
+
                 console.log('final submit function called');
                 if (!productImageForm.checkValidity() || !productTextsForm.checkValidity() || !productFilesForm
                     .checkValidity()) {
@@ -349,8 +351,6 @@
                         'Few fields are missing, please go through all the tabs and fill the required fields.'
                     );
                     return;
-                } else {
-                    toastr.info('Submitting your product, please wait...');
                 }
                 const formData = new FormData(productTextsForm);
 
@@ -384,9 +384,7 @@
                         spinner.classList.add('d-none');
                     }
                 } catch (error) {
-                    console.error(error);
-                    toastr.error(error.message);
-                    // alert('An error occurred during submission.');
+                    toastr.error("Internal Server Error, Please try again later");
                 }
             }
 
@@ -586,7 +584,7 @@
                     const formData = new FormData(productTextDataForm);
                     // const textSpinner = document.getElementById('textSpinner');
                     $.ajax({
-                        url: `/product/validatetext`,
+                        url: `/product/validatetext?product=` + product.id,
                         type: 'POST',
                         data: formData,
                         processData: false,
@@ -675,7 +673,7 @@
                     const formData = new FormData(productImageForm);
 
                     $.ajax({
-                        url: `/product/validate`,
+                        url: `/product/validate?edit=true`,
                         type: 'POST',
                         data: formData,
                         processData: false,

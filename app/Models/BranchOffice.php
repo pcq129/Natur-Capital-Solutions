@@ -40,4 +40,5 @@ class BranchOffice extends Model
             'status' => Status::class,
         ];
     }
+    
 }

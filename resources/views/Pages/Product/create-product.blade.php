@@ -24,7 +24,7 @@
 @endphp
 
 @section('content_header')
-    <h1>Create Product</h1>
+    <h1>Edit Product</h1>
 @stop
 
 @section('content')
@@ -127,7 +127,7 @@
                         <label class="form-label">Warranty List*</label>
                         @trix(\App\Models\Product::class, CONSTANTS::PRODUCT_WARRANTY_LIST, ['hideButtonIcons' => ['attach']])
                         <div class="priority">
-                            <select name="warrantyListPriority" class="custom-select mt-1" required>
+                            <select name="warrantylistPriority" class="custom-select mt-1" required>
                                 <option selected>Warranty List Priority</option>
                                 @for ($priority = 1; $priority <= 5; $priority++)
                                     <option value="{{ $priority }}">{{ $priority }}</option>
@@ -139,7 +139,7 @@
                         <label class="form-label">Service List*</label>
                         @trix(\App\Models\Product::class, CONSTANTS::PRODUCT_SERVICE_LIST, ['hideButtonIcons' => ['attach']])
                         <div class="priority">
-                            <select name="serviceListPriority" class="custom-select mt-1" required>
+                            <select name="servicelistPriority" class="custom-select mt-1" required>
                                 <option selected>Service List Priority</option>
                                 @for ($priority = 1; $priority <= 5; $priority++)
                                     <option value="{{ $priority }}">{{ $priority }}</option>
@@ -158,7 +158,7 @@
                 <form data-validate id="addProductImagesForm" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group productMainImage h-50">
-                        <h5><strong>List-Page/Main Image</strong></h5>
+                        <h5><strong>Product Main Image</strong></h5>
                         <label class="border border-secondary px-3 rounded" for="productImage">Select Product
                             Image</label>
                         <input type="file" class="form-control border border-secondary" id="productImage"
@@ -243,8 +243,6 @@
                         'Few fields are missing, please go through all the tabs and fill the required fields.'
                     );
                     return;
-                } else {
-                    toastr.info('Submitting your product, please wait...');
                 }
                 const formData = new FormData(productTextsForm);
 
@@ -458,15 +456,13 @@
 
                                 $('#images-tab').removeClass('disabled');
                                 $('#basic-tab').addClass('disabled');
-                                // Show tab using Bootstrap's tab method
                                 $('#productTab a[href="#images"]').tab('show');
 
                                 return;
                             } else {
                                 for (const property in data.message) {
-                                    toastr.error(data.message[property][0]);
+                                    toastr.error(data.message[property][0], '', { timeOut: 9500 });
                                 }
-                                // spinner.classList.add('d-none');
                             }
 
                         },
@@ -488,7 +484,7 @@
 
                 if (categoryId) {
                     $.ajax({
-                        url: `/get-subcategories/${categoryId}`,
+                        url: `/get-subcategories/`+categoryId,
                         type: 'GET',
                         success: function(data) {
                             subSelect.empty().append(

@@ -47,4 +47,12 @@ class SubCategory extends Model
             'category_id' => 'integer'
         ];
     }
+
+
+    protected static function booted()
+    {
+        static::deleting(function ($subCategory) {
+            $subCategory->products()->delete();
+        });
+    }
 }

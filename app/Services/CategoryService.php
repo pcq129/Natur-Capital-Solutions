@@ -90,6 +90,7 @@ class CategoryService
     {
         try {
             $is_deleted = $category->delete();
+
             if ($is_deleted) {
                 return ServiceResponse::success(CONSTANTS::DELETE_SUCCESS);
             } else {

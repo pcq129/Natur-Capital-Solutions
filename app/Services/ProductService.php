@@ -94,12 +94,12 @@ class ProductService
                 'content' => $request['product-trixFields'][CONSTANTS::PRODUCT_CHARACTERISTICS] ?? null,
             ],
             [
-                'priority' => $request['warrantyListPriority'] ?? 0,
+                'priority' => $request['warrantylistPriority'] ?? 0,
                 'name' => CONSTANTS::PRODUCT_WARRANTY_LIST,
                 'content' => $request['product-trixFields'][CONSTANTS::PRODUCT_WARRANTY_LIST] ?? null,
             ],
             [
-                'priority' => $request['serviceListPriority'] ?? 0,
+                'priority' => $request['servicelistPriority'] ?? 0,
                 'name' => CONSTANTS::PRODUCT_SERVICE_LIST,
                 'content' => $request['product-trixFields'][CONSTANTS::PRODUCT_SERVICE_LIST] ?? null,
             ],

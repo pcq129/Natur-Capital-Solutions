@@ -51,7 +51,8 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="categoryName">Name</label>
-                            <input type="text" name="name" class="form-control" id="categoryName" required placeholder="Name of the category to be added.">
+                            <input type="text" name="name" class="form-control" id="categoryName" required
+                                placeholder="Name of the category to be added.">
                             @error('name')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -85,7 +86,8 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="updateModalCategoryName">Name</label>
-                            <input type="text" name="name" class="form-control" id="updateModalCategoryName" placeholder="Name of the category to be added.">
+                            <input type="text" name="name" class="form-control" id="updateModalCategoryName"
+                                placeholder="Name of the category to be added.">
                         </div>
                         <div class="form-group">
                             <label>Status</label>
@@ -129,7 +131,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        Are you sure you want to delete <strong id="modalCategoryName"></strong>?
+                        <span id="categoryDeleteModalContent"></span>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -144,12 +146,16 @@
 @push('css')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 @endpush
 
 @push('js')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+
 
     <script>
         $(document).ready(function() {
@@ -164,28 +170,149 @@
                         'Accept': 'Application/JSON'
                     }
                 },
-                columns: [
-                    { data: 'name', name: 'name', className: 'text-center' },
-                    { data: 'status', name: 'status', className: 'text-center' },
-                    { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-center' }
+                columns: [{
+                        data: 'name',
+                        name: 'name',
+                        className: 'text-center'
+                    },
+                    {
+                        data: 'status',
+                        name: 'status',
+                        className: 'text-center'
+                    },
+                    {
+                        data: 'actions',
+                        name: 'actions',
+                        orderable: false,
+                        searchable: false,
+                        className: 'text-center'
+                    }
                 ],
-                order: [[0, 'desc']]
+                order: [
+                    [0, 'desc']
+                ]
             });
 
+
+
             // Delete modal
-            $("#{{ CONSTANTS::DELETE_CATEGORY_MODAL }}").on('show.bs.modal', function(event) {
-                const button = $(event.relatedTarget);
+            // $("#{{ CONSTANTS::DELETE_CATEGORY_MODAL }}").on('show.bs.modal', function(event) {
+
+            //     const button = $(event.relatedTarget);
+            //     const categoryId = button.data('id');
+            //     const categoryName = button.data('name');
+            //     const form = $('#deleteCategoryForm');
+            //     const validationUrl = '{{ route('categories.destroy', ':id') }}'.replace(':id',
+            //         categoryId);
+            //     const spinner = button.find('#deleteCategorySpinner');
+            //     const deleteIcon = button.find('#deleteCategoryIcon');
+            //     deleteIcon.addClass('d-none');
+            //     spinner.removeClass('d-none');
+
+            //     // $('#{{ CONSTANTS::DELETE_CATEGORY_MODAL }}').on('hide.bs.modal', function(event) {
+            //     //     const spinner = button.find('#deleteCategorySpinner');
+            //     //     const deleteIcon = button.find('#deleteCategoryIcon');
+            //     //     deleteIcon.removeClass('d-none');
+            //     //     spinner.addClass('d-none');
+            //     //     console.log('hello world');
+            //     // });
+
+            //     $.ajax({
+            //         url: validationUrl,
+            //         method: 'get',
+            //         headers: {
+            //             'Accept': 'application/json'
+            //         },
+            //         success: function(response) {
+            //             if (response.success) {
+            //                 console.log(response);
+            //                 // Optional: You can auto-submit the form or enable a delete button
+            //                 // form.off('submit').submit();
+            //             }
+            //         },
+            //         error: function(xhr) {
+            //             event.preventDefault();
+            //             console.log(xhr);
+            //             if (xhr.status === 422) {
+            //                 form.find('.text-danger').remove();
+            //                 $.each(xhr.responseJSON.errors, function(key, messages) {
+            //                     const field = form.find(`[name="${key}"]`);
+            //                     field.after(
+            //                         `<div class="text-danger">${messages[0]}</div>`);
+            //                 });
+            //             }
+            //         },
+            //         complete: function() {
+            //             // Always restore icon/spinner after request
+            //             deleteIcon.removeClass('d-none');
+            //             spinner.addClass('d-none');
+            //         }
+            // });
+
+            $(document).on('click', '.open-delete-modal-btn', function(event) {
+                event.preventDefault();
+
+                const button = $(this);
                 const categoryId = button.data('id');
-                const categoryName = button.data('name');
+                // const categoryName = button.data('name');
                 const form = $('#deleteCategoryForm');
+                const modal = $('#{{ CONSTANTS::DELETE_CATEGORY_MODAL }}');
                 const action = '{{ route('categories.destroy', ':id') }}'.replace(':id', categoryId);
-                form.attr('action', action);
+
+                const validationUrl = '{{ route('category.validatedelete', ':id') }}'.replace(':id',
+                    categoryId);
+
+                const spinner = button.find('#deleteCategorySpinner');
+                const deleteIcon = button.find('#deleteCategoryIcon');
+
+                // Show spinner, hide icon
+                deleteIcon.addClass('d-none');
+                spinner.removeClass('d-none');
+
+                // Do AJAX check first
+                $.ajax({
+                    url: validationUrl,
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                        'Accept': 'application/json'
+                    },
+                    success: function(response) {
+                        console.log(response.status );
+                        // if (response.status === true || response.status === "true" || response.status == 1) {
+                            // Set form action and modal text
+                            form.attr('action', action);
+                            // $('#modalCategoryName').text(categoryName);
+                            $('#categoryDeleteModalContent').text(response.message);
+                            modal.modal('show');
+                            // Now show modal
+
+                    },
+                    error: function(xhr) {
+
+
+
+                    },
+                    complete: function() {
+                        // Restore UI
+                        deleteIcon.removeClass('d-none');
+                        spinner.addClass('d-none');
+                    }
+                });
+
+
+
+
+                form.attr('action', validationUrl);
                 $('#modalCategoryName').text(categoryName);
+                $('#categoryDeleteModalContent').text('Are you sure to delete')
             });
 
             // Update modal
             $("#{{ CONSTANTS::UPDATE_CATEGORY_MODAL }}").on('show.bs.modal', function(event) {
                 const button = $(event.relatedTarget);
+
+
                 const categoryId = button.data('id');
                 const categoryName = button.data('name');
                 const categoryStatus = button.data('status');
@@ -195,7 +322,7 @@
                 $('#updateCategoryId').val(categoryId);
                 $(`input[name="status"][value="${categoryStatus}"]`).prop('checked', true);
 
-                const updateAction = '{{ route("categories.update", ":id") }}'.replace(':id', categoryId);
+                const updateAction = '{{ route('categories.update', ':id') }}'.replace(':id', categoryId);
                 $('#updateCategoryForm').attr('action', updateAction).find('.text-danger').remove();
             });
 
@@ -204,7 +331,8 @@
                 e.preventDefault();
                 const form = $(this);
                 const categoryId = $('#updateCategoryId').val();
-                const validationUrl = '{{ route("categories.validate", ":id") }}'.replace(':id', categoryId);
+                const validationUrl = '{{ route('categories.validate', ':id') }}'.replace(':id',
+                    categoryId);
 
                 $.ajax({
                     url: validationUrl,
@@ -224,7 +352,8 @@
                             form.find('.text-danger').remove();
                             $.each(xhr.responseJSON.errors, function(key, messages) {
                                 const field = form.find(`[name="${key}"]`);
-                                field.after(`<div class="text-danger">${messages[0]}</div>`);
+                                field.after(
+                                    `<div class="text-danger">${messages[0]}</div>`);
                             });
                         }
                     }
@@ -235,7 +364,7 @@
                 e.preventDefault();
                 const form = $(this);
                 const categoryName = $('#categoryName').val();
-                const validationUrl = '{{ route("categories.validateStore") }}';
+                const validationUrl = '{{ route('categories.validateStore') }}';
 
                 $.ajax({
                     url: validationUrl,
@@ -255,7 +384,8 @@
                             form.find('.text-danger').remove();
                             $.each(xhr.responseJSON.errors, function(key, messages) {
                                 const field = form.find(`[name="${key}"]`);
-                                field.after(`<div class="text-danger">${messages[0]}</div>`);
+                                field.after(
+                                    `<div class="text-danger">${messages[0]}</div>`);
                             });
                         }
                     }

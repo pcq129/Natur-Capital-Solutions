@@ -133,7 +133,7 @@ return [
     |
     */
 
-    'usermenu_enabled' => false,
+    'usermenu_enabled' => true,
     'usermenu_header' => false,
     'usermenu_header_class' => 'bg-primary',
     'usermenu_image' => false,
@@ -337,7 +337,7 @@ return [
         // ],
         [
             'icon' => 'nav-icon fas fa-copy',
-            'text' => 'CMS-pages',
+            'text' => 'CMS Pages',
             'url' => '/cms-pages',
         ],
         // [
@@ -347,7 +347,7 @@ return [
         // ],
         [
             'icon' => 'nav-icon fas fa-paper-plane',
-            'text' => 'Email-Templates',
+            'text' => 'Email Templates',
             'url' => '/email-templates',
         ],
         // [

@@ -73,4 +73,13 @@ class Product extends Model
         'is_featured' => 'boolean',
         'status' => Status::class
     ];
+
+
+    protected static function booted()
+    {
+        static::deleting(function ($product) {
+            $product->Productfiles()->delete();
+            $product->Sections()->delete();
+        });
+    }
 }

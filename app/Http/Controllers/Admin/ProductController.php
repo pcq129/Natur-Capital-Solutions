@@ -38,26 +38,35 @@ class ProductController extends Controller
 
     public function validateText(Request $request)
     {
+        $productId = $request->product ?? '';
         $validator = Validator::make(
             $request->all(),
             [
-                'name' => 'required|string|max:255|unique:products,name',
+                'name' => 'required|string|max:255|unique:products,name,' . $productId,
                 'productCategory' => 'required|integer|exists:categories,id',
                 'productSubCategory' => 'required|integer|exists:sub_categories,id',
                 'minimumQuantity' => 'required|integer|min:1',
                 'product-trixFields' => 'required|array',
                 'product-trixFields.*' => ['required', function ($attribute, $value, $fail) {
                     if (trim(strip_tags($value)) === '') {
-                        $fail("The $attribute field cannot be empty.");
+                        $fail("The $attribute cannot be empty.");
                     }
                 }],
                 'descriptionPriority' => 'required|integer|min:1|max:5',
                 'informationPriority' => 'required|integer|min:1|max:5',
                 'characteristicsPriority' => 'required|integer|min:1|max:5',
-                'warrantyListPriority' => 'required|integer|min:1|max:5',
-                'serviceListPriority' => 'required|integer|min:1|max:5',
+                'warrantylistPriority' => 'required|integer|min:1|max:5',
+                'servicelistPriority' => 'required|integer|min:1|max:5',
             ],
-            $this->getValidationMessages()
+            $this->getValidationMessages(),
+            [
+                'product-trixFields.Information' => 'Product Information',
+                'product-trixFields.Characteristics' => 'Product Characteristics',
+                'product-trixFields.ServiceList' => 'Product ServiceList',
+                'product-trixFields.WarrantyList' => 'Product WarrantyList',
+                'product-trixFields.Description' => 'Product Description',
+                // etc.
+            ]
         );
 
         if ($validator->fails()) {
@@ -76,15 +85,24 @@ class ProductController extends Controller
 
     public function validateImages(Request $request)
     {
+        $required = $request->edit ? '' : 'required';
         $validator = Validator::make(
             $request->all(),
             [
-                'productImage' => 'max:8192|mimetypes:image/jpeg,image/png,image/jpg|image|mimes:jpg,jpeg,png|max:8192',
-                'productDetailImages.*' => 'mimetypes:image/jpeg,image/png,image/jpg|image|mimes:jpg,jpeg,png|max:8192',
+                'productImage' => 'max:8192|mimetypes:image/jpeg,image/png,image/jpg|image|mimes:jpg,jpeg,png|max:8192|' . $required,
+                'productDetailImages' => 'array|' . $required,
+                'productDetailImages.*' => 'mimetypes:image/jpeg,image/png,image/jpg|image|mimes:jpg,jpeg,png|max:8192|' . $required,
             ],
             [
-                'productDetailImages.*.mimetypes' => 'Invalid/Corrupt product detail Images.',
-                'productImage.mimetypes' => 'Invalid/Corrupt product image.',
+                'productImage.mimes' => 'Product image must be a file of type: jpg, jpeg, png.',
+                'productImage.mimetypes' => 'Product image must be a valid image (JPG, PNG).',
+                'productImage.image' => 'Product image must be an actual image.',
+                'productImage.max' => 'Product image must not exceed 8MB.',
+
+                'productDetailImages.*.mimes' => 'Each product detail image must be a file of type: jpg, jpeg, png.',
+                'productDetailImages.*.mimetypes' => 'Each product detail image must be a valid image (JPG, PNG).',
+                'productDetailImages.*.image' => 'Each product detail image must be an image.',
+                'productDetailImages.*.max' => 'Each product detail image must not exceed 8MB.',
             ]
         );
 
@@ -102,51 +120,13 @@ class ProductController extends Controller
         }
     }
 
-    // public function addFiles(Request $request, $product ){
-    //     dd($request);
-    //     $product = Product::findOrFail($request->product);
-    //     dd($product, $request->file('productImage'));
-    // }
-
-    // public function addImages(Request $request, $product)
-    // {
-
-    //     $productImage = $this->fileService->saveFile(
-    //         $request->file('productImage'),
-    //         ProductConstants::PRODUCT_IMAGE_PATH
-    //     );
-
-    //     ProductFile::create([
-    //         'product_id' => $product,
-    //         'file_name' =>  $request->file('productImage')->getClientOriginalExtension(),
-    //         'file_path' => $productImage->data,
-    //         'file_type' => FileType::MAIN_IMAGE->value,
-    //     ]);
-
-    //     foreach ($request->file('productDetailImages') as $image) {
-    //         $productDetailImage = $this->fileService->saveFile(
-    //             $image,
-    //             ProductConstants::PRODUCT_IMAGE_PATH
-    //         );
-
-    //         ProductFile::create([
-    //             'product_id' => $product,
-    //             'file_name' => $image->getClientOriginalExtension(),
-    //             'file_path' => $productDetailImage->data,
-    //             'file_type' => FileType::IMAGE->value,
-    //         ]);
-    //     }
-    //     toastr()->success('Product images added successfully');
-    //     return view('Pages.Product.add-files', ['productId' => $product]);
-
-    // }
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        $categories = Category::all();
+        $categories = Category::has('sub_categories')->get();
         return view('Pages.Product.create-product', ['categories' => $categories]);
     }
 
@@ -191,7 +171,7 @@ class ProductController extends Controller
 
             'product-trixFields.required' => 'Product details are required.',
             'product-trixFields.array' => 'Product details must be in array format.',
-            'product-trixFields.*.required' => 'Each product detail field is required.',
+            'product-trixFields.*.required' => 'Product :attribute section field is required.',
             // The custom closure handles "empty" HTML, so no message is needed here.
 
             'descriptionPriority.required' => 'Description priority is required.',
@@ -214,10 +194,10 @@ class ProductController extends Controller
             'warrantyListPriority.min' => 'Warranty list priority must be at least 1.',
             'warrantyListPriority.max' => 'Warranty list priority must be at most 5.',
 
-            'serviceListPriority.required' => 'Service list priority is required.',
-            'serviceListPriority.integer' => 'Service list priority must be a number.',
-            'serviceListPriority.min' => 'Service list priority must be at least 1.',
-            'serviceListPriority.max' => 'Service list priority must be at most 5.',
+            'servicelistPriority.required' => 'Service list priority is required.',
+            'servicelistPriority.integer' => 'Service list priority must be a number.',
+            'servicelistPriority.min' => 'Service list priority must be at least 1.',
+            'servicelistPriority.max' => 'Service list priority must be at most 5.',
         ];
     }
 
@@ -247,10 +227,19 @@ class ProductController extends Controller
                 'descriptionPriority' => 'required|integer|min:1|max:5',
                 'informationPriority' => 'required|integer|min:1|max:5',
                 'characteristicsPriority' => 'required|integer|min:1|max:5',
-                'warrantyListPriority' => 'required|integer|min:1|max:5',
-                'serviceListPriority' => 'required|integer|min:1|max:5',
+                'warrantylistPriority' => 'required|integer|min:1|max:5',
+                'servicelistPriority' => 'required|integer|min:1|max:5',
             ],
-            $this->getValidationMessages()
+            $this->getValidationMessages(),
+            [
+                'product-trixFields.Information' => 'Product Information',
+                'product-trixFields.Characteristics' => 'Product Characteristics',
+                'product-trixFields.ServiceList' => 'Product ServiceList',
+                'product-trixFields.WarrantyList' => 'Product WarrantyList',
+                'product-trixFields.Description' => 'Product Description',
+                // etc.
+            ]
+
         );
 
         if ($validator->fails()) {
@@ -322,24 +311,6 @@ class ProductController extends Controller
         ], 201);
     }
 
-    /**
-     * Show the form for adding files to a product.
-     */
-    // public function addImagesForm(Request $request)
-    // {
-    //     $productId = $request->query('product');
-    //     return view('Pages.Product.add-images', compact('productId'));
-    // }
-
-
-    /**
-     * Show the form for adding files to a product.
-     */
-    // public function addFilesForm(Request $request)
-    // {
-    //     $productId = $request->query('product');
-    //     return view('Pages.Product.add-files', compact('productId'));
-    // }
 
 
     /**
@@ -367,32 +338,6 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        // dd($request->all(), $request->files->all());
-
-
-        // dd($request->all());
-
-        // $data = $request->validate([
-        //     'name' => 'required|string|max:255|unique:products,name',
-        //     'productCategory' => 'required|integer|exists:categories,id',
-        //     'productSubCategory' => 'required|integer|exists:sub_categories,id',
-        //     'minimumQuantity' => 'required|integer|min:1',
-        //     'productImage' => 'image|mimes:jpg,jpeg,png|max:8192|mimes:jpg,jpeg,png|max:8192',
-        //     'productDetailImages.*' => 'image|mimes:jpg,jpeg,png|max:8192',
-        //     'videoInstruction' => 'nullable|mimes:mp4|max:51200', // 50MB
-        //     'files.*' => 'mimes:pdf|max:8192',
-        //     'product-trixFields' => 'required|array',
-        //     'product-trixFields.*' => ['required', function ($attribute, $value, $fail) {
-        //         if (trim(strip_tags($value)) === '') {
-        //             $fail("The $attribute field cannot be empty.");
-        //         }
-        //     }],
-        //     'descriptionPriority' => 'required|integer|min:1|max:5',
-        //     'informationPriority' => 'required|integer|min:1|max:5',
-        //     'characteristicsPriority' => 'required|integer|min:1|max:5',
-        //     'warrantyListPriority' => 'required|integer|min:1|max:5',
-        //     'serviceListPriority' => 'required|integer|min:1|max:5',
-        // ]);
 
         $validator = Validator::make(
             $request->all(),
@@ -463,7 +408,6 @@ class ProductController extends Controller
     {
         $subCategories = SubCategory::where('category_id', $categoryId)
             ->get(['id', 'name', 'category_id']);
-
 
         return response()->json(($subCategories));
     }

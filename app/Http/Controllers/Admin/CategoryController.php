@@ -161,9 +161,25 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Category $category)
+    public function destroy(Request $request,Category $category)
     {
         try {
+            if($request->ajax()){
+                $products = $category->products()->get();
+
+                if($products->count()){
+                    return response()->json([
+                        'message' => $category->name.' have products assigned. Deleting it will delete all related products. Are you sure to proceed?',
+                        'status' => false
+                    ], 200);
+
+                }else{
+                    return response()->json([
+                        'message' => 'Are you sure to delete '.$category->name.'?',
+                        'status' => true
+                    ], 200);
+                }
+            }
             $action = $this->categoryService->deleteCategory($category);
             $this->toasterService->toast($action);
             return redirect()->route('categories.index');
