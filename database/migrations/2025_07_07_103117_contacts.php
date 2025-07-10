@@ -16,13 +16,13 @@ return new class extends Migration
         Schema::dropIfExists('contact_details');
         Schema::create('contact_details', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 80);
-            $table->string('description', 255);
-            $table->enum('contact_type', array_column(ContactType::cases(), 'value'));
-            $table->tinyInteger('status');
-            $table->enum('action_type', array_column(ActionType::cases(), 'value'));
+            $table->string('name', 80);
+            $table->enum('contact_type', array_column(ContactType::cases(),'value'));
+            $table->string('contact', 255);
+            $table->string('button_text', 40);
             $table->string('action_url', 255);
             $table->integer('priority', false, true);
+            $table->tinyInteger('status');
             // $table->enum('status', array_column(Status::cases(), 'value'));
             $table->timestamps();
             $table->softDeletes();

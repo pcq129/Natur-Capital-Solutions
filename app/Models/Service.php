@@ -7,8 +7,32 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Service extends Model
 {
-    public function documents(): MorphMany
+    public function resources(): MorphMany
     {
-        return $this->morphMany(Document::class, 'documentable');
+        return $this->morphMany(Resource::class, 'resourceable');
     }
+
+    // /**
+    //  * Get all of the SubServices for the Service
+    //  *
+    //  * @return \Illuminate\Database\Eloquent\Relations\HasMany
+    //  */
+    // public function SubServices(): HasMany
+    // {
+    //     return $this->hasMany(SubServices::class, 'foreign_key', 'local_key');
+    // }
+
+    protected $casts = [
+        'id' => 'integer',
+        'name'=> 'string',
+        'description' => 'string',
+        'icon' => 'string'
+    ];
+
+    protected $fillable = [
+        'id',
+        'name',
+        'description',
+        'icon'
+    ];
 }

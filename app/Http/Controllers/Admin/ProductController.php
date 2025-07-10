@@ -18,6 +18,8 @@ use App\Services\FileService;
 use Illuminate\Support\Facades\Validator;
 use App\Constants\ProductConstants as CONSTANTS;
 use App\Enums\ServiceResponseType;
+use App\Http\Requests\Product\CreateProductRequest;
+use App\Http\Requests\Product\UpdateProductRequest;
 
 class ProductController extends Controller
 {
@@ -204,110 +206,13 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateProductRequest $request)
     {
-        // dd($request->all());
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'name' => 'required|string|max:255|unique:products,name',
-                'productCategory' => 'required|integer|exists:categories,id',
-                'productSubCategory' => 'required|integer|exists:sub_categories,id',
-                'minimumQuantity' => 'required|integer|min:1',
-                'productImage' => 'max:8192|mimetypes:image/jpeg,image/png,image/jpg|image|mimes:jpg,jpeg,png|max:8192',
-                'productDetailImages.*' => 'mimetypes:image/jpeg,image/png,image/jpg|image|mimes:jpg,jpeg,png|max:8192',
-                'videoInstruction' => 'nullable|mimetypes:video/mp4|mimes:mp4|max:51200', // 50MB
-                'files.*' => 'required|mimes:pdf|mimetypes:application/pdf|max:8192',
-                'product-trixFields' => 'required|array',
-                'product-trixFields.*' => ['required', function ($attribute, $value, $fail) {
-                    if (trim(strip_tags($value)) === '') {
-                        $fail("The $attribute field cannot be empty.");
-                    }
-                }],
-                'descriptionPriority' => 'required|integer|min:1|max:5',
-                'informationPriority' => 'required|integer|min:1|max:5',
-                'characteristicsPriority' => 'required|integer|min:1|max:5',
-                'warrantylistPriority' => 'required|integer|min:1|max:5',
-                'servicelistPriority' => 'required|integer|min:1|max:5',
-            ],
-            $this->getValidationMessages(),
-            [
-                'product-trixFields.Information' => 'Product Information',
-                'product-trixFields.Characteristics' => 'Product Characteristics',
-                'product-trixFields.ServiceList' => 'Product ServiceList',
-                'product-trixFields.WarrantyList' => 'Product WarrantyList',
-                'product-trixFields.Description' => 'Product Description',
-                // etc.
-            ]
-
-        );
-
-        if ($validator->fails()) {
-            $message = $validator->errors();
-            return response()->json([
-                'message' => $message,
-            ], 422);
-        }
-        $data = $validator->validated();
-        // dd($data);
-
-        $action = $this->productService->store($data);
-        $productId = $action->data; //
-        $productImage = $this->fileService->saveFile(
-            $request->file('productImage'),
-            ProductConstants::PRODUCT_IMAGE_PATH
-        );
-        $productVideo = $this->fileService->saveFile(
-            $request->file('videoInstruction'),
-            ProductConstants::PRODUCT_FILE_PATH
-        );
-
-        ProductFile::create([
-            'product_id' => $productId,
-            'file_name' =>  $request->file('productImage')->getClientOriginalName(),
-            'file_path' => $productImage->data,
-            'file_type' => FileType::MAIN_IMAGE->value,
-        ]);
-
-        ProductFile::create([
-            'product_id' => $productId,
-            'file_name' =>  $request->file('videoInstruction')->getClientOriginalName(),
-            'file_path' => $productVideo->data,
-            'file_type' => FileType::VIDEO->value,
-        ]);
-
-        foreach ($request->file('productDetailImages') as $image) {
-            $productDetailImage = $this->fileService->saveFile(
-                $image,
-                ProductConstants::PRODUCT_IMAGE_PATH
-            );
-
-            ProductFile::create([
-                'product_id' => $productId,
-                'file_name' => $image->getClientOriginalName(),
-                'file_path' => $productDetailImage->data,
-                'file_type' => FileType::IMAGE->value,
-            ]);
-        }
-        foreach ($request->file('files') as $document) {
-            $productDocument = $this->fileService->saveFile(
-                $document,
-                ProductConstants::PRODUCT_FILE_PATH
-            );
-
-            ProductFile::create([
-                'product_id' => $productId,
-                'file_name' => $document->getClientOriginalName(),
-                'file_path' => $productDocument->data,
-                'file_type' => FileType::PDF->value,
-            ]);
-        }
-
-
-        // $this->toasterService->toast($action);
+        $action = $this->productService->store($request);
+        $this->toasterService->toast($action);
         return response()->json([
             'message' => 'Product created successfully',
-            'productId' => $productId,
+            'productId' => $action->data,
         ], 201);
     }
 
@@ -336,44 +241,20 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product)
     {
-
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'name' => 'required|string|max:255|unique:products,name,' . $product->id,
-                'productCategory' => 'required|integer|exists:categories,id',
-                'productSubCategory' => 'required|integer|exists:sub_categories,id',
-                'minimumQuantity' => 'required|integer|min:1',
-                'productImage' => 'image|max:8192|mimes:jpg,jpeg,png|mimetypes:image/jpeg,image/png,image/jpg|max:8192',
-                'productDetailImages.*' => 'image|mimes:jpg,jpeg,png|mimetypes:image/jpeg,image/png,image/jpg|max:8192',
-                'videoInstruction' => 'nullable|mimes:mp4|mimetypes:video/mp4|max:51200', // 50MB
-                'files.*' => 'mimes:pdf|mimetypes:application/pdf|max:8192',
-                'product-trixFields' => 'required|array',
-                'product-trixFields.*' => ['required', function ($attribute, $value, $fail) {
-                    if (trim(strip_tags($value)) === '') {
-                        $fail("The $attribute field cannot be empty.");
-                    }
-                }],
-                'descriptionPriority' => 'required|integer|min:1|max:5',
-                'informationPriority' => 'required|integer|min:1|max:5',
-                'characteristicsPriority' => 'required|integer|min:1|max:5',
-                'warrantylistPriority' => 'required|integer|min:1|max:5',
-                'servicelistPriority' => 'required|integer|min:1|max:5',
-            ],
-            $this->getValidationMessages()
-        );
-
-        if ($validator->fails()) {
-            $message = $validator->errors();
-            return response()->json([
-                'message' => $message,
-            ], 422);
+        if (isset($request->isFeatured)) {
+            $product->is_featured = 1;
+        } else {
+            $product->is_featured = 0;
         }
-
-        $data = array_merge($validator->validated(), $request->allFiles());
-
+        if (isset($request->status)) {
+            $product->status = Status::ACTIVE;
+        } else {
+            $product->status = Status::INACTIVE;
+        }
+        $product->save();
+        $data = array_merge($request->validated(), $request->allFiles());
         $addFiles = $this->productService->update($data, $product);
         // dd($addFiles);
         if ($addFiles->status !== ServiceResponseType::SUCCESS) {
@@ -386,10 +267,6 @@ class ProductController extends Controller
                 'productId' => $product->id,
             ], 201);
         }
-
-
-        // $this->toasterService->toast($action);
-
     }
 
 

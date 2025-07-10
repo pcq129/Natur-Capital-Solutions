@@ -340,11 +340,11 @@ return [
             'text' => 'CMS Pages',
             'url' => '/cms-pages',
         ],
-        // [
-        //     'icon'=> 'nav-icon fas fa-envelope',
-        //     'text' => 'Contact-Details',
-        //     'url' => '/contact-details',
-        // ],
+        [
+            'icon'=> 'nav-icon fas fa-envelope',
+            'text' => 'Contact-Details',
+            'url' => '/contact-details',
+        ],
         [
             'icon' => 'nav-icon fas fa-paper-plane',
             'text' => 'Email Templates',
@@ -389,11 +389,11 @@ return [
         //     'text' => 'Scheduled-Services',
         //     'url' => '/scheduled-services',
         // ],
-        // [
-        //     'icon'=> 'nav-icon fas fa-cogs',
-        //     'text' => 'Services',
-        //     'url' => '/services',
-        // ],
+        [
+            'icon'=> 'nav-icon fas fa-cogs',
+            'text' => 'Services',
+            'url' => '/services',
+        ],
 
         // [
         //     'icon'=> 'nav-icon fas fa-tree',

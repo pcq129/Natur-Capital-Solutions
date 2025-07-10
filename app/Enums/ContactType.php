@@ -2,8 +2,8 @@
 
 namespace App\Enums;
 
-enum ContactType: string
+enum ContactType:int
 {
-    case EMAIL = 'email';
-    case PHONE = 'phone';
+    case EMAIL=1;
+    case PHONE=2;
 }

@@ -213,7 +213,7 @@
                     data-prev="#images">Back</button>
                 <button type="submit" id="finalSubmit" class="btn btn-success">
                     <span class="spinner-border spinner-border-sm d-none" id="finalSubmitSpinner" role="status"
-                            aria-hidden="true"></span>
+                        aria-hidden="true"></span>
                     Submit
                 </button>
             </div>
@@ -258,7 +258,8 @@
                     const response = await fetch(productTextsForm.action, {
                         method: 'POST',
                         headers: {
-                            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                            'Accept': 'application/json'
                         },
                         body: formData
                     });
@@ -271,7 +272,7 @@
                         for (const property in result.message) {
                             toastr.error(result.message[property][0]);
                         }
-                $('#finalSubmitSpinner').addClass('d-none');
+                        $('#finalSubmitSpinner').addClass('d-none');
 
                         $("#finalSubmit").prop('disabled', false);
                     }
@@ -461,7 +462,9 @@
                                 return;
                             } else {
                                 for (const property in data.message) {
-                                    toastr.error(data.message[property][0], '', { timeOut: 9500 });
+                                    toastr.error(data.message[property][0], '', {
+                                        timeOut: 9500
+                                    });
                                 }
                             }
 
@@ -484,7 +487,7 @@
 
                 if (categoryId) {
                     $.ajax({
-                        url: `/get-subcategories/`+categoryId,
+                        url: `/get-subcategories/` + categoryId,
                         type: 'GET',
                         success: function(data) {
                             subSelect.empty().append(

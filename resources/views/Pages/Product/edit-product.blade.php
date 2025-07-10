@@ -55,12 +55,21 @@
                     action="{{ route('products.update', $product[0]->id) }}" enctype="multipart/form-data">
                     @csrf
                     {{-- @method('PUT') --}}
-
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="true" id="isFeatured" name="isFeatured">
-                        <label class="form-check-label " for="isFeatured">
-                            Is Featured
-                        </label>
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="true" id="isFeatured"
+                                name="isFeatured">
+                            <label class="form-check-label " for="isFeatured">
+                                Is Featured
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="true" id="status"
+                                name="status">
+                            <label class="form-check-label " for="status">
+                                Active
+                            </label>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="productName">Product Name*</label>
@@ -337,6 +346,12 @@
                 document.getElementById('isFeatured').checked = false;
             }
 
+
+            if (product.status == 1) {
+                document.getElementById('status').checked = true;
+            } else {
+                document.getElementById('status').checked = false;
+            }
 
 
 
