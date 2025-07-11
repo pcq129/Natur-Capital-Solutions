@@ -13,7 +13,6 @@
         "laravel/ui": "^4.6",
         "livewire/livewire": "^3.6",
         "mews/purifier": "^3.4",
-        "robsontenorio/mary": "*",
         "socialiteproviders/facebook": "^4.1",
         "socialiteproviders/google": "^4.1",
         "te7a-houdini/laravel-trix": "^3.1",

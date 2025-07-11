@@ -27,11 +27,9 @@
                     <thead class="thead-dark">
                         <tr>
                             {{-- <th>Id</th> --}}
-                            <th class="text-center">Product Name</th>
-                            <th class="text-center">Category</th>
-                            <th class="text-center">Minimum Quantity</th>
-                            <th class="text-center">Featured</th>
-                            <th class="text-center">Status</th>
+                            <th class="text-center">Service Name</th>
+                            <th class="text-center">Description</th>
+                            <th class="text-center">Icon</th>
                             <th class="text-center">Actions</th>
                         </tr>
                     </thead>
@@ -42,16 +40,49 @@
 @stop
 
 
+@push('css')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
+@endpush
 
 @push('js')
-<script>
-    $(document).ready(function(){
-        let table = $('#servicesTable').DataTable({
-            processing: true,
-            serverSide: true,
-            responsive: true,
-            
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            let table = $('#servicesTable').DataTable({
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: {
+                    url: '{{ route('services.index') }}',
+                    type: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                },
+                columns: [{
+                    name: 'name',
+                    data: 'name',
+                    className: 'text-center',
+                }, {
+                    name: 'description',
+                    data: 'description',
+                    className: 'text-center'
+                }, {
+                    name: 'icon',
+                    data: 'icon',
+                    className: 'text-center'
+                },{
+                    name: 'actions',
+                    data: 'actions',
+                    className: 'text-center'
+                }],
+                order: [
+                    [0, 'desc']
+                ]
+            })
         })
-    })
-</script>
+    </script>
 @endpush

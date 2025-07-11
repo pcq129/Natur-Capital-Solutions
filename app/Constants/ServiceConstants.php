@@ -3,5 +3,5 @@
 namespace App\Constants;
 
 class ServiceConstants{
-    public const SERVICE_DELETE_MODAL = 'serviceDeleteModal';
+    public const SERVICE_DELETE_MODAL_ID = 'serviceDeleteModal';
 }

@@ -56,6 +56,7 @@ class BranchOfficeService
     public function updateBranchOffice(UpdateBranchOfficeRequest $request, int $id)
     {
         $updatedBranchOffice = $request->validated();
+
         $branchOffice = BranchOffice::find($id);
         if (!$branchOffice) {
             return ServiceResponse::error('Branch not found');
@@ -68,6 +69,7 @@ class BranchOfficeService
             'location' => $updatedBranchOffice['location'],
             'status' => $updatedBranchOffice['status']
         ]);
+
 
         if ($branchOffice->isDirty()) {
             $branchOffice->save();

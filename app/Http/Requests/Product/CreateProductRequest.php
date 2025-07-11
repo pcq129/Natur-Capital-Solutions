@@ -31,7 +31,7 @@ class CreateProductRequest extends FormRequest
             'productCategory' => 'required|integer|exists:categories,id',
             'productSubCategory' => 'required|integer|exists:sub_categories,id',
             'minimumQuantity' => 'required|integer|min:1',
-            'productImage' => 'max:8192|mimetypes:image/jpeg,image/png,image/jpg|image|mimes:jpg,jpeg,png|max:8192',
+            'productImage' => 'mimetypes:image/jpeg,image/png,image/jpg|image|mimes:jpg,jpeg,png|max:8192',
             'productDetailImages.*' => 'mimetypes:image/jpeg,image/png,image/jpg|image|mimes:jpg,jpeg,png|max:8192',
             'videoInstruction' => 'nullable|mimetypes:video/mp4|mimes:mp4|max:51200', // 50MB
             'files.*' => 'required|mimes:pdf|mimetypes:application/pdf|max:8192',

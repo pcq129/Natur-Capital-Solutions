@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('address', 255);
             $table->string('email', 80);
             $table->string('mobile', 20);
-            $table->enum('status', array_column(Status::cases(), 'value'))->comment("-1 = deleted, 0 = inactive, 1 = active");
+            $table->tinyInteger('status');
             $table->string('location', 30);
             $table->timestamps();
             $table->softDeletes();
