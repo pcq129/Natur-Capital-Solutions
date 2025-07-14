@@ -31,10 +31,6 @@
 {{-- @extends('layouts.app')
 
 @php
-    // use App\Models\EmailTemplate;
-    // use App\Enums\Status;
-
-    //* or any other dependencies
 @endphp
 
 @section('content_header')
@@ -44,7 +40,11 @@
 @section('content')
 @stop
 
-
+@push('css')
+@endpush
 
 @push('js')
+<script>
+
+</script>
 @endpush --}}

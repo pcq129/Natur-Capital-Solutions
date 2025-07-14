@@ -9,9 +9,17 @@ use App\Enums\Status;
 use Yajra\DataTables\DataTables;
 use App\Constants\ServiceConstants as CONSTANTS;
 use App\Http\Requests\Service\StoreServiceRequest;
+use App\Http\Requests\Service\UpdateServiceRequest;
+use App\Services\ServiceService;
+use App\Services\ToasterService;
 
 class ServiceController extends Controller
 {
+    public function __construct(private ServiceService $serviceService, private ToasterService $toasterService)
+    {
+    }
+
+
     /**
      * Display a listing of the resource.
      */
@@ -34,7 +42,7 @@ class ServiceController extends Controller
                     return view('Partials.actions', ['edit' => $editUrl,  'row' => $row, 'target' => $targetDelete]);
                 })
                 ->addColumn('icon', function($row){
-                    return '<img src='.$row.' height="100px" width="100px">';
+                    return '<img src="/'.$row->icon.'" height="100px" width="100px">';
                 })
                 ->rawColumns(['actions','icon'])
                 ->make(true);
@@ -58,8 +66,14 @@ class ServiceController extends Controller
      */
     public function store(StoreServiceRequest $request)
     {
-        $data = $request->validated();
-        
+        $texts = $request->validated();
+        $files = $request->allFiles();
+
+        $data = array_merge($texts, $files);
+        $action = $this->serviceService->StoreService($data);
+        $this->toasterService->toast($action);
+        return redirect()->route('services.index');
+
     }
 
     /**
@@ -75,15 +89,21 @@ class ServiceController extends Controller
      */
     public function edit(Service $service)
     {
-        //
+        return view('Pages.Services.update', ['service' => $service]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Service $service)
+    public function update(UpdateServiceRequest $request, Service $service)
     {
-        //
+        $texts = $request->validated();
+        $files = $request->allFiles();
+
+        $data = array_merge($texts, $files);
+        $action = $this->serviceService->UpdateService($data, $service);
+        $this->toasterService->toast($action);
+        return redirect()->route('services.index');
     }
 
     /**

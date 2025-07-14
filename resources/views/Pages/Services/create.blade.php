@@ -85,6 +85,7 @@
 
 
 @push('js')
+@trixassets
     <script>
         $(document).ready(function() {
 

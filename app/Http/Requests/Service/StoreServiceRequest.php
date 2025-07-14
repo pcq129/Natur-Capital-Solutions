@@ -24,7 +24,7 @@ class StoreServiceRequest extends FormRequest
         return [
             'name' => 'required|string|max:80',
             'description' => 'string|max:255',
-            'serviceIcon' => 'required,mimetypes:image/jpg,image/jpeg,image/png|max:2500'
+            'serviceIcon' => 'required|mimetypes:image/jpg,image/jpeg,image/png|max:2500'
         ];
     }
 

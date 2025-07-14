@@ -37,6 +37,7 @@ class Service extends Model
         'id',
         'name',
         'description',
-        'icon'
+        'icon',
+        'status'
     ];
 }

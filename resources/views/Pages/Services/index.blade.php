@@ -1,10 +1,7 @@
 @extends('layouts.app')
 
 @php
-    // use App\Models\EmailTemplate;
-    // use App\Enums\Status;
-
-    //* or any other dependencies
+    use App\Constants\ServiceConstants as CONSTANTS;
 @endphp
 
 @section('content_header')
@@ -35,6 +32,30 @@
                     </thead>
                 </table>
             </div>
+        </div>
+    </div>
+    <div class="modal fade" id="{{ CONSTANTS::SERVICE_DELETE_MODAL_ID }}" tabindex="-1"
+        aria-labelledby="deleteProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="POST" id="deleteProductForm">
+                @csrf
+                @method('DELETE')
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirm Delete</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete <strong id="productName"></strong>?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 @stop
@@ -74,7 +95,7 @@
                     name: 'icon',
                     data: 'icon',
                     className: 'text-center'
-                },{
+                }, {
                     name: 'actions',
                     data: 'actions',
                     className: 'text-center'
