@@ -65,7 +65,7 @@
                                 </div>
                                 <div class="previousServiceIconPreview">
                                     <span class="d-block"><strong>Current Icon</strong></span>
-                                    <img src="/{{ $service['icon'] }}" height="100px" width="100px">
+                                    <img src="{{ $service['icon'] }}" height="100px" width="100px">
                                 </div>
                             </div>
                         </div>

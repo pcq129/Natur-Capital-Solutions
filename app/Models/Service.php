@@ -7,22 +7,26 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use App\Models\SubService;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Te7aHoudini\LaravelTrix\Traits\HasTrixRichText;
 
 class Service extends Model
 {
+    use SoftDeletes, HasTrixRichText;
+
     public function resources(): MorphMany
     {
         return $this->morphMany(Resource::class, 'resourceable');
     }
 
     /**
-     * Get all of the SubServices for the Service
+     * Get all of the serviceSections for the Service
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function SubServices(): HasMany
+    public function serviceSections(): HasMany
     {
-        return $this->hasMany(SubServices::class, 'foreign_key', 'local_key');
+        return $this->hasMany(ServiceSection::class, 'service_id', 'id');
     }
 
     protected $casts = [
@@ -30,7 +34,7 @@ class Service extends Model
         'name'=> 'string',
         'description' => 'string',
         'icon' => 'string',
-        'status' => Status::class
+        'status' => Status::class,
     ];
 
     protected $fillable = [
@@ -38,6 +42,14 @@ class Service extends Model
         'name',
         'description',
         'icon',
-        'status'
+        'status',
     ];
+
+    protected static function booted()
+    {
+        static::deleting(function ($service) {
+            $service->servic()->delete();
+            $service->products()->delete();
+        });
+    }
 }

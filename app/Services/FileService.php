@@ -24,7 +24,7 @@ class FileService
             $file->storeAs($folder, $fileName, 'public');
 
             // Return the public path for frontend use
-            $fileLocation = 'storage/' . $folder . '/' . $fileName;
+            $fileLocation = '/storage/' . $folder . '/' . $fileName;
             return ServiceResponse::success('File stored successfully', $fileLocation);
         } catch (\Exception $e) {
             $message = 'Uncaght exception while storing File';

@@ -206,15 +206,15 @@ return new class extends Migration
             $table->softDeletes();
         });
 
-        Schema::create('resources', function (Blueprint $table) {
-            $table->id();
-            $table->morphs('resourcable');
-            $table->enum('content_type', array_column(ContentType::cases(), 'value'))->nullable();
-            $table->tinyInteger('priority');
-            $table->text('path');
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        // Schema::create('resources', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->morphs('resourcable');
+        //     $table->enum('content_type', array_column(ContentType::cases(), 'value'));
+        //     $table->tinyInteger('priority');
+        //     $table->text('path');
+        //     $table->timestamps();
+        //     $table->softDeletes();
+        // });
 
         Schema::create('cart_items', function (Blueprint $table) {
             $table->id();

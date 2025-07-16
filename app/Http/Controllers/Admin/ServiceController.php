@@ -42,7 +42,7 @@ class ServiceController extends Controller
                     return view('Partials.actions', ['edit' => $editUrl,  'row' => $row, 'target' => $targetDelete]);
                 })
                 ->addColumn('icon', function($row){
-                    return '<img src="/'.$row->icon.'" height="100px" width="100px">';
+                    return '<img src="'.$row->icon.'" height="100px" width="100px">';
                 })
                 ->rawColumns(['actions','icon'])
                 ->make(true);
@@ -72,7 +72,11 @@ class ServiceController extends Controller
         $data = array_merge($texts, $files);
         $action = $this->serviceService->StoreService($data);
         $this->toasterService->toast($action);
-        return redirect()->route('services.index');
+        return response()->json([
+            'status' => 'success',
+            'message' => $action->message,
+            'redirect' => route('services.index')
+        ], 200);
 
     }
 
@@ -111,6 +115,6 @@ class ServiceController extends Controller
      */
     public function destroy(Service $service)
     {
-        //
+        dd($service);
     }
 }

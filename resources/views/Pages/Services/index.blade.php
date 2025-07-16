@@ -104,6 +104,18 @@
                     [0, 'desc']
                 ]
             })
+
+            $("#{{ CONSTANTS::SERVICE_DELETE_MODAL_ID }}").on('show.bs.modal', function(event) {
+                const button = $(event.relatedTarget);
+                const serviceId = button.data('id');
+                const serviceName = button.data('name');
+
+                const form = $('#deleteProductForm');
+                const action = '{{ route('services.destroy', ':id') }}'.replace(':id', serviceId);
+                form.attr('action', action);
+
+                $('#serviceName').text(serviceName);
+            });
         })
     </script>
 @endpush

@@ -310,26 +310,26 @@
 
                 if (product_file.file_type == '{{ FileType::MAIN_IMAGE }}') {
                     const img = document.createElement('img');
-                    img.src = BASE_URL + '/storage' + product_file.file_path;
+                    img.src = BASE_URL + '/' + product_file.file_path;
                     img.classList.add('img-thumbnail', 'productImagePreview');
                     img.style.width = '200px';
                     previewImage.append(img);
                 } else if (product_file.file_type == '{{ FileType::IMAGE }}') {
                     const img = document.createElement('img');
-                    img.src = BASE_URL + '/storage' + product_file.file_path;
+                    img.src = BASE_URL + '/' + product_file.file_path;
                     img.classList.add('img-thumbnail', 'extraImagesPreview');
                     img.style.width = '200px';
                     previewDetailImage.append(img);
                 } else if (product_file.file_type == '{{ FileType::VIDEO }}') {
                     const video = document.createElement('a');
-                    video.href = BASE_URL + '/storage' + product_file.file_path;
+                    video.href = BASE_URL + '/' + product_file.file_path;
                     video.textContent = product_file.file_name;
                     video.target = '_blank';
                     video.download = product_file.file_name;
                     document.querySelector('.productVideo').appendChild(video);
                 } else if (product_file.file_type == '{{ FileType::PDF }}') {
                     const documentFile = document.createElement('a');
-                    documentFile.href = BASE_URL + '/storage' + product_file.file_path;
+                    documentFile.href = BASE_URL + '/' + product_file.file_path;
                     documentFile.textContent = product_file.file_name;
                     documentFile.target = '_blank';
                     documentFile.download = product_file.file_name;

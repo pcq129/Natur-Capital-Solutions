@@ -37,24 +37,24 @@ class ProductService
             $query->where('status', (int)$request->status);
         }
 
-        $products = DataTables::of($query)
-            ->addColumn('status', function ($row) {
-                if ($row->status->value == Status::ACTIVE->value) {
-                    return 'Active';
-                } else if ($row->status->value == Status::INACTIVE->value) {
-                    return 'Inactive';
-                }
-            })
-            ->addColumn('category', function ($row) {
-                return $row->category->name ?? '-';
-            })
-            ->addColumn('actions', function ($row) {
-                $editUrl = route('products.edit', $row->id);
-                $targetDelete = CONSTANTS::PRODUCT_DELETE_MODAL_ID;
-                return view('Partials.actions', ['edit' => $editUrl,  'row' => $row, 'target' => $targetDelete]);
-            })
-            ->rawColumns(['actions'])
-            ->make(true);
+            $products = DataTables::of($query)
+                ->addColumn('status', function ($row) {
+                    if ($row->status->value == Status::ACTIVE->value) {
+                        return 'Active';
+                    } else if ($row->status->value == Status::INACTIVE->value) {
+                        return 'Inactive';
+                    }
+                })
+                ->addColumn('category', function ($row) {
+                    return $row->category->name ?? '-';
+                })
+                ->addColumn('actions', function ($row) {
+                    $editUrl = route('products.edit', $row->id);
+                    $targetDelete = CONSTANTS::PRODUCT_DELETE_MODAL_ID;
+                    return view('Partials.actions', ['edit' => $editUrl,  'row' => $row, 'target' => $targetDelete]);
+                })
+                ->rawColumns(['actions'])
+                ->make(true);
 
         return ServiceResponse::success('success', $products);
     }
@@ -72,7 +72,7 @@ class ProductService
             'category_id' => $data['productCategory'],
             'sub_category_id' => $data['productSubCategory'],
             'minimum_quantity' => $data['minimumQuantity'],
-            'is_featured' => $data['isFeatured'] ? true : false,
+            'is_featured' => isset($data['isFeatured']) ? true : false,
             'status' => Status::from($data['status'] ?? true),
             'description' => $data['product-trixFields'][CONSTANTS::PRODUCT_DESCRIPTION] ?? null,
         ]);
