@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\FileType;
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\ResourceType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,10 +24,12 @@ class Resource extends Model
         'resource_type',
         'priority',
         'resource',
+        'resourceable_id',
+        'resourceable_type',
     ];
 
     protected $casts = [
-        'resource_type' => ResourceType::class,
+        'resource_type' => FileType::class,
         'resource' => 'string',
         'priority' => 'integer',
         'id' => 'integer',

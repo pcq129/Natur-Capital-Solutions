@@ -46,7 +46,7 @@
                         <div class="input-group w-50">
                             <div class="serviceIcon">
                                 <input type="file" name="serviceIcon" accept=".jpg, .jpeg, .png" id="serviceIcon">
-                                <label class="" for="serviceIcon">Choose file</label>
+                                <label class="border rounded p-1" for="serviceIcon">Choose file</label>
                                 <br>
                                 <span class="text-danger" id="warning"></span>
                                 @error('serviceIcon')
@@ -85,7 +85,7 @@
                         </div>
                         <div class="dynamic-field-wrapper">
                             <input name="sectionName[__INDEX__]" type="text" class="form-control mb-2 mt-3"
-                                placeholder="Section Name">
+                                placeholder="Section Name" required>
                             @trix(\App\Models\ServiceSection::class, '__INDEX__')
                         </div>
                     </div>
@@ -169,7 +169,7 @@
                 $(this).closest('.form-group').remove();
             });
 
-            let counter = 1;
+            let counter = 2;
 
             document.getElementById('add-field-btn').addEventListener('click', function() {
                 const wrapper = document.getElementById('dynamic-fields-wrapper');
@@ -222,7 +222,8 @@
                                 });
                             }
                         } else {
-                            window.location.href = "{{ route('services.index') }}";
+                            toastr.error('An unexpected error occurred. Please try again later.');
+                            console.log(response);
                         }
                     },
                     success: function(data) {

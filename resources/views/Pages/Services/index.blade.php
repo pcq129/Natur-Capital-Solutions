@@ -35,9 +35,9 @@
         </div>
     </div>
     <div class="modal fade" id="{{ CONSTANTS::SERVICE_DELETE_MODAL_ID }}" tabindex="-1"
-        aria-labelledby="deleteProductModalLabel" aria-hidden="true">
+        aria-labelledby="deleteServiceModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form method="POST" id="deleteProductForm">
+            <form method="POST" id="deleteServiceForm">
                 @csrf
                 @method('DELETE')
                 <div class="modal-content">
@@ -48,7 +48,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        Are you sure you want to delete <strong id="productName"></strong>?
+                        Are you sure you want to delete <strong id="serviceName"></strong>?
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -106,11 +106,12 @@
             })
 
             $("#{{ CONSTANTS::SERVICE_DELETE_MODAL_ID }}").on('show.bs.modal', function(event) {
+                console.log('event triggered');
                 const button = $(event.relatedTarget);
                 const serviceId = button.data('id');
                 const serviceName = button.data('name');
 
-                const form = $('#deleteProductForm');
+                const form = $('#deleteServiceForm');
                 const action = '{{ route('services.destroy', ':id') }}'.replace(':id', serviceId);
                 form.attr('action', action);
 

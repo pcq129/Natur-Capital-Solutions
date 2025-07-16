@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @php
+
+    use App\Constants\ServiceConstants as CONSTANTS;
 @endphp
 
 @section('content_header')
@@ -52,7 +54,7 @@
                                     <div class="serviceIcon">
                                         <input type="file" name="serviceIcon" accept=".jpg, .jpeg, .png"
                                             id="serviceIcon">
-                                        <label class="" for="serviceIcon">Choose file</label>
+                                        <label class="border rounded p-2" for="serviceIcon">Choose file</label>
                                         <br>
                                         <span class="text-danger" id="warning"></span>
                                         @error('serviceIcon')
@@ -65,17 +67,68 @@
                                 </div>
                                 <div class="previousServiceIconPreview">
                                     <span class="d-block"><strong>Current Icon</strong></span>
-                                    <img src="{{ $service['icon'] }}" height="100px" width="100px">
+                                    <img src="{{ $service['icon'] }}" height="100px">
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <div class="col">
+                    <div class="d-flex justify-content-between">
+                        <label class="form-label px-auto mb-0 mt-1">Sections</label>
+                        <button type="button" class="btn" id="add-field-btn">+ Add Field</button>
+                    </div>
+                </div>
+                <div class="col">
+                    <div id="dynamic-fields-wrapper">
+                        @foreach ($serviceSections as $section)
+                            <div class="form-group">
+
+                                <div class="mt-3 d-flex justify-content-between">
+                                    <span><strong>Section Name: </strong>{{ $section->heading }}</span>
+                                    <i class="bi bi-x btn btn-danger"></i>
+                                </div>
+
+
+                                <input id="sectionName[{{ $section->priority }}]" value="{{ old('serviceName') ?? $section->heading }}"
+                                    name="sectionName[{{ $section->priority }}]" type="text" class="form-control mb-2 mt-2"
+                                    placeholder="Section Name" required>
+                                <input id="serviceSection-trixField[{{ $section->priority }}]" value="{{ $section->content }}" type="hidden" name="serviceSection-trixFields[{{ $section->priority }}]">
+                                <trix-editor input="serviceSection-trixField[{{ $section->priority }}]"></trix-editor>
+                                @error('sectionName[{{ $section->priority }}]')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        @endforeach
+                    </div>
+
+                </div>
+
+                <template id="section-template">
+                    <div class="form-group section-body">
+                        <div class="mt-3 d-flex justify-content-between">
+                            <span>Additional Section __INDEX__</span>
+                            <i class="bi bi-x btn btn-danger"></i>
+                        </div>
+                        <div class="dynamic-field-wrapper">
+                            <input name="sectionName[__INDEX__]" type="text" class="form-control mb-2 mt-3"
+                                placeholder="Section Name" required>
+                            @trix(\App\Models\ServiceSection::class, '__INDEX__')
+                        </div>
+                    </div>
+                    @error('sectionName[__INDEX__]')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </template>
+
+
+
                 <div class="form-group">
                     <div class="col">
                         <label for="serviceStatus">Active</label>
-                        <input type="checkbox" name="status" id="serviceStatus" value="1">
+                        <input type="checkbox" name="status" id="serviceStatus" value="1"
+                            {{ $service->status ? 'checked' : '' }}>
                         @error('status')
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
@@ -93,52 +146,67 @@
 @push('css')
 @endpush
 @push('js')
-<script>
-    $(document).ready(function() {
+    @trixassets
 
-        document.getElementById('serviceIcon').addEventListener('change', function(e) {
+    <script>
+        $(document).ready(function() {
 
-            const oldPreview = document.querySelector('.serviceIconPreview');
-            if (oldPreview) oldPreview.remove();
+            $(document).on('click', '.bi-x', function() {
+                $(this).closest('.form-group').remove();
+            });
 
-            const file = this.files[0];
-            if (!file) return;
+            let counter = {{ count($serviceSections) + 1 }};
+                document.getElementById('add-field-btn').addEventListener('click', function() {
+                console.log('add btn clicked');
+                const wrapper = document.getElementById('dynamic-fields-wrapper');
+                const template = document.getElementById('section-template').innerHTML;
+                const html = template.replace(/__INDEX__/g, counter);
+                wrapper.insertAdjacentHTML('beforeend', html);
+                counter++;
+            });
 
-            const maxSizeMB = 2;
-            const maxSizeBytes = maxSizeMB * 1024 * 1024;
+            document.getElementById('serviceIcon').addEventListener('change', function(e) {
+                const oldPreview = document.querySelector('.serviceIconPreview');
+                if (oldPreview) oldPreview.remove();
 
-            if (file.size > maxSizeBytes) {
-                $('#warning').removeAttr('hidden');
-                $('#warning').text(`File size exceeds ${maxSizeMB} MB. Please upload a smaller file.`);
-                this.value = ''; // Clear the file input
-                return;
-            }else{
-                $('#warning').prop('hidden', true);
-            }
+                const file = this.files[0];
+                if (!file) return;
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const previewContainer = document.createElement('div');
-                previewContainer.classList.add('serviceIconPreview', 'image-preview');
+                const maxSizeMB = 2;
+                const maxSizeBytes = maxSizeMB * 1024 * 1024;
 
-                const wrapper = document.createElement('div');
-                wrapper.classList.add('image-wrapper', 'm-1', 'd-inline');
+                if (file.size > maxSizeBytes) {
+                    $('#warning').removeAttr('hidden');
+                    $('#warning').text(`File size exceeds ${maxSizeMB} MB. Please upload a smaller file.`);
+                    this.value = ''; // Clear the file input
+                    return;
+                } else {
+                    $('#warning').prop('hidden', true);
+                }
 
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.classList.add('img-thumbnail');
-                img.style.width = '200px';
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewContainer = document.createElement('div');
+                    previewContainer.classList.add('serviceIconPreview', 'image-preview');
 
-                wrapper.appendChild(img);
-                previewContainer.appendChild(wrapper);
-                document.querySelector('#serviceIconPreviewContainer').appendChild(
-                previewContainer);
-            };
+                    const wrapper = document.createElement('div');
+                    wrapper.classList.add('image-wrapper', 'm-1', 'd-inline');
 
-            reader.readAsDataURL(file);
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.classList.add('img-thumbnail');
+                    img.style.width = '200px';
+
+                    wrapper.appendChild(img);
+                    previewContainer.appendChild(wrapper);
+                    document.querySelector('#serviceIconPreviewContainer').appendChild(
+                        previewContainer);
+                };
+
+                reader.readAsDataURL(file);
 
 
-        });
-    })
-</script>
+            });
+        })
+    </script>
 @endpush

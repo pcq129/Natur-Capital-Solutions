@@ -48,8 +48,7 @@ class Service extends Model
     protected static function booted()
     {
         static::deleting(function ($service) {
-            $service->servic()->delete();
-            $service->products()->delete();
+            $service->serviceSections()->delete();
         });
     }
 }

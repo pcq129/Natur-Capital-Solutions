@@ -93,7 +93,8 @@ class ServiceController extends Controller
      */
     public function edit(Service $service)
     {
-        return view('Pages.Services.update', ['service' => $service]);
+        $serviceSections = $service->serviceSections()->get(['id', 'service_id', 'heading', 'content', 'priority']);
+        return view('Pages.Services.update', ['service' => $service, 'serviceSections' => $serviceSections]);
     }
 
     /**
@@ -115,6 +116,8 @@ class ServiceController extends Controller
      */
     public function destroy(Service $service)
     {
-        dd($service);
+        $action = $this->serviceService->DeleteService($service);
+        $this->toasterService->toast($action);
+        return redirect()->route('services.index');
     }
 }

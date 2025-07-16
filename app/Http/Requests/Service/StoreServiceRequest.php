@@ -28,9 +28,11 @@ class StoreServiceRequest extends FormRequest
             'serviceName' => 'required|string|max:80|unique:services,name',
             'serviceDescription' => 'string|max:255',
             'sectionName' => 'array|required',
+            'sectionName.*' => 'required|string|max:80',
             'servicesection-trixFields' => 'array|required',
+            'servicesection-trixFields.*' => 'required|string|min:1',
             'attachment-servicesection-trixFields' => 'array|required',
-
+            'attachment-servicesection-trixFields.*' => 'string',
             // files
             'serviceIcon' => 'required|mimetypes:image/jpg,image/jpeg,image/png|max:2500',
         ];
@@ -67,6 +69,7 @@ class StoreServiceRequest extends FormRequest
             'serviceName' => 'Service Name',
             'serviceDescription' => 'Service Description',
             'serviceIcon' => 'Service Icon',
+            'sectionName.*' => 'Section Name',
         ];
 
         return $attributes;

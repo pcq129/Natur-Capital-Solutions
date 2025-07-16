@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Te7aHoudini\LaravelTrix\Traits\HasTrixRichText;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class ServiceSection extends Model
 {
@@ -38,15 +39,9 @@ class ServiceSection extends Model
         return $this->belongsTo(Service::class, 'service_id', 'id');
     }
 
-    /**
-     * Get all of the sectionAttachments for the ServiceSection
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function sectionAttachments(): HasMany
+    public function resources(): MorphMany
     {
-        return $this->hasMany(sectionAttachment::class, 'section_id', 'id');
+        return $this->morphMany(Resource::class, 'resourceable');
     }
-
 
 }

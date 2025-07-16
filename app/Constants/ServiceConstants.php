@@ -10,7 +10,7 @@ class ServiceConstants{
 
 
 
-
+    
     public const STORE_SUCCESS = 'New Service created successfully';
     public const UPDATE_SUCCESS = 'Service updated successfully';
     public const DELETE_SUCCESS = 'Service deleted successfully';

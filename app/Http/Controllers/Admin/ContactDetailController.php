@@ -13,52 +13,58 @@ use App\Http\Requests\ContactDetail\createContactDetailRequest;
 use App\Services\ContactDetailService;
 use App\Services\ToasterService;
 use App\Http\Requests\ContactDetail\UpdateContactDetailRequest;
+use App\Exceptions\Handler;
 
 class ContactDetailController extends Controller
 {
 
-    public function __construct(private ContactDetailService $contactDetailService, private ToasterService $toasterService){
-
-    }
+    public function __construct(private ContactDetailService $contactDetailService, private ToasterService $toasterService) {}
 
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        if($request->ajax()){
-            // dd($request);
-            $query = ContactDetail::query();
+        try {
+            if ($request->ajax()) {
+                // dd($request);
+                $query = ContactDetail::query();
 
-            if($request->filled('status')){
-                $query->where('status', (int) $request->status);
-            }
+                if ($request->filled('status')) {
+                    $query->where('status', (int) $request->status);
+                }
 
-            $contactDetails = DataTables::of($query)
-                ->addColumn('status', function ($row) {
-                    return $row->status == Status::ACTIVE ? 'Active' : 'Inactive';
-                })
-                ->addColumn('actions', function ($row) {
-                    $editUrl = route('contact-details.edit', $row->id);
-                    $target = ContactDetailConstants::CONTACT_DETAIL_DELETE_MODAL_ID;
-                    return view('Partials.actions', ['edit' => $editUrl,  'row' => $row, 'target' => $target])->render();
-                })
-                ->addColumn('contact_type', function ($row) {
-                    if($row->contact_type== ContactType::EMAIL){
-                        return 'Email';
-                    }else{
-                        return 'Phone';
-                    }
-                })
-                ->rawColumns(['actions'])
-                ->make(true);
+                $contactDetails = DataTables::of($query)
+                    ->addColumn('status', function ($row) {
+                        return $row->status == Status::ACTIVE ? 'Active' : 'Inactive';
+                    })
+                    ->addColumn('actions', function ($row) {
+                        $editUrl = route('contact-details.edit', $row->id);
+                        $target = ContactDetailConstants::CONTACT_DETAIL_DELETE_MODAL_ID;
+                        return view('Partials.actions', ['edit' => $editUrl,  'row' => $row, 'target' => $target])->render();
+                    })
+                    ->addColumn('contact_type', function ($row) {
+                        if ($row->contact_type == ContactType::EMAIL) {
+                            return 'Email';
+                        } else {
+                            return 'Phone';
+                        }
+                    })
+                    ->rawColumns(['actions'])
+                    ->make(true);
 
                 return $contactDetails;
 
-            // return ServiceResponse::success('Contact Details fetched successfully.', $contactDetails);
+                // return ServiceResponse::success('Contact Details fetched successfully.', $contactDetails);
 
+            }
+            return view('Pages.ContactDetail.Index');
+        } catch (\Throwable $e) {
+            $message = 'Error while fetching Contact Details';
+            Handler::logError($e, $message);
+            $this->toasterService->exceptionToast($message);
+            return redirect()->back();
         }
-        return view('Pages.ContactDetail.Index');
     }
 
     /**
@@ -67,8 +73,8 @@ class ContactDetailController extends Controller
     public function create()
     {
         $contactTypes = collect(ContactType::cases())
-        ->mapWithKeys(fn($case) => [$case->name => $case->value])
-        ->toArray();
+            ->mapWithKeys(fn($case) => [$case->name => $case->value])
+            ->toArray();
 
         return view('Pages.ContactDetail.create', ['contactTypes' => $contactTypes]);
     }
@@ -78,10 +84,17 @@ class ContactDetailController extends Controller
      */
     public function store(createContactDetailRequest $request)
     {
-        $data = $request->validated();
-        $action = $this->contactDetailService->store($data);
-        $this->toasterService->toast($action);
-        return redirect()->route('contact-details.index');
+        try {
+            $data = $request->validated();
+            $action = $this->contactDetailService->store($data);
+            $this->toasterService->toast($action);
+            return redirect()->route('contact-details.index');
+        } catch (\Throwable $e) {
+            $message = 'Error while storing Contact Detail';
+            Handler::logError($e, $message);
+            $this->toasterService->exceptionToast($message);
+            return redirect()->back();
+        }
     }
 
     /**
@@ -105,10 +118,17 @@ class ContactDetailController extends Controller
      */
     public function update(UpdateContactDetailRequest $request, ContactDetail $contactDetail)
     {
-        $data = $request->validated();
-        $action = $this->contactDetailService->update($data, $contactDetail);
-        $this->toasterService->toast($action);
-        return redirect()->route('contact-details.index');
+        try {
+            $data = $request->validated();
+            $action = $this->contactDetailService->update($data, $contactDetail);
+            $this->toasterService->toast($action);
+            return redirect()->route('contact-details.index');
+        } catch (\Throwable $e) {
+            $message = 'Error while updating Contact Detail';
+            Handler::logError($e, $message);
+            $this->toasterService->exceptionToast($message);
+            return redirect()->back();
+        }
     }
 
     /**
@@ -116,9 +136,15 @@ class ContactDetailController extends Controller
      */
     public function destroy(ContactDetail $contactDetail)
     {
-        $contactDetail->delete();
-        toastr()->success('Contact detail deleted successfully');
-        return redirect()->route('contact-details.index');
-
+        try {
+            $contactDetail->delete();
+            toastr()->success('Contact detail deleted successfully');
+            return redirect()->route('contact-details.index');
+        } catch (\Throwable $e) {
+            $message = 'Error while deleting Contact Detail';
+            Handler::logError($e, $message);
+            $this->toasterService->exceptionToast($message);
+            return redirect()->back();
+        }
     }
 }
