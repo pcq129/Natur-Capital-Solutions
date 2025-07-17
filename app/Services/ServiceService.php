@@ -48,12 +48,30 @@ class ServiceService
                     'priority' => $count
                 ]);
             }
+            $count++;
         }
         return ServiceResponse::success(ServiceConstants::STORE_SUCCESS);
     }
 
     public function UpdateService(array $data, Service $service)
     {
+        $deletedFiles = json_decode($data['deletedFiles'] ?? '[]');
+        $deletedSections = json_decode($data['removedSections'] ?? '[]');
+
+        dd($data, $deletedFiles, $deletedSections);
+
+        $service->fill(
+            [
+                'name' => $data['serviceName'],
+                'description' => $data['serviceDescription'],
+                'status' => $data['status'] ?? 0
+            ]
+        );
+
+        foreach($deletedFiles as $image){
+            $this->fileService->deleteFile($image, 'public');
+        }
+
 
         if (isset($data['serviceIcon'])) {
             $image =  $data['serviceIcon'];
@@ -64,13 +82,7 @@ class ServiceService
                 ]
             );
         }
-        $service->fill(
-            [
-                'name' => $data['name'],
-                'description' => $data['description'],
-                'status' => $data['status'] ?? 0
-            ]
-        );
+
 
 
 

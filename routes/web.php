@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CmsPageController;
 use App\Http\Controllers\Admin\BranchOfficeController;
+use App\Http\Controllers\ResourceController;    
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ContactDetailController;
 use App\Http\Controllers\Admin\SubCategoryController;
@@ -23,28 +24,38 @@ Auth::routes();
 
 Route::middleware('auth')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
+
     Route::resource('/banners', BannerController::class);
+
     Route::resource('/branchoffices', BranchOfficeController::class);
+
     Route::resource('/cms-pages', CmsPageController::class);
+
     Route::resource('/email-templates', EmailTemplateController::class);
+
     Route::resource('/categories', CategoryController::class);
-    Route::resource('/products', ProductController::class);
     Route::resource('/sub-categories', SubCategoryController::class);
-    Route::resource('/services', ServiceController::class);
-    Route::resource('/contact-details', ContactDetailController::class);
     Route::get('/get-subcategories/{categoryId}', [ProductController::class, 'getSubcategories']);
+
+    Route::resource('/products', ProductController::class);
     Route::get('/product/add-files-page', [ProductController::class, 'addFilesForm'])->name('products.add-files-page');
     Route::get('/product/add-images-page', [ProductController::class, 'addImagesForm'])->name('products.add-images-page');
     Route::post('/product/add-images/{product}', [ProductController::class, 'addImages'])->name('products.add-images');
     Route::post('/product/add-files/{product}', [ProductController::class, 'addFiles'])->name('products.add-files');
     Route::post('/product/validate', [ProductController::class, 'validateImages'])->name('product.validate');
     Route::post('/product/validatetext', [ProductController::class, 'validateText'])->name('product.validate');
-    Route::get('/category/validate-delete/{category}', [CategoryController::class, 'destroy'])->name('category.validatedelete');
-    Route::get('/sub-category/validate-delete/{subCategory}', [SubCategoryController::class, 'destroy'])->name('sub-category.validatedelete');
+
+    Route::resource('/services', ServiceController::class);
+
+    Route::resource('/contact-details', ContactDetailController::class);
+
+    Route::get('/remove-attachment', [ResourceController::class, 'removeAttachment'])->name('attachment.remove');
 
 
 
     // Data validation url
+    Route::get('/category/validate-delete/{category}', [CategoryController::class, 'destroy'])->name('category.validatedelete');
+    Route::get('/sub-category/validate-delete/{subCategory}', [SubCategoryController::class, 'destroy'])->name('sub-category.validatedelete');
     Route::put('/sub-categories/{sub_category}/validate', [SubCategoryController::class, 'validateSubCategoryUpdate'])->name('sub-categories.validate');
     Route::put('/categories/{category}/validate', [CategoryController::class, 'validateCategoryUpdate'])->name('categories.validate');
     Route::post('/categories/validate', [CategoryController::class, 'validateCategoryStore'])->name('categories.validateStore');

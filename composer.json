@@ -12,6 +12,7 @@
         "laravel/tinker": "^2.9",
         "laravel/ui": "^4.6",
         "livewire/livewire": "^3.6",
+        "luvi-ui/laravel-luvi": "^0.6.0",
         "mews/purifier": "^3.4",
         "socialiteproviders/facebook": "^4.1",
         "socialiteproviders/google": "^4.1",

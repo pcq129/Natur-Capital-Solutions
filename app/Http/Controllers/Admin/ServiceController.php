@@ -102,10 +102,8 @@ class ServiceController extends Controller
      */
     public function update(UpdateServiceRequest $request, Service $service)
     {
-        $texts = $request->validated();
-        $files = $request->allFiles();
 
-        $data = array_merge($texts, $files);
+        $data = $request->validated();
         $action = $this->serviceService->UpdateService($data, $service);
         $this->toasterService->toast($action);
         return redirect()->route('services.index');

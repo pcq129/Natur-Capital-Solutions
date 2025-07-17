@@ -17,15 +17,17 @@
 @section('content')
     <div class="col">
         <div class="card">
-            <form data-validate class="p-2" id="newBranchForm" action="{{ route('services.update', $service->id) }}"
+            <form data-validate class="p-2" id="updateServiceForm" action="{{ route('services.update', $service->id) }}"
                 method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
+                <input type="hidden" name="removedSections" id="removedSections" value="[]">
+
                 <div class="form-group ">
-                    <label for="name" class="col col-form-label">Name*</label>
+                    <label for="serviceName" class="col col-form-label">Name*</label>
                     <div class="col">
-                        <input type="text" name="name" class="form-control" id="name"
+                        <input type="text" name="serviceName" class="form-control" id="serviceName"
                             value="{{ old('name') ?? $service['name'] }}" required>
                         @error('name')
                             <div class="text-danger">{{ $message }}</div>
@@ -35,9 +37,9 @@
 
 
                 <div class="form-group">
-                    <label for="description" class="col col-form-label">Description*</label>
+                    <label for="serviceDescription" class="col col-form-label">Description*</label>
                     <div class="col">
-                        <textarea name="description" class="form-control" id="description" required>{{ old('description') ?? $service['description'] }}</textarea>
+                        <textarea name="serviceDescription" class="form-control" id="serviceDescription" required>{{ old('description') ?? $service['description'] }}</textarea>
                         @error('description')
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
@@ -87,14 +89,17 @@
 
                                 <div class="mt-3 d-flex justify-content-between">
                                     <span><strong>Section Name: </strong>{{ $section->heading }}</span>
-                                    <i class="bi bi-x btn btn-danger"></i>
+                                    <i class="bi bi-x btn btn-danger savedSecition" data-id="{{ $section->id }}"></i>
                                 </div>
 
 
-                                <input id="sectionName[{{ $section->priority }}]" value="{{ old('serviceName') ?? $section->heading }}"
-                                    name="sectionName[{{ $section->priority }}]" type="text" class="form-control mb-2 mt-2"
-                                    placeholder="Section Name" required>
-                                <input id="serviceSection-trixField[{{ $section->priority }}]" value="{{ $section->content }}" type="hidden" name="serviceSection-trixFields[{{ $section->priority }}]">
+                                <input id="sectionName[{{ $section->priority }}]"
+                                    value="{{ old('serviceName') ?? $section->heading }}"
+                                    name="sectionName[{{ $section->priority }}]" type="text"
+                                    class="form-control mb-2 mt-2" placeholder="Section Name" required>
+                                <input id="serviceSection-trixField[{{ $section->priority }}]"
+                                    value="{{ $section->content }}" type="hidden"
+                                    name="currentServiceSection-trixFields[{{ $section->id }}]">
                                 <trix-editor input="serviceSection-trixField[{{ $section->priority }}]"></trix-editor>
                                 @error('sectionName[{{ $section->priority }}]')
                                     <div class="text-danger">{{ $message }}</div>
@@ -135,35 +140,91 @@
                     </div>
                 </div>
 
-                <button type="submit" id="newBranchFormSubmit" class="btn btn-primary m-2">Create</button>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success w-100" id="updateServiceFinalSubmission">Submit</button>
+                </div>
             </form>
         </div>
     </div>
 @stop
 
 
-
 @push('css')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
 @endpush
+
+
+
 @push('js')
     @trixassets
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
         $(document).ready(function() {
-
+            let removedSections = [];
+            let deletedFile = [];
+            let sectionCount = {{ count($serviceSections) + 1 }};
             $(document).on('click', '.bi-x', function() {
-                $(this).closest('.form-group').remove();
+
+                const sectionId = $(this).data('id');
+                console.log(sectionId);
+                if (sectionId) {
+                    removedSections.push(sectionId);
+                    $('#removedSections').val(JSON.stringify(removedSections));
+                    console.log(removedSections);
+                }
+                if (sectionCount <= 2) {
+                    toastr.error('At least one section is required.');
+                } else {
+                    $(this).closest('.form-group').remove();
+                    sectionCount--;
+                }
             });
 
             let counter = {{ count($serviceSections) + 1 }};
-                document.getElementById('add-field-btn').addEventListener('click', function() {
+            document.getElementById('add-field-btn').addEventListener('click', function() {
                 console.log('add btn clicked');
                 const wrapper = document.getElementById('dynamic-fields-wrapper');
                 const template = document.getElementById('section-template').innerHTML;
                 const html = template.replace(/__INDEX__/g, counter);
                 wrapper.insertAdjacentHTML('beforeend', html);
                 counter++;
+                sectionCount++;
             });
+
+            function stripStoragePath(fullUrl) {
+                return fullUrl.replace('http://localhost:8000/storage/', '');
+            }
+
+            document.addEventListener('trix-attachment-remove', function(e) {
+                fileUrl = e.attachment.attachment.previewURL;
+                file = stripStoragePath(fileUrl);
+                // const deleteFileUrl = "{{ route('attachment.remove') }}"+"?file=" + file;
+                deletedFile.push(
+                    file
+                );
+                console.log(deletedFile);
+                return;
+
+                // $.ajax({
+                //     type: "GET",
+                //     url: deleteFileUrl,
+                //     processData: false,
+                //     contentType: false,
+                //     dataType: 'json',
+                //     success: function(response) {
+                //         if (response.status === 200) {
+                //             console.log('File removed successfully');
+                //         } else {
+                //             console.log(response);
+                //         }
+                //     },
+                //     error: function(error) {
+                //         console.log(error);
+                //         toastr.error('Error while removing attachment file');
+                //     },
+
+                // });
+            })
 
             document.getElementById('serviceIcon').addEventListener('change', function(e) {
                 const oldPreview = document.querySelector('.serviceIconPreview');
@@ -204,9 +265,128 @@
                 };
 
                 reader.readAsDataURL(file);
-
-
             });
+
+            const finalSubmit = $('#updateServiceFinalSubmission');
+            const updateServiceForm = $('#updateServiceForm');
+            updateServiceForm.on('submit', function(e) {
+                e.preventDefault();
+
+                let isValid = true;
+                const trixEditors = $('input[type="hidden"][name^="servicesection-trixFields"]').each(
+                    function() {
+                        if ($(this).val().trim() === '') {
+                            isValid = false;
+                            return false;
+                        } else {
+                            isValid = true;
+                        }
+                    });
+                if (!isValid) {
+                    toastr.error('Please fill all the section before proceeding.');
+                    return false;
+                } else {
+                    console.log('submit success')
+                }
+
+                var actionUrl = $(this).attr('action');
+
+                var formData = new FormData(this);
+                formData.append('deletedFiles', JSON.stringify(deletedFile));
+                console.log(formData);
+                $.ajax({
+                    type: "POST",
+                    url: actionUrl,
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    dataType: 'json',
+                    error: function(response) {
+                        if (response.status === 400) {
+                            const errors = response.responseJSON.message;
+                            for (const field in errors) {
+                                errors[field].forEach(function(errorMessage) {
+                                    toastr.error(errorMessage);
+                                });
+                            }
+                        } else {
+                            toastr.error(
+                                'An unexpected error occurred. Please try again later.');
+                            console.log(response);
+                        }
+                    },
+                    success: function(data) {
+                        // window.location.href = "{{ route('services.index') }}";
+                    }
+                });
+            });
+
+            (function() {
+                var HOST = "https://example.com/"
+
+                addEventListener("trix-attachment-add", function(event) {
+                    if (event.attachment.file) {
+                        console.log(event.attachment.file);
+                        uploadFileAttachment(event.attachment)
+                    }
+                })
+
+                function uploadFileAttachment(attachment) {
+                    console.log(attachment);
+                    uploadFile(attachment.file, setProgress, setAttributes)
+
+                    function setProgress(progress) {
+                        attachment.setUploadProgress(progress)
+                    }
+
+                    function setAttributes(attributes) {
+                        attachment.setAttributes(attributes)
+                    }
+                }
+
+                function uploadFile(file, progressCallback, successCallback) {
+                    var key = createStorageKey(file)
+                    var formData = createFormData(key, file)
+                    console.log(key, formData,);
+                    $.ajax({
+                        type: "POST",
+                        url: '{{ route( 'laravel-trix.store' ) }}',
+                        processData: false,
+                        contentType: false,
+                        dataType: 'json',
+                        success: function(response) {
+                            console.log(response);
+                            if (response.status === 200) {
+                                console.log('File uploaded successfully');
+                            } else {
+                                console.log(response);
+                            }
+                        },
+                        error: function(error) {
+                            console.log(error);
+                            toastr.error('Error while removing attachment file');
+                        },
+
+                    });
+                }
+
+                function createStorageKey(file) {
+                    var date = new Date()
+                    var day = date.toISOString().slice(0, 10)
+                    var name = date.getTime() + "-" + file.name
+                    return ["tmp", day, name].join("/")
+                }
+
+                function createFormData(key, file) {
+                    var data = new FormData();
+                    data.append("key", key);
+                    data.append("Content-Type", file.type);
+                    data.append("file", file);
+                    data.append("modelClass", "App\\Models\\ServiceSection");
+                    data.append("field", "{{ $service->id }}");
+                    return data;
+                }
+            })();
         })
     </script>
 @endpush
