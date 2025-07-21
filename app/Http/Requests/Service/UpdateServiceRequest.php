@@ -11,31 +11,29 @@ class UpdateServiceRequest extends FormRequest
 
     public function authorize(): bool
     {
-        dd($this);
         return true;
     }
 
     public function rules(): array
     {
         return [
+            'serviceIcon' => 'mimetypes:image/jpg,image/jpeg,image/png|max:2500',
             'serviceName' => 'required|string|max:80|unique:services,name,' . $this->route('service')->id,
             'removedSections' => 'sometimes|string',
             'deletedFiles' => 'sometimes|string',
+            'addedFiles' => 'sometimes|string',
             'serviceDescription' => 'string|max:255',
-            'sectionName' => 'array|required',
-            'sectionName.*' => 'required|string|max:80',
-            'servicesection-trixFields' => 'array|required',
-            'servicesection-trixFields.*' => 'required|string|min:1',
-            'currentServiceSection-trixFields' =>'array|required',
-
-            'attachment-servicesection-trixFields' => 'array|required',
-            'attachment-servicesection-trixFields.*' => 'string',
-            'status' => 'nullable|integer', // Optional status field
-            // files
-            'serviceIcon' => 'mimetypes:image/jpg,image/jpeg,image/png|max:2500',
-
-
-
+            'currentServiceSectionName' => 'sometimes|array|required',
+            'currentServiceSectionName.*' => 'required|string|max:80',
+            'currentServiceSection-trixFields' =>'sometimes|array|required',
+            'currentServicesection-trixFields.*' => 'required|string|min:1',
+            'status' => 'nullable|integer',
+            'sectionName' => 'required_without:currentServiceSectionName|array',
+            'servicesection-trixFields' => 'required_without:currentServiceSection-trixFields|array',
+            'attachment-servicesection-trixFields' => 'required_without:currentServiceSection-trixFields|array',
+            'servicesection-trixFields.*' => 'required_with:servicesection-trixFields|string|min:1',
+            'sectionName.*' => 'required_with:sectionName|string|max:80',
+            'attachment-servicesection-trixFields.*' => 'required_with:attachment-servicesection-trixFields|string',
         ];
     }
 

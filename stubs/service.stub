@@ -1,0 +1,12 @@
+<?php
+
+namespace {{ namespace }};
+
+use App\Services\DTO\ServiceResponse;
+
+class {{ class }}
+{
+    /**
+     * Define service methods here.
+     */
+}

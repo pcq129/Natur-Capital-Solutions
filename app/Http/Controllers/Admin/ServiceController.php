@@ -106,6 +106,11 @@ class ServiceController extends Controller
         $data = $request->validated();
         $action = $this->serviceService->UpdateService($data, $service);
         $this->toasterService->toast($action);
+        return response()->json([
+            'status' => 'success',
+            'message' => $action->message,
+            'redirect' => route('services.index')
+        ], 200);
         return redirect()->route('services.index');
     }
 

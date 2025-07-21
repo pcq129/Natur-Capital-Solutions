@@ -93,15 +93,15 @@
                                 </div>
 
 
-                                <input id="sectionName[{{ $section->priority }}]"
+                                <input id="sectionName[{{ $section->id }}]"
                                     value="{{ old('serviceName') ?? $section->heading }}"
-                                    name="sectionName[{{ $section->priority }}]" type="text"
+                                    name="currentServiceSectionName[{{ $section->id }}]" type="text"
                                     class="form-control mb-2 mt-2" placeholder="Section Name" required>
-                                <input id="serviceSection-trixField[{{ $section->priority }}]"
-                                    value="{{ $section->content }}" type="hidden"
-                                    name="currentServiceSection-trixFields[{{ $section->id }}]">
-                                <trix-editor input="serviceSection-trixField[{{ $section->priority }}]"></trix-editor>
-                                @error('sectionName[{{ $section->priority }}]')
+                                <input id="serviceSection-trixField[{{ $section->id }}]" value="{{ $section->content }}"
+                                    type="hidden" name="currentServiceSection-trixFields[{{ $section->id }}]">
+                                <trix-editor input="serviceSection-trixField[{{ $section->id }}]"
+                                    data-id="{{ $section->id }}"></trix-editor>
+                                @error('sectionName[{{ $section->id }}]')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -150,18 +150,20 @@
 
 
 @push('css')
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
 @endpush
 
 
 
 @push('js')
-    @trixassets
+    <script type="text/javascript" src="https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
         $(document).ready(function() {
             let removedSections = [];
-            let deletedFile = [];
+            let deletedFiles = [];
+            let addedFiles = [];
             let sectionCount = {{ count($serviceSections) + 1 }};
             $(document).on('click', '.bi-x', function() {
 
@@ -170,7 +172,6 @@
                 if (sectionId) {
                     removedSections.push(sectionId);
                     $('#removedSections').val(JSON.stringify(removedSections));
-                    console.log(removedSections);
                 }
                 if (sectionCount <= 2) {
                     toastr.error('At least one section is required.');
@@ -191,18 +192,13 @@
                 sectionCount++;
             });
 
-            function stripStoragePath(fullUrl) {
-                return fullUrl.replace('http://localhost:8000/storage/', '');
-            }
-
             document.addEventListener('trix-attachment-remove', function(e) {
                 fileUrl = e.attachment.attachment.previewURL;
-                file = stripStoragePath(fileUrl);
                 // const deleteFileUrl = "{{ route('attachment.remove') }}"+"?file=" + file;
-                deletedFile.push(
-                    file
-                );
-                console.log(deletedFile);
+                deletedFiles.push({
+                   id: e.target.dataset.id ?? 0,
+                   fileUrl:  fileUrl
+                });
                 return;
 
                 // $.ajax({
@@ -292,8 +288,11 @@
                 var actionUrl = $(this).attr('action');
 
                 var formData = new FormData(this);
-                formData.append('deletedFiles', JSON.stringify(deletedFile));
-                console.log(formData);
+                formData.append('deletedFiles', JSON.stringify(deletedFiles));
+                formData.append('addedFiles', JSON.stringify(addedFiles));
+                console.log(addedFiles, deletedFiles);
+                console.log(removedSections);
+
                 $.ajax({
                     type: "POST",
                     url: actionUrl,
@@ -316,23 +315,22 @@
                         }
                     },
                     success: function(data) {
-                        // window.location.href = "{{ route('services.index') }}";
+                        console.log(data);
+                        window.location.href = data.redirect ?? "{{ route('services.index') }}";
                     }
                 });
             });
 
             (function() {
-                var HOST = "https://example.com/"
 
                 addEventListener("trix-attachment-add", function(event) {
                     if (event.attachment.file) {
-                        console.log(event.attachment.file);
-                        uploadFileAttachment(event.attachment)
+                        console.log(event);
+                        uploadFileAttachment(event.attachment, event.target.dataset.id ?? 0);
                     }
                 })
 
-                function uploadFileAttachment(attachment) {
-                    console.log(attachment);
+                function uploadFileAttachment(attachment, sectionId) {
                     uploadFile(attachment.file, setProgress, setAttributes)
 
                     function setProgress(progress) {
@@ -341,31 +339,50 @@
 
                     function setAttributes(attributes) {
                         attachment.setAttributes(attributes)
+                        addedFiles.push({
+                            id: sectionId,
+                            fileUrl: attributes.url,
+                        })
                     }
+
                 }
 
                 function uploadFile(file, progressCallback, successCallback) {
                     var key = createStorageKey(file)
                     var formData = createFormData(key, file)
-                    console.log(key, formData,);
+
                     $.ajax({
                         type: "POST",
-                        url: '{{ route( 'laravel-trix.store' ) }}',
+                        url: '{{ route('laravel-trix.store') }}',
+                        data: formData,
                         processData: false,
                         contentType: false,
                         dataType: 'json',
-                        success: function(response) {
-                            console.log(response);
-                            if (response.status === 200) {
-                                console.log('File uploaded successfully');
-                            } else {
-                                console.log(response);
+                        xhr: function() {
+                            var xhr = new window.XMLHttpRequest();
+
+                            xhr.upload.addEventListener("progress", function(event) {
+                                if (event.lengthComputable) {
+                                    var progress = (event.loaded / event.total) * 100;
+                                    progressCallback(progress);
+                                }
+                            }, false);
+
+                            return xhr;
+                        },
+                        success: function(data, textStatus, jqXHR) {
+                            if (jqXHR.status === 201) {
+
+                                var attributes = {
+                                    url: data.url,
+                                    href: data.url
+                                };
+                                successCallback(attributes);
                             }
                         },
-                        error: function(error) {
-                            console.log(error);
-                            toastr.error('Error while removing attachment file');
-                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.error("Upload error:", errorThrown);
+                        }
 
                     });
                 }

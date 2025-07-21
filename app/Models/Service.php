@@ -14,10 +14,10 @@ class Service extends Model
 {
     use SoftDeletes, HasTrixRichText;
 
-    public function resources(): MorphMany
-    {
-        return $this->morphMany(Resource::class, 'resourceable');
-    }
+    // public function resources(): MorphMany
+    // {
+    //     return $this->morphMany(Resource::class, 'resourceable');
+    // }
 
     /**
      * Get all of the serviceSections for the Service

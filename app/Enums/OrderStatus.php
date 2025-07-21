@@ -9,6 +9,7 @@ enum OrderStatus: string
     case PAYMENT_PENDING = 'payment-pending';
     case PAYMENT_PROCESSING = 'payment-processing';
     case PAYMENT_FAILED = 'payment-failed';
+    case PAYMENT_CONFIRMED = 'payment-confirmed';
     case APPROVAL_PENDING = 'approval-pending';
     case APPROVED = 'approved';
     case REJECTED = 'rejected';
@@ -29,10 +30,10 @@ enum OrderStatus: string
     case REFUND_COMPLETED = 'refund-completed';
     case ON_HOLD = 'on-hold';
     case DELIVERY_FAILED = 'delivery-failed';
-    case LOST_IN_TRANSIT = 'lost-in-transit';
-    case DAMAGED_IN_TRANSIT = 'damaged-in-transit';
+    // case LOST_IN_TRANSIT = 'lost-in-transit';
+    // case DAMAGED_IN_TRANSIT = 'damaged-in-transit';
     case REPLACEMENT_SHIPPED = 'replacement-shipped';
-    case AWAITING_CUSTOMER_RESPONSE = 'awaiting-customer-response';
+    // case AWAITING_CUSTOMER_RESPONSE = 'awaiting-customer-response';
     case PRE_ORDER = 'pre-order';
 
     // public function label(): string
