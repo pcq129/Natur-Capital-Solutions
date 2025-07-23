@@ -8,8 +8,8 @@ use Illuminate\Http\Request;
 use App\Enums\Status;
 use Yajra\DataTables\DataTables;
 use App\Constants\ServiceConstants as CONSTANTS;
-use App\Http\Requests\Service\StoreServiceRequest;
-use App\Http\Requests\Service\UpdateServiceRequest;
+use App\Http\Requests\Admin\Service\StoreServiceRequest;
+use App\Http\Requests\Admin\Service\UpdateServiceRequest;
 use App\Services\ServiceService;
 use App\Services\ToasterService;
 

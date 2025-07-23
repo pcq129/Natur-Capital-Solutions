@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\SubService;
-use App\Http\Requests\StoreSubServiceRequest;
-use App\Http\Requests\UpdateSubServiceRequest;
+use App\Http\Requests\Admin\StoreSubServiceRequest;
+use App\Http\Requests\Admin\UpdateSubServiceRequest;
 
 class SubServiceController extends Controller
 {

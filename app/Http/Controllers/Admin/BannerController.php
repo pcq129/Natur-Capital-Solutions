@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\Banner\CreateBannerRequest;
-use App\Http\Requests\Banner\UpdateBannerRequest;
+use App\Http\Requests\Admin\Banner\CreateBannerRequest;
+use App\Http\Requests\Admin\Banner\UpdateBannerRequest;
 use App\Services\BannerService;
 use Illuminate\Support\Facades\Log;
 use App\Services\ToasterService;

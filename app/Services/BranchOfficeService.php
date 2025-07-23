@@ -6,7 +6,7 @@ use App\Enums\Status;
 use App\Services\DTO\ServiceResponse;
 use App\Models\BranchOffice;
 use Yajra\DataTables\Facades\DataTables;
-use App\Http\Requests\BranchOffice\UpdateBranchOfficeRequest;
+use App\Http\Requests\Admin\BranchOffice\UpdateBranchOfficeRequest;
 
 class BranchOfficeService
 {

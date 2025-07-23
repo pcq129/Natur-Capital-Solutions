@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Http\Requests\CmsPage\CreateCmsPageRequest;
-use App\Http\Requests\CmsPage\UpdateCmsPageRequest;
+use App\Http\Requests\Admin\CmsPage\CreateCmsPageRequest;
+use App\Http\Requests\Admin\CmsPage\UpdateCmsPageRequest;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\CmsPage;
 use App\Enums\Status;

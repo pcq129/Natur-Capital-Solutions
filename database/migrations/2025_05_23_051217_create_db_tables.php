@@ -62,23 +62,23 @@ return new class extends Migration
             $table->softDeletes();
         });
 
-        Schema::create('countries', function (Blueprint $table) {
-            $table->id();
-            $table->string('name', 140);
-        });
+        // Schema::create('countries', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->string('name', 140);
+        // });
 
-        Schema::create('states', function (Blueprint $table) {
-            $table->id();
-            $table->string('name', 140);
-            $table->unsignedBigInteger('country_id');
-        });
+        // Schema::create('states', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->string('name', 140);
+        //     $table->unsignedBigInteger('country_id');
+        // });
 
-        Schema::create('cities', function (Blueprint $table) {
-            $table->id();
-            $table->string('name', 140);
-            $table->unsignedBigInteger('state_id');
-            $table->unsignedBigInteger('country_id');
-        });
+        // Schema::create('cities', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->string('name', 140);
+        //     $table->unsignedBigInteger('state_id');
+        //     $table->unsignedBigInteger('country_id');
+        // });
 
         Schema::create('user_addresses', function (Blueprint $table) {
             $table->id();
@@ -206,7 +206,7 @@ return new class extends Migration
             $table->softDeletes();
         });
 
-        
+
 
         Schema::create('cart_items', function (Blueprint $table) {
             $table->id();

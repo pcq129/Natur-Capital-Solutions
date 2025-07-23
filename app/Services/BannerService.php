@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Http\Requests\Banner\UpdateBannerRequest;
+use pBanner\UpdateBannerRequest;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Banner;
 use App\Services\FileService;
@@ -13,7 +13,7 @@ use App\Services\DTO\ServiceResponse;
 use App\Enums\ServiceResponseType;
 use App\Exceptions\Handler;
 use Exception;
-// use App\Http\Requests\Banner\CreateBannerRequest;
+// use App\Http\Requests\Admin\Banner\CreateBannerRequest;
 // use Illuminate\Http\RedirectResponse;
 // use Illuminate\Support\Facades\Storage;
 // use Illuminate\Support\Facades\Log;

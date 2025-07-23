@@ -9,10 +9,10 @@ use App\Constants\ContactDetailConstants;
 use App\Enums\Status;
 use Yajra\DataTables\DataTables;
 use App\Enums\ContactType;
-use App\Http\Requests\ContactDetail\createContactDetailRequest;
+use App\Http\Requests\Admin\ContactDetail\createContactDetailRequest;
 use App\Services\ContactDetailService;
 use App\Services\ToasterService;
-use App\Http\Requests\ContactDetail\UpdateContactDetailRequest;
+use App\Http\Requests\Admin\ContactDetail\UpdateContactDetailRequest;
 use App\Exceptions\Handler;
 
 class ContactDetailController extends Controller

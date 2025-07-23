@@ -4,7 +4,6 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CmsPageController;
 use App\Http\Controllers\Admin\BranchOfficeController;
-use App\Http\Controllers\ResourceController;    
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ContactDetailController;
 use App\Http\Controllers\Admin\SubCategoryController;
@@ -15,12 +14,20 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ServiceController;
+use App\Http\Controllers\Admin\ResourceController;
+use Laravel\Sanctum\Sanctum;
 
+
+
+
+Auth::routes();
+Route::get('/sanctum/csrf-cookie', function (Request $request) {
+    return response()->noContent();
+});
 
 Route::post('/register', [RegisterController::class, 'register']);
 Route::get('auth/{provider}/redirect', [SocialLoginController::class, 'redirect'])->name('auth.socialite.redirect');
 Route::get('auth/{provider}/callback', [SocialLoginController::class, 'callback'])->name('auth.socialite.callback');
-Auth::routes();
 
 Route::middleware('auth')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');

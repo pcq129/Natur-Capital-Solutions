@@ -18,8 +18,8 @@ use App\Services\FileService;
 use Illuminate\Support\Facades\Validator;
 use App\Constants\ProductConstants as CONSTANTS;
 use App\Enums\ServiceResponseType;
-use App\Http\Requests\Product\CreateProductRequest;
-use App\Http\Requests\Product\UpdateProductRequest;
+use App\Http\Requests\Admin\Product\CreateProductRequest;
+use App\Http\Requests\Admin\Product\UpdateProductRequest;
 
 class ProductController extends Controller
 {

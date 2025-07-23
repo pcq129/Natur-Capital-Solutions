@@ -67,7 +67,7 @@ return new class extends Migration
 
         Schema::table('cities', function (Blueprint $table) {
             $table->foreign('state_id')->references('id')->on('states')->onDelete('cascade');
-            $table->foreign('country_id')->references('id')->on('countries')->onDelete('cascade');
+            // $table->foreign('country_id')->references('id')->on('countries')->onDelete('cascade');
         });
 
         Schema::table('states', function (Blueprint $table) {
