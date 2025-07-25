@@ -350,11 +350,11 @@ return [
             'text' => 'Email Templates',
             'url' => '/email-templates',
         ],
-        // [
-        //     'icon'=> 'nav-icon fas fa-comments',
-        //     'text' => 'Enquiries',
-        //     'url' => '/enquiries',
-        // ],
+        [
+            'icon'=> 'nav-icon fas fa-comments',
+            'text' => 'Enquiries',
+            'url' => '/enquiries',
+        ],
         // [
         //     'icon'=> 'nav-icon fas fa-book',
         //     'text' => 'Orders',

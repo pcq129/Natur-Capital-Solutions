@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\ResourceController;
+use App\Http\Controllers\Admin\EnquiryController;
 use Laravel\Sanctum\Sanctum;
 
 
@@ -58,6 +59,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/remove-attachment', [ResourceController::class, 'removeAttachment'])->name('attachment.remove');
 
+    Route::resource('/enquiries', EnquiryController::class);
 
 
     // Data validation url

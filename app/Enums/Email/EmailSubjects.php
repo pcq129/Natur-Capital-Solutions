@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Enums;
+namespace App\Enums\Email;
 
-enum SystemMessage: string
+enum EmailSubjects: string
 {
     //  AUTH & ACCOUNT MESSAGES
     case REGISTRATION_SUCCESSFUL = 'Registration successful. Welcome aboard!';

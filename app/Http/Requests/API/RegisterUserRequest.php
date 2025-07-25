@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Main;
+namespace App\Http\Requests\API;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -28,7 +28,7 @@ class RegisterUserRequest extends FormRequest
             'password' => 'required|string|min:6',
             'company' => 'required|string|max:255',
             'city' => 'required|numeric|exists:cities,id',
-            'country' => 'required|numeric|exists:coutries,id'
+            'country' => 'required|numeric|exists:countries,id'
         ];
     }
 

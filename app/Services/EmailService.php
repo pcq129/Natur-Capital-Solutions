@@ -20,16 +20,16 @@ class EmailService
 
 
     /**
-     * @param emailcontent is the message body of mail to be sent
-     * @param template is the full database entry that holds the email template
+     * @param emailcontent the message body of mail to be sent
+     * @param mixed template full database entry that holds the email template
      * which includes subject, heading, email content, role of receiver.
-     * @param array dynamicdata is an array containing extra variable required by a
+     * @param array dynamicdata an array containing extra variable required by a
      * each template (variable for each template).
      */
-    public function sendMail($emailContent, $template, $dynamicData)
+    public function sendMail($emailContent, $template, $dynamicData, $email = null)
     {
        if($this->authorizeReceiver($template)){
-        $email = $dynamicData['email'];
+        $email = $dynamicData['email'] ?? $email;
         Mail::to($email)->send(new Template($emailContent, $template, $dynamicData));
         toastr()->success(CONSTANTS::REGISTRATION_SUCCESSFUL);
         return true;

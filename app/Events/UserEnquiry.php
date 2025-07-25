@@ -10,8 +10,9 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Enquiry;
+use App\Models\User;
 
-class UserEnquiry implements ShouldBroadcast
+class UserEnquiry //implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -19,7 +20,8 @@ class UserEnquiry implements ShouldBroadcast
      * Create a new event instance.
      */
     public function __construct(
-        public Enquiry $enquiry
+        public Enquiry $enquiry,
+        public User $user // Assuming you want to include the user who made the enquiry
     ) {}
 
     /**
@@ -27,10 +29,10 @@ class UserEnquiry implements ShouldBroadcast
      *
      * @return array<int, \Illuminate\Broadcasting\Channel>
      */
-    public function broadcastOn(): array
-    {
-        return [
-            new PrivateChannel('channel-name'),
-        ];
-    }
+    // public function broadcastOn(): array
+    // {
+    //     return [
+    //         new PrivateChannel('channel-name'),
+    //     ];
+    // }
 }

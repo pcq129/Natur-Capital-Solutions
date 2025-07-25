@@ -56,9 +56,9 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'country' => 'numeric',
-            'state' => 'numeric',
-            'city' => 'numeric',
+            'country' => 'integer',
+            'state' => 'integer',
+            'city' => 'integer',
             'phone' => 'string',
             'role' => Role::class
         ];
@@ -82,5 +82,15 @@ class User extends Authenticatable
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class, 'id', 'role');
+    }
+
+    /**
+     * Get all of the enquiries for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function enquiries(): HasMany
+    {
+        return $this->hasMany(Enquiry::class, 'user_id', 'id');
     }
 }

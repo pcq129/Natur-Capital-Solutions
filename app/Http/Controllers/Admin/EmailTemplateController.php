@@ -85,7 +85,6 @@ class EmailTemplateController extends Controller
             $this->toasterService->exceptionToast($message);
             Handler::logError($e, $message);
             return redirect()->back();
-
         }
     }
 

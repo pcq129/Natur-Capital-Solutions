@@ -13,6 +13,7 @@ use App\Services\EmailService as MAIL;
 class UserRegisteredListener
 {
     protected $email;
+    protected $MAIL;
 
     /**
      * Create the event listener.
@@ -20,6 +21,7 @@ class UserRegisteredListener
     public function __construct()
     {
         $this->email = EmailTemplate::where('name', 'User Registered')->first();
+        $this->MAIL = new MAIL();
     }
 
     /**
@@ -31,15 +33,16 @@ class UserRegisteredListener
 
         // Prepare dynamic data for the email
         $emailContent = $this->email->trixRender('EmailTemplateContent');
+        // dd($emailContent);
         $dynamicData = [
             'user'=> $user->name,
             'email' => $user->email,
-            'role' => Role::fromValue($user->role)->name, // Assuming role is stored as an enum value
+            'role' => $user->role->name, // Assuming role is stored as an enum value
         ];
 
         // Send the email
         if ($this->email) {
-            $this->sendMail($this->email, $user->email, $dynamicData);
+            $this->sendMail($emailContent, $this->email, $dynamicData);
         }else{
             // Handle the case where the email template is not found
             \Log::error('Email template for User Registered not found.');
@@ -68,8 +71,8 @@ class UserRegisteredListener
     // }
 
 
-    private function sendMail($emailContent, $newUserEmail, $dynamicData)
+    private function sendMail($emailContent, $emailData, $dynamicData)
     {
-       return MAIL->sendMail($emailContent, $newUserEmail, $dynamicData);
+       return $this->MAIL->sendMail($emailContent, $emailData, $dynamicData);
     }
 }

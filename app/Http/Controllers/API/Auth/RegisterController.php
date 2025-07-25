@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Main\RegisterUserRequest;
+use App\Http\Requests\API\RegisterUserRequest;
 use App\Models\User;
 use App\Enums\Status;
 use Illuminate\Http\Request;
@@ -15,7 +15,6 @@ use App\Events\UserRegistered;
 class RegisterController extends Controller
 {
     public function register(RegisterUserRequest $request){
-        dd($request->all());
         $userData = $request->validated();
 
         $user = User::create([
@@ -34,7 +33,7 @@ class RegisterController extends Controller
 
         return response()->json([
             'message' => 'User registered successfully',
-            'user' => $user,
+            'user' => $user->only(['id', 'name', 'email', 'phone', 'company', 'city', 'country', 'role', 'status']),
         ], Response::HTTP_CREATED);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Email\EmailTypes;
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\Language;
 use App\Enums\Status;
@@ -30,7 +31,7 @@ class EmailTemplate extends Model
     public function casts() : array
     {
         return [
-            'template_name' => 'string',
+            'name' => 'string',
             'subject' => 'string',
             'content' => 'string',
             'language' => Language::class,

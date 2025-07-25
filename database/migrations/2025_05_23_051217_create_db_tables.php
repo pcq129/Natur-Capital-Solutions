@@ -112,18 +112,6 @@ return new class extends Migration
             $table->softDeletes();
         });
 
-        Schema::create('enquiries', function (Blueprint $table) {
-            $table->id();
-            $table->string('name', 80);
-            $table->string('email');
-            $table->string('phone');
-            $table->unsignedBigInteger('country_id');
-            $table->unsignedBigInteger('city_id');
-            $table->text('message');
-            $table->text('response');
-            $table->timestamps();
-            $table->softDeletes();
-        });
 
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
